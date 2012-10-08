@@ -21,3 +21,4 @@ FAQ
 	your own application specific session code on top of atmospere-gwt.
 	Atmosphere-gwt is also able to track the individual window connections and you can send information to each specific 
 	window and also know from which it is coming.
+	If you are interested in sharing one connection from multiple windows then have a look at the GWT connection sharing example.

@@ -228,7 +228,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                 }
 
                                 resource.disableSuspend(false);
-                                resource.suspend(session.getRequestSuspendTime(), false);
+                                resource.suspend(session.getRequestSuspendTime());
                                 resource.disableSuspend(true);
                             }
                         } else {

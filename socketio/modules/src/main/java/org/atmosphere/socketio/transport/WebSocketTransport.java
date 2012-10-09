@@ -85,7 +85,7 @@ public class WebSocketTransport extends AbstractTransport {
                 SocketIOWebSocketSessionWrapperImpl sessionWrapper = new SocketIOWebSocketSessionWrapperImpl(session, socketioEventListener);
                 socketioEventListener.setSessionWrapper(sessionWrapper);
                 request.setAttribute(SocketIOAtmosphereHandler.SOCKETIO_SESSION_OUTBOUND, sessionWrapper);
-                resource.suspend(-1, false);
+                resource.suspend(-1);
             }
         } else {
             session = sessionFactory.getSession(sessionId);

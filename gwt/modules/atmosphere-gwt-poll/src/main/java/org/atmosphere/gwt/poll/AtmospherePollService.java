@@ -84,14 +84,14 @@ public class AtmospherePollService extends AbstractRemoteServiceServlet
             throw new UnexpectedException("Failed to find Atmosphere resource have you setup Atmosphere?", null);
         }
         atm.getRequest().setAttribute(GWT_SUSPENDED, true);
-        atm.suspend(-1, false);
+        atm.suspend(-1);
         return new SuspendInfo(atm);
     }
 
     protected SuspendInfo suspend(long timeout) {
         AtmosphereResource atm = getAtmosphereResource();
         atm.getRequest().setAttribute(GWT_SUSPENDED, true);
-        atm.suspend(timeout, false);
+        atm.suspend(timeout);
         return new SuspendInfo(atm);
     }
 

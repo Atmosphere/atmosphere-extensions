@@ -170,7 +170,7 @@ public class GwtAtmosphereResourceImpl implements GwtAtmosphereResource {
         if (!suspended) {
             atmResource.setSerializer(serializer).addEventListener(eventListener);
             writer.suspend();
-            atmResource.suspend(timeout, false);
+            atmResource.suspend(timeout);
         }
     }
 

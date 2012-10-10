@@ -78,13 +78,13 @@ public class CometdAtmosphereInterceptor implements AtmosphereInterceptor {
 
         @Override
         public void suspend() {
-            r.suspend(timeoutMs, false);
+            r.suspend(timeoutMs);
         }
 
         @Override
         public void suspend(ServletResponse response) {
             this.response = response;
-            r.suspend(timeoutMs, false);
+            r.suspend(timeoutMs);
         }
 
         @Override

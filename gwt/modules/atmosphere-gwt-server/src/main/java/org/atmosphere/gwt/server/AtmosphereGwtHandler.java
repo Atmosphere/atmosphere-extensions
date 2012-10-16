@@ -94,7 +94,10 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
     }
 
     /**
-     * When the connection has died this method will be called to let you know about it.
+     * When the connection has been terminated method will be called to let you know about it. 
+     * This goes for every physical connection regardsless of whether the client reconnects again. This method
+     * will also be called when a connection is refreshed. The serverInitiated parameter simply means if the
+     * connection was terminated/stopped from serverside code or that the client decided to disconnect.
      *
      *
      * @param cometResponse

@@ -61,7 +61,7 @@ public class SocketIOWebSocketEventListener extends WebSocketEventListenerAdapte
         } else {
             List<SocketIOPacketImpl> messages = null;
             try {
-                messages = SocketIOPacketImpl.parse(event.message());
+                messages = SocketIOPacketImpl.parse(event.message().toString());
             } catch (SocketIOException e) {
                 logger.warn("", e);
             }
@@ -103,7 +103,7 @@ public class SocketIOWebSocketEventListener extends WebSocketEventListenerAdapte
     public void onClose(WebSocketEvent event) {
         logger.trace("calling from " + this.getClass().getName() + " : " + "onClose event = " + event);
 
-        sessionWrapper.getSession().onClose(event.message());
+        sessionWrapper.getSession().onClose(event.message().toString());
     }
 
 }

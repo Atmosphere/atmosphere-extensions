@@ -39,7 +39,7 @@ public class OperaEventSourceResponseWriter extends GwtResponseWriterImpl {
 
         writer.append("Event: c\ndata: c")
                 .append(String.valueOf(resource.getHeartBeatInterval())).append(':')
-                .append(String.valueOf(connectionID)).append("\n\n");
+                .append(String.valueOf(resource.getConnectionUUID())).append("\n\n");
     }
 
     @Override

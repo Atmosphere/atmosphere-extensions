@@ -44,9 +44,9 @@ public interface AtmosphereListener {
      * The connection has been established
      *
      * @param heartbeat This is the interval with which the server will send heartbeats
-     * @param connectionID This is the unique number that identifies this connection
+     * @param connectionUUID This is the unique number that identifies this connection
      */
-    public void onConnected(int heartbeat, int connectionID);
+    public void onConnected(int heartbeat, String connectionUUID);
 
     /**
      * Send just before the connection is stopped

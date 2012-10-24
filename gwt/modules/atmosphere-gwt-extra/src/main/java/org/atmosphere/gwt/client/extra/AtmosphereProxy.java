@@ -237,7 +237,7 @@ public class AtmosphereProxy implements UserInterface {
             // these events need to dispatched to our children as well as to the client listener
             // they originate from the master connection and need to be propagated top-down
             case ON_CONNECTED:
-                clientListener.onConnected(-1, -1);
+                clientListener.onConnected(-1, "");
                 break;
             case ON_BEFORE_DISCONNECTED:
                 clientListener.onBeforeDisconnected();
@@ -371,8 +371,8 @@ public class AtmosphereProxy implements UserInterface {
     private AtmosphereListener masterListener = new AtmosphereListener() {
 
         @Override
-        public void onConnected(int heartbeat, int connectionID) {
-            clientListener.onConnected(heartbeat, connectionID);
+        public void onConnected(int heartbeat, String connectionUUID) {
+            clientListener.onConnected(heartbeat, connectionUUID);
             dispatchEvent(event(EventType.ON_CONNECTED));
         }
 

@@ -85,8 +85,8 @@ public class IEHTMLFileCometTransport extends IFrameCometTransport {
         htmlfile.parentWindow.m = $entry(function(message) {
             client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onMessages(Lcom/google/gwt/core/client/JsArrayString;)(arguments);
         });
-        htmlfile.parentWindow.c = $entry(function(heartbeat, connectionID) {
-            client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onConnected(II)(heartbeat, connectionID);
+        htmlfile.parentWindow.c = $entry(function(heartbeat, connectionUUID) {
+            client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onConnected(ILjava/lang/String;)(heartbeat, connectionUUID);
         });
         htmlfile.parentWindow.d = $entry(function() {
             client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onDisconnected()();

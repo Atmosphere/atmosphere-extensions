@@ -58,7 +58,7 @@ public abstract class BaseCometTransport implements CometTransport {
     protected AtmosphereClient client;
     protected AtmosphereListener listener;
     protected ServerTransport serverTransport;
-    protected int connectionId;
+    protected String connectionUUID;
     private static final Logger logger = Logger.getLogger(BaseCometTransport.class.getName());
 
     @Override
@@ -138,7 +138,7 @@ public abstract class BaseCometTransport implements CometTransport {
         protected String serviceUrl() {
             int i = client.getUrl().indexOf('?');
             String serviceUrl = (i > 0 ? client.getUrl().substring(0, i) : client.getUrl())
-                    + "?servertransport=rpcprotocol&connectionID=" + connectionId;
+                    + "?servertransport=rpcprotocol";
             
             serviceUrl = addUrlParameter(serviceUrl, Constants.CLIENT_SERIALZE_MODE_PARAMETER, client.getSerializer().getPushMode().name());
             return serviceUrl;

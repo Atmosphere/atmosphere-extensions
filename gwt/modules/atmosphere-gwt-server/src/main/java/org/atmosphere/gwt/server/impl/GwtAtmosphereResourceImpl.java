@@ -158,8 +158,8 @@ public class GwtAtmosphereResourceImpl implements GwtAtmosphereResource {
     }
 
     @Override
-    public int getConnectionID() {
-        return writer.connectionID;
+    public String getConnectionUUID() {
+        return atmResource.uuid();
     }
 
     public void suspend() throws IOException {

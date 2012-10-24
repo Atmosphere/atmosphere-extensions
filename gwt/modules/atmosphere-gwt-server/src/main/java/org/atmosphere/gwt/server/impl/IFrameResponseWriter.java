@@ -73,7 +73,7 @@ public class IFrameResponseWriter extends ManagedStreamResponseWriter {
         }
         writer.append(MID);
         writer.append(Integer.toString(resource.getHeartBeatInterval()));
-        writer.append(',').append(String.valueOf(connectionID));
+        writer.append(',').append(String.valueOf(resource.getConnectionUUID()));
         writer.append(TAIL);
     }
 

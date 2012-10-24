@@ -17,7 +17,8 @@ nbproject
 target
 test-output
 nbactions.xml
-samples/gwt-demo/src/main/webapp/WEB-INF/classes/
-samples/gwt-chat/src/main/webapp/WEB-INF/classes/
-samples/gwt-conn-share/src/main/webapp/WEB-INF/classes/
+gwt/samples/gwt-demo/src/main/webapp/WEB-INF/classes/
+gwt/samples/gwt-chat/src/main/webapp/WEB-INF/classes/
+gwt/samples/gwt-conn-share/src/main/webapp/WEB-INF/classes/
 atlassian-ide-plugin.xml
+

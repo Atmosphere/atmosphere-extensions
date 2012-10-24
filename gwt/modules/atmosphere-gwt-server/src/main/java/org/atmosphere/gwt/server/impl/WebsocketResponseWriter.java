@@ -44,7 +44,7 @@ public class WebsocketResponseWriter extends GwtResponseWriterImpl {
 
         writer.append("c;c;")
                 .append(String.valueOf(resource.getHeartBeatInterval())).append(';')
-                .append(String.valueOf(connectionID)).append(MESSAGE_SEPERATOR);
+                .append(String.valueOf(resource.getConnectionUUID())).append(MESSAGE_SEPERATOR);
     }
 
     @Override

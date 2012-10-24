@@ -127,28 +127,27 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
 
     /**
      * This can be used to lookup a resource for instance if you are implementing a remote service call
-     * You will need to pass the connectionID, which you can pass as an url parameter {getConnectionID()} or
-     * directly in your remote call
+     * The unique UUID is set by the framework
      *
-     * @param connectionId
+     * @param connectionUUID
      * @return
      */
-    protected GwtAtmosphereResource lookupResource(int connectionId) {
+    protected GwtAtmosphereResource lookupResource(String connectionUUID) {
         if (resources == null) {
             return null;
         }
-        GwtAtmosphereResource r = resources.get(connectionId);
+        GwtAtmosphereResource r = resources.get(connectionUUID);
         if (r != null) {
             return r;
         } else {
-            logger.info("Failed to find resource for [" + connectionId + "]");
+            logger.info("Failed to find resource for [" + connectionUUID + "]");
         }
         return null;
     }
 
     // -------------- you most likely don't need to override the functions below -----------------
 
-    private Map<Integer, GwtAtmosphereResource> resources;
+    private Map<String, GwtAtmosphereResource> resources;
     private Map<GwtAtmosphereResource, SerialMode> resourceSerialModeMap;
     private ServletContext context;
 
@@ -202,7 +201,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
         if (resources != null) {
             for (GwtAtmosphereResource resource : resources.values()) {
                 if (!resource.isAlive()) {
-                    resourceSerialModeMap.remove(resources.remove(resource.getConnectionID()));
+                    resourceSerialModeMap.remove(resources.remove(resource.getConnectionUUID()));
                 }
             }
         }
@@ -216,17 +215,12 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
         String servertransport = request.getParameter("servertransport");
         Object webSocketSubProtocol = resource.getRequest().getAttribute(FrameworkConfig.WEBSOCKET_SUBPROTOCOL);
         if ("rpcprotocol".equals(servertransport)) {
-
-            Integer connectionID = Integer.parseInt(request.getParameter("connectionID"));
-            doServerMessage(request, resource.getResponse(), connectionID);
+            doServerMessage(request, resource.getResponse(), resource.uuid());
             return;
 
         } else if (webSocketSubProtocol != null
                   && webSocketSubProtocol.equals(FrameworkConfig.SIMPLE_HTTP_OVER_WEBSOCKET)) {
-
-            Integer connectionID = (Integer) request.getAttribute(AtmosphereGwtHandler.class.getName()
-                                        + ".connectionID");
-            doServerMessage(request, resource.getResponse(), connectionID);
+            doServerMessage(request, resource.getResponse(), resource.uuid());
             return;
         }
 
@@ -236,8 +230,6 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
 
             GwtAtmosphereResourceImpl resourceWrapper =
                     new GwtAtmosphereResourceImpl(resource, this, requestHeartbeat, requestEscapeText);
-            request.setAttribute(AtmosphereGwtHandler.class.getName() + ".connectionID",
-                    (Integer) resourceWrapper.getConnectionID());
             doCometImpl(resourceWrapper);
         } catch (IOException e) {
 //            GwtAtmosphereResourceImpl resource = new GwtAtmosphereResourceImpl(atm, this, -1);
@@ -274,11 +266,11 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
 
     /// --- server message handlers
 
-    protected void doServerMessage(HttpServletRequest request, HttpServletResponse response, int connectionID)
+    protected void doServerMessage(HttpServletRequest request, HttpServletResponse response, String connectionUUID)
         throws IOException{
         BufferedReader data = request.getReader();
         List<Object> postMessages = new ArrayList<Object>();
-        GwtAtmosphereResource resource = lookupResource(connectionID);
+        GwtAtmosphereResource resource = lookupResource(connectionUUID);
         if (resource == null) {
             return;
         }
@@ -294,7 +286,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
                 String action = data.readLine();
 
                 if (logger.isTraceEnabled()) {
-                    logger.trace("[" + connectionID + "] Server message received: " + event + ";" + action);
+                    logger.trace("[" + connectionUUID + "] Server message received: " + event + ";" + action);
                 }
                 if (event.equals("o") || event.equals("s")) {
                     int length = Integer.parseInt(data.readLine());
@@ -334,7 +326,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
                 }
             }
         } catch (IOException ex) {
-            logger.error("[" + connectionID + "] Failed to read", ex);
+            logger.error("[" + connectionUUID + "] Failed to read", ex);
         }
 
         if (postMessages.size() > 0) {
@@ -450,7 +442,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
 
     public void disconnect(GwtAtmosphereResource resource) {
         if (resource != null) {
-            logger.debug("Resuming connection[" + resource.getConnectionID() + "] after client disconnect message");
+            logger.debug("Resuming connection[" + resource.getConnectionUUID() + "] after client disconnect message");
             resource.getAtmosphereResource().resume();
         }
     }
@@ -477,7 +469,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
             // setup the request
             resource.getWriterImpl().initiate();
             if (resources == null) {
-                resources = new ConcurrentHashMap<Integer, GwtAtmosphereResource>(5);
+                resources = new ConcurrentHashMap<String, GwtAtmosphereResource>(5);
                 resourceSerialModeMap = new ConcurrentHashMap<GwtAtmosphereResource, SerialMode>(5);
                 scheduler.scheduleWithFixedDelay(new Runnable() {
                     @Override
@@ -486,7 +478,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
                     }
                 }, 30, 10, TimeUnit.SECONDS);
             }
-            resources.put(resource.getConnectionID(), resource);
+            resources.put(resource.getConnectionUUID(), resource);
         } catch (IOException e) {
             logger.error("Error initiating GwtComet", e);
             return;
@@ -517,7 +509,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
     }
 
     public void terminate(GwtAtmosphereResource cometResponse, boolean serverInitiated) {
-        resourceSerialModeMap.remove(resources.remove(cometResponse.getConnectionID()));
+        resourceSerialModeMap.remove(resources.remove(cometResponse.getConnectionUUID()));
         cometTerminated(cometResponse, serverInitiated);
     }
 

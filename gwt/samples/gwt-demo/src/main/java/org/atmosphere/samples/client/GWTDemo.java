@@ -135,8 +135,8 @@ public class GWTDemo implements EntryPoint {
     private class MyCometListener implements AtmosphereListener {
 
         @Override
-        public void onConnected(int heartbeat, int connectionID) {
-            logger.info("comet.connected [" + heartbeat + ", " + connectionID + "]");
+        public void onConnected(int heartbeat, String connectionUUID) {
+            logger.info("comet.connected [" + heartbeat + ", " + connectionUUID + "]");
             displayCookies();
             toggleStartStop(true);
         }
@@ -163,17 +163,17 @@ public class GWTDemo implements EntryPoint {
 
         @Override
         public void onHeartbeat() {
-            logger.info("comet.heartbeat [" + client.getConnectionID() + "]");
+            logger.info("comet.heartbeat [" + client.getConnectionUUID() + "]");
         }
 
         @Override
         public void onRefresh() {
-            logger.info("comet.refresh [" + client.getConnectionID() + "]");
+            logger.info("comet.refresh [" + client.getConnectionUUID() + "]");
         }
 
         @Override
         public void onAfterRefresh() {
-            logger.info("comet.afterRefresh [" + client.getConnectionID() + "]");
+            logger.info("comet.afterRefresh [" + client.getConnectionUUID() + "]");
         }
 
         @Override
@@ -182,8 +182,8 @@ public class GWTDemo implements EntryPoint {
             for (Object obj : messages) {
                 result.append(obj.toString()).append("<br/>");
             }
-            logger.log(Level.INFO, "comet.message [" + client.getConnectionID() + "] " + result.toString());
-            Info.display("[" + client.getConnectionID() + "] Received " + messages.size() + " messages", result.toString());
+            logger.log(Level.INFO, "comet.message [" + client.getConnectionUUID() + "] " + result.toString());
+            Info.display("[" + client.getConnectionUUID() + "] Received " + messages.size() + " messages", result.toString());
         }
     }
 

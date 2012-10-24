@@ -185,8 +185,8 @@ public class GWTDemo implements EntryPoint {
         DateTimeFormat timeFormat = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.TIME_MEDIUM);
 
         @Override
-        public void onConnected(int heartbeat, int connectionID) {
-            logger.info("comet.connected [" + heartbeat + ", " + connectionID + "]");
+        public void onConnected(int heartbeat, String connectionUUID) {
+            logger.info("comet.connected [" + heartbeat + ", " + connectionUUID + "]");
             addChatLine(MESSAGE_ROOM_CONNECTED, COLOR_SYSTEM_MESSAGE);
         }
 
@@ -216,17 +216,17 @@ public class GWTDemo implements EntryPoint {
 
         @Override
         public void onHeartbeat() {
-            logger.info("comet.heartbeat [" + client.getConnectionID() + "]");
+            logger.info("comet.heartbeat [" + client.getConnectionUUID() + "]");
         }
 
         @Override
         public void onRefresh() {
-            logger.info("comet.refresh [" + client.getConnectionID() + "]");
+            logger.info("comet.refresh [" + client.getConnectionUUID() + "]");
         }
 
         @Override
         public void onAfterRefresh() {
-            logger.info("comet.afterRefresh [" + client.getConnectionID() + "]");
+            logger.info("comet.afterRefresh [" + client.getConnectionUUID() + "]");
         }
 
         @Override

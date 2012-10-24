@@ -119,8 +119,8 @@ public class WebSocketCometTransport extends BaseCometTransport {
             String initParameters = message.substring(2);
             try {
                 String[] params = initParameters.split(";");
-                connectionId = Integer.parseInt(params[1]);
-                listener.onConnected(Integer.parseInt(params[0]), connectionId);
+                connectionUUID = params[1];
+                listener.onConnected(Integer.parseInt(params[0]), connectionUUID);
             } catch (NumberFormatException e) {
                 listener.onError(new AtmosphereClientException("Unexpected init parameters: " + initParameters), true);
             }

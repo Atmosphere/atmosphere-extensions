@@ -28,5 +28,5 @@ import org.timepedia.exporter.client.Exportable;
 @ExportPackage("atmosphere")
 @ExportClosure
 public interface OnConnected extends Exportable {
-    public void execute(int heartbeat, int connectionID);
+    public void execute(int heartbeat, String connectionUUID);
 }

@@ -46,9 +46,9 @@ abstract public class JsUserInterface implements Exportable {
 
     protected AtmosphereListener listener = new AtmosphereListener() {
         @Override
-        public void onConnected(int heartbeat, int connectionID) {
+        public void onConnected(int heartbeat, String connectionUUID) {
             if (onConnected != null) {
-                onConnected.execute(heartbeat, connectionID);
+                onConnected.execute(heartbeat, connectionUUID);
             }
         }
 

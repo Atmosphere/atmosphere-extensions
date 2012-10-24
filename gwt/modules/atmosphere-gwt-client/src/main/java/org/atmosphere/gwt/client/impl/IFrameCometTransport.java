@@ -114,8 +114,8 @@ public class IFrameCometTransport extends BaseCometTransport {
         window.m = $entry(function(message) {
             client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onMessages(Lcom/google/gwt/core/client/JsArrayString;)(arguments);
         });
-        window.c = $entry(function(heartbeat, connectionID) {
-            client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onConnected(II)(heartbeat, connectionID);
+        window.c = $entry(function(heartbeat, connectionUUID) {
+            client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onConnected(ILjava/lang/String;)(heartbeat, connectionUUID);
         });
         window.d = $entry(function() {
             client.@org.atmosphere.gwt.client.impl.IFrameCometTransport::onDisconnected()();
@@ -203,12 +203,12 @@ public class IFrameCometTransport extends BaseCometTransport {
     }
 
     @SuppressWarnings("unused")
-    private void onConnected(int heartbeat, int connectionID) {
+    private void onConnected(int heartbeat, String connectionUUID) {
         connected = true;
         body = iframe.getContentDocument().getBody();
         collect();
-        this.connectionId = connectionID;
-        listener.onConnected(heartbeat, connectionID);
+        this.connectionUUID = connectionUUID;
+        listener.onConnected(heartbeat, connectionUUID);
     }
 
     private void onDisconnected() {

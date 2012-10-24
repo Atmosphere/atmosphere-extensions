@@ -142,8 +142,8 @@ public class GWTDemo implements EntryPoint {
     private class MyCometListener implements AtmosphereListener {
 
         @Override
-        public void onConnected(int heartbeat, int connectionID) {
-            logger.info("comet.connected [" + heartbeat + ", " + connectionID + "]");
+        public void onConnected(int heartbeat, String connectionUUID) {
+            logger.info("comet.connected [" + heartbeat + ", " + connectionUUID + "]");
             displayCookies();
             toggleStartStop(true);
         }

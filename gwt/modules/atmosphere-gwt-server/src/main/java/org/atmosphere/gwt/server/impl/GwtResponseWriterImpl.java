@@ -52,7 +52,6 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
 
     protected Writer writer;
     protected final GwtAtmosphereResourceImpl resource;
-    protected final int connectionID;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected boolean shouldEscapeText = true;
@@ -64,7 +63,6 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
 
     protected GwtResponseWriterImpl(GwtAtmosphereResourceImpl resource) {
         this.resource = resource;
-        this.connectionID = connectionIDs.getAndIncrement();
         if (getSerializationMode() == SerialMode.RPC) {
             gwtRpc = new GwtRpcSerializer(resource.getRequest(), resource.getServletContext());
         }
@@ -96,8 +94,8 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
 
     synchronized void scheduleHeartbeat() {
         if (logger.isTraceEnabled()) {
-            logger.trace("Schedule heartbeat for [" + connectionID + "]");
-            logger.trace("Last write for [" + connectionID + "] was " + new Date(lastWriteTime).toString());
+            logger.trace("Schedule heartbeat for [" + resource.getConnectionUUID() + "]");
+            logger.trace("Last write for [" + resource.getConnectionUUID() + "] was " + new Date(lastWriteTime).toString());
         }
         lastWriteTime = System.currentTimeMillis();
         if (heartbeatFuture != null) {
@@ -154,9 +152,8 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
         writer = new OutputStreamWriter(outputStream, "UTF-8");
 
         if (logger.isTraceEnabled()) {
-            logger.trace("Initiated [" + connectionID + "]");
+            logger.trace("Initiated [" + resource.getConnectionUUID() + "]");
         }
-        getRequest().setAttribute("connectionID", connectionID);
         scheduleHeartbeat();
     }
 
@@ -167,7 +164,7 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
                     return;
                 }
                 if (logger.isTraceEnabled()) {
-                    logger.trace("Suspending [" + connectionID + "]");
+                    logger.trace("Suspending [" + resource.getConnectionUUID() + "]");
                 }
                 doSuspend();
 
@@ -229,7 +226,7 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
                 heartbeat();
             } else {
                 if (logger.isTraceEnabled()) {
-                    logger.trace("Writing #" + messages.size() + " messages to [" + connectionID + "]");
+                    logger.trace("Writing #" + messages.size() + " messages to [" + resource.getConnectionUUID() + "]");
                 }
                 doWrite(messages);
                 if (flush) {
@@ -248,7 +245,7 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
     public synchronized void heartbeat() throws IOException {
         if (!terminated) {
             try {
-                logger.trace("Sending heartbeat [" + connectionID + "]");
+                logger.trace("Sending heartbeat [" + resource.getConnectionUUID() + "]");
                 doHeartbeat();
                 flush();
                 scheduleHeartbeat();
@@ -270,7 +267,7 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
             terminated = true;
 
             if (logger.isTraceEnabled()) {
-                logger.trace("Terminating [" + connectionID + "]");
+                logger.trace("Terminating [" + resource.getConnectionUUID() + "]");
             }
             if (heartbeatFuture != null) {
                 heartbeatFuture.cancel(false);
@@ -365,5 +362,4 @@ public abstract class GwtResponseWriterImpl implements GwtResponseWriter {
     private boolean terminated;
     private volatile long lastWriteTime;
     private ScheduledFuture<?> heartbeatFuture;
-    private static AtomicInteger connectionIDs = new AtomicInteger(1);
 }

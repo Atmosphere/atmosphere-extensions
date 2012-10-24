@@ -57,7 +57,7 @@ import org.atmosphere.gwt.client.impl.CometTransport;
  * class with the appropriate annotations.
  * <p/>
  * The sequence of events are as follows: The application calls {@link AtmosphereClient#start()}.
- * {@link AtmosphereListener#onConnected(int,int)} gets called when the connection is established.
+ * {@link AtmosphereListener#onConnected(int,String)} gets called when the connection is established.
  * {@link AtmosphereListener#onMessage(List)} gets called when messages are received from the server.
  * {@link AtmosphereListener#onDisconnected()} gets called when the connection is disconnected
  * {@link AtmosphereListener#onError(Throwable, boolean)} gets called if there is an error with the connection.
@@ -216,12 +216,12 @@ public class AtmosphereClient implements UserInterface {
     }
 
     /**
-     * The unique connection ID
+     * The unique connection UUID
      * 
      * @return 
      */
-    public int getConnectionID() {
-        return primaryTransport.connectionID;
+    public String getConnectionUUID() {
+        return primaryTransport.connectionUUID;
     }
 
     /** 
@@ -366,7 +366,7 @@ public class AtmosphereClient implements UserInterface {
         }
     }
 
-    private void doOnConnected(int heartbeat, int connectionID, CometClientTransportWrapper transport) {
+    private void doOnConnected(int heartbeat, String connectionUUID, CometClientTransportWrapper transport) {
         if (refreshState != null) {
             if (transport == refreshTransport) {
                 if (refreshState == RefreshState.PRIMARY_DISCONNECTED) {
@@ -387,7 +387,7 @@ public class AtmosphereClient implements UserInterface {
                 listener.onAfterRefresh();
             }
         } else {
-            listener.onConnected(heartbeat, connectionID);
+            listener.onConnected(heartbeat, connectionUUID);
         }
     }
 
@@ -526,7 +526,7 @@ public class AtmosphereClient implements UserInterface {
         private boolean webSocketSuccessful = false;
         private int heartbeatTimeout;
         private double lastReceivedTime;
-        private int connectionID;
+        private String connectionUUID;
         private int reconnectionCounter = 1;
 
         public CometClientTransportWrapper() {
@@ -557,8 +557,8 @@ public class AtmosphereClient implements UserInterface {
             transport.broadcast(messages);
         }
 
-        public int getConnectionID() {
-            return connectionID;
+        public String getConnectionUUID() {
+            return connectionUUID;
         }
 
         public void connect() {
@@ -571,10 +571,10 @@ public class AtmosphereClient implements UserInterface {
         }
 
         @Override
-        public void onConnected(int heartbeat, int connectionID) {
+        public void onConnected(int heartbeat, String connectionUUID) {
             heartbeatTimeout = heartbeat + connectionTimeout;
             lastReceivedTime = Duration.currentTimeMillis();
-            this.connectionID = connectionID;
+            this.connectionUUID = connectionUUID;
             if (transport instanceof WebSocketCometTransport) {
                 webSocketSuccessful = true;
             }
@@ -584,7 +584,7 @@ public class AtmosphereClient implements UserInterface {
             connectionTimer.cancel();
             heartbeatTimer.schedule(heartbeatTimeout);
 
-            doOnConnected(heartbeat, connectionID, this);
+            doOnConnected(heartbeat, connectionUUID, this);
         }
 
         @Override

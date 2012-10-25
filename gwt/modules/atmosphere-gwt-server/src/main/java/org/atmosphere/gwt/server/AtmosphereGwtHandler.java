@@ -215,7 +215,8 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
         String servertransport = request.getParameter("servertransport");
         Object webSocketSubProtocol = resource.getRequest().getAttribute(FrameworkConfig.WEBSOCKET_SUBPROTOCOL);
         if ("rpcprotocol".equals(servertransport)) {
-            doServerMessage(request, resource.getResponse(), resource.uuid());
+            String connectionID = request.getHeader("connectionID");
+            doServerMessage(request, resource.getResponse(), connectionID);
             return;
 
         } else if (webSocketSubProtocol != null

@@ -43,6 +43,7 @@ import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.cpr.DefaultBroadcaster;
 import org.atmosphere.cpr.FrameworkConfig;
+import org.atmosphere.cpr.HeaderConfig;
 import org.atmosphere.gwt.server.impl.GwtAtmosphereResourceImpl;
 import org.atmosphere.gwt.server.impl.GwtRpcDeserializer;
 import org.atmosphere.gwt.server.spi.JSONSerializerProvider;
@@ -215,7 +216,7 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
         String servertransport = request.getParameter("servertransport");
         Object webSocketSubProtocol = resource.getRequest().getAttribute(FrameworkConfig.WEBSOCKET_SUBPROTOCOL);
         if ("rpcprotocol".equals(servertransport)) {
-            String connectionID = request.getHeader("connectionID");
+            String connectionID = request.getHeader(HeaderConfig.X_ATMOSPHERE_TRACKING_ID);
             doServerMessage(request, resource.getResponse(), connectionID);
             return;
 

@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-gwt</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.atmosphere</groupId>
@@ -26,13 +26,10 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-runtime</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>

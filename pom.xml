@@ -16,7 +16,7 @@
     
     <url>https://github.com/Atmosphere/atmosphere</url>
     <modules>
-        <module>gwt/modules</module>
+        <module>gwt</module>
         <module>guice/modules</module>
         <module>spring/modules</module>
         <module>jgroups/modules</module>

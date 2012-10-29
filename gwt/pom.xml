@@ -22,10 +22,6 @@
 
     <modules>
         <module>modules</module>
-        <module>samples/gwt-chat</module>
-        <module>samples/gwt-conn-share</module>
-        <module>samples/gwt-demo</module>
-        <module>samples/gwt-jsdemo</module>
     </modules>
     
   <build>

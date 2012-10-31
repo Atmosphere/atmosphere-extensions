@@ -125,7 +125,10 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${project.basedir}/*releaseBackup</directory>
+                            <directory>${project.basedir}</directory>
+                            <includes>
+                                <include>*.releaseBackup</include>
+                            </includes>
                         </fileset>
                         <fileset>
                             <directory>${project.basedir}/work</directory>

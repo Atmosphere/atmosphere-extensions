@@ -5,12 +5,12 @@
   <!-- synced to revision 144 of gwt-comet -->
 
   <parent>
-    <groupId>org.atmosphere</groupId>
+    <groupId>atmosphere-extensions</groupId>
     <artifactId>atmosphere-gwt-project</artifactId>
-    <version>1.1.0.beta1</version>
+    <version>${atmosphere-version}</version>
   </parent>
 
-  <groupId>org.atmosphere</groupId>
+  <groupId>atmosphere-extensions</groupId>
   <artifactId>atmosphere-gwt</artifactId>
   <packaging>pom</packaging>
   <name>atmosphere-gwt</name>

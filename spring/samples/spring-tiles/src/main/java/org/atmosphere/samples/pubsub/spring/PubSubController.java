@@ -117,7 +117,7 @@ public class PubSubController {
 		if (HeaderConfig.LONG_POLLING_TRANSPORT.equalsIgnoreCase(header)) {
 			req.setAttribute(ApplicationConfig.RESUME_ON_BROADCAST,
 					Boolean.TRUE);
-			r.suspend(-1, false);
+			r.suspend(-1);
 		} else {
 			r.suspend(-1);
 		}

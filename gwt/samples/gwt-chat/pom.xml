@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>atmosphere-extensions</groupId>
+        <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-gwt-project</artifactId>
         <version>1.1.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
@@ -97,12 +97,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>atmosphere-extensions</groupId>
+            <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-gwt-client</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>atmosphere-extensions</groupId>
+            <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-gwt-server</artifactId>
         </dependency>
         <dependency>

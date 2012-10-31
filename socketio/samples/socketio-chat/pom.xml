@@ -14,19 +14,21 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
-			<groupId>atmosphere-extensions</groupId>
+			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-runtime</artifactId>
-			<version>${project.version}</version>
+			<version>${atmosphere-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>atmosphere-extensions</groupId>
+            <groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-socketio</artifactId>
-			<version>${project.version}</version>
+            <version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

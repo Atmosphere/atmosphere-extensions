@@ -33,17 +33,19 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jms</artifactId>
-            <version>${project.version}</version>
+            <version>${atmosphere-version}</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.samples</groupId>
             <artifactId>atmosphere-jquery-pubsub</artifactId>
-            <version>${project.version}</version>
+            <version>${atmosphere-version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

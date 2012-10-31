@@ -12,7 +12,7 @@
     <packaging>pom</packaging>
     <name>atmosphere-extension-project</name>
     <version>1.1.0-SNAPSHOT</version>
-    <url>http://github.com/Atmosphere/atmosphere</url>
+    <url>http://github.com/Atmosphere/atmosphere-extensions</url>
     <scm>
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
         <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</developerConnection>
@@ -29,8 +29,8 @@
         </developer>
     </developers>
     <issueManagement>
-        <system>bugzilla</system>
-        <url>https://github.com/Atmosphere/atmosphere-extensions/servlets/ProjectIssues</url>
+        <system>Github</system>
+        <url>https://github.com/Atmosphere/atmosphere-extensions/</url>
     </issueManagement>
     <mailingLists>
         <mailingList>
@@ -248,16 +248,16 @@
 
     <modules>
         <module>gwt</module>
-        <module>guice/modules</module>
-        <module>spring/modules</module>
-        <module>jgroups/modules</module>
-        <module>jms/modules</module>
-        <module>redis/modules</module>
-        <module>xmpp/modules</module>
-        <module>hazelcast/modules</module>
-        <module>weblogic/modules</module>
-        <module>socketio/modules</module>
-        <module>cometd/modules</module>
+        <module>guice/</module>
+        <module>spring/</module>
+        <module>jgroups/</module>
+        <module>jms/</module>
+        <module>redis/</module>
+        <module>xmpp/</module>
+        <module>hazelcast/</module>
+        <module>weblogic/</module>
+        <module>socketio/</module>
+        <module>cometd/</module>
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

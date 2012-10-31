@@ -16,7 +16,7 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-samples-commons</artifactId>
-            <version>${project.version}</version>
+            <version>${atmosphere-version}</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere</groupId>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jquery</artifactId>
-            <version>${project.version}</version>
+            <version>${atmosphere-version}</version>
             <type>war</type>
         </dependency>
     </dependencies>

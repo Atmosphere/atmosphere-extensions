@@ -3,21 +3,21 @@
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-extension-project</artifactId>
-        <version>1.1.0.beta1</version>
+        <version>1.1.0-SNAPSHOT</version>
         <relativePath>../../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.atmosphere.samples</groupId>
     <artifactId>atmosphere-guice-chat</artifactId>
     <packaging>war</packaging>
-    <version>1.1.0.beta1</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>atmosphere-guice-chat</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-samples-commons</artifactId>
-            <version>${atmosphere-version}</version>
+            <version>1.1.0.beta1</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere</groupId>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jquery</artifactId>
-            <version>${atmosphere-version}</version>
+            <version>1.1.0.beta1</version>
             <type>war</type>
         </dependency>
     </dependencies>

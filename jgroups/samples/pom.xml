@@ -33,12 +33,12 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jgroups</artifactId>
-            <version>1.1.0.beta1</version>
+            <version>${atmosphere-version}</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.samples</groupId>
             <artifactId>atmosphere-jquery-pubsub</artifactId>
-            <version>1.1.0.beta1</version>
+            <version>${atmosphere-version}</version>
             <type>war</type>
         </dependency>
         <dependency>

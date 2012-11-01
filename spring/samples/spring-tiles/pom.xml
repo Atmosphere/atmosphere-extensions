@@ -149,12 +149,12 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-runtime</artifactId>
-            <version>1.1.0.beta1</version>
+            <version>${atmosphere-version}</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jquery</artifactId>
-            <version>1.1.0.beta1</version>
+            <version>${atmosphere-version}</version>
             <type>war</type>
         </dependency>
     </dependencies>

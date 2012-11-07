@@ -88,9 +88,9 @@ abstract public class JsUserInterface implements Exportable {
         }
 
         @Override
-        public void onAfterRefresh() {
+        public void onAfterRefresh(String connectionUUID) {
             if (onAfterRefresh != null) {
-                onAfterRefresh.execute();
+                onAfterRefresh.execute(connectionUUID);
             }
         }
 

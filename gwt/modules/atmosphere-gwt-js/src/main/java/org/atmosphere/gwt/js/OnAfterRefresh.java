@@ -28,5 +28,5 @@ import org.timepedia.exporter.client.Exportable;
 @ExportPackage("atmosphere")
 @ExportClosure
 public interface OnAfterRefresh extends Exportable {
-    public void execute();
+    public void execute(String connectionUUID);
 }

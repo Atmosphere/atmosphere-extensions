@@ -255,7 +255,7 @@ public class AtmosphereProxy implements UserInterface {
                 clientListener.onRefresh();
                 break;
             case ON_AFTER_REFRESH:
-                clientListener.onAfterRefresh();
+                clientListener.onAfterRefresh("");
                 break;
             case ON_MESSAGE:
                 clientListener.onMessage(Collections.singletonList(event.getData()));
@@ -407,8 +407,8 @@ public class AtmosphereProxy implements UserInterface {
         }
 
         @Override
-        public void onAfterRefresh() {
-            clientListener.onAfterRefresh();
+        public void onAfterRefresh(String connectionUUID) {
+            clientListener.onAfterRefresh(connectionUUID);
             dispatchEvent(event(EventType.ON_AFTER_REFRESH));
         }
 

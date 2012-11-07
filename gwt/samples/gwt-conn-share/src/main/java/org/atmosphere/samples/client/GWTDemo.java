@@ -180,7 +180,7 @@ public class GWTDemo implements EntryPoint {
         }
 
         @Override
-        public void onAfterRefresh() {
+        public void onAfterRefresh(String connectionUUID) {
             logger.info("comet.afterRefresh");
         }
 

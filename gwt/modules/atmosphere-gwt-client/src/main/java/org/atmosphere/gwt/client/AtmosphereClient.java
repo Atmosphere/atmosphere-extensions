@@ -370,10 +370,10 @@ public class AtmosphereClient implements UserInterface {
         if (refreshState != null) {
             if (transport == refreshTransport) {
                 if (refreshState == RefreshState.PRIMARY_DISCONNECTED) {
-                    doneRefresh();
+                    doneRefresh(connectionUUID);
                 } else if (refreshState == RefreshState.CONNECTING) {
                     primaryTransport.disconnect();
-                    doneRefresh();
+                    doneRefresh(connectionUUID);
                 } else {
                     throw new IllegalStateException("Unexpected refresh state");
                 }
@@ -384,7 +384,7 @@ public class AtmosphereClient implements UserInterface {
                     throw new IllegalStateException("Unexpected refresh state");
                 }
                 refreshState = null;
-                listener.onAfterRefresh();
+                listener.onAfterRefresh(connectionUUID);
             }
         } else {
             listener.onConnected(heartbeat, connectionUUID);
@@ -442,13 +442,13 @@ public class AtmosphereClient implements UserInterface {
     }
 
     @SuppressWarnings("unchecked")
-    private void doneRefresh() {
+    private void doneRefresh(String connectionUUID) {
         refreshState = null;
         CometClientTransportWrapper temp = primaryTransport;
         primaryTransport = refreshTransport;
         refreshTransport = temp;
         
-        listener.onAfterRefresh();
+        listener.onAfterRefresh(connectionUUID);
 
         if (refreshQueue != null) {
             if (refreshQueue.size() > 0) {
@@ -633,7 +633,8 @@ public class AtmosphereClient implements UserInterface {
         }
 
         @Override
-        public void onAfterRefresh() {
+        public void onAfterRefresh(String connectionUUID) {
+          // this is for the client only and does not happen on transports
             lastReceivedTime = Duration.currentTimeMillis();
         }
 

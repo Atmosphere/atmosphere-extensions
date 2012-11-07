@@ -85,9 +85,9 @@ public interface AtmosphereListener {
     
     /**
      * You will receive this after a connection has been refreshed or re-established and is ready to process
-     * new events.
+     * new events. You will receive a new connectionUUID
      */
-    public void onAfterRefresh();
+    public void onAfterRefresh(String connectionUUID);
 
     /**
      * A batch of messages from the server has arrived.

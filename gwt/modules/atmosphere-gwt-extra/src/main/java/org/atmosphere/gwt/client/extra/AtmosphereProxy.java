@@ -33,6 +33,7 @@ public class AtmosphereProxy implements UserInterface {
     private AtmosphereListener clientListener;
     private AtmosphereGWTSerializer serializer;
     private JSONObjectSerializer jsonSerializer = GWT.create(JSONObjectSerializer.class);
+    private boolean useWebSockets = true;
     private AtmosphereClient masterConnection = null;
     private String url;
     private WindowSocket eventSocket;
@@ -82,7 +83,15 @@ public class AtmosphereProxy implements UserInterface {
         parent = null;
         windowList.clear();
     }
-    
+
+    public boolean isUseWebSockets() {
+      return useWebSockets;
+    }
+
+    public void setUseWebSockets(boolean useWebSockets) {
+      this.useWebSockets = useWebSockets;
+    }
+
     // push message back to the server on this connection
     @Override
     public void post(Object message) {
@@ -173,7 +182,7 @@ public class AtmosphereProxy implements UserInterface {
             dispatchEvent(parent, event(EventType.ANNOUNCE_NEW_CHILD));
         } else {
             logger.info("Starting master connection");
-            masterConnection = new AtmosphereClient(url, serializer, masterListener);
+            masterConnection = new AtmosphereClient(url, serializer, masterListener, useWebSockets);
             masterConnection.start();
             parent = null;
         }
@@ -209,7 +218,7 @@ public class AtmosphereProxy implements UserInterface {
             case ELECT_MASTER:
                 logger.fine("Become new master");
                 parent = null;
-                masterConnection = new AtmosphereClient(url, serializer, masterListener);
+                masterConnection = new AtmosphereClient(url, serializer, masterListener, useWebSockets);
                 // same code for adoption
             case ADOPT_ORPHANS:
                 JavaScriptObject orphanArray = Window.current().getObject("orphans");

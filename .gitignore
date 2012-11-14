@@ -17,6 +17,7 @@ nbproject
 target
 test-output
 nbactions.xml
+nb-configuration.xml
 atlassian-ide-plugin.xml
 gwt/samples/gwt-conn-share/src/main/gwt-unitCache/
 gwt/samples/gwt-conn-share/src/main/webapp/gwtDemo/

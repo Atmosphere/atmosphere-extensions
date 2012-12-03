@@ -15,6 +15,7 @@
  */
 package org.atmosphere.samples.chat;
 
+import org.atmosphere.cache.SessionBroadcasterCache;
 import org.atmosphere.config.service.AtmosphereHandlerService;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResource;
@@ -40,7 +41,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  *
  * @author Sebastien Dionne : sebastien.dionne@gmail.com
  */
-@AtmosphereHandlerService(path = "/*")
+@AtmosphereHandlerService(path = "/*", broadcasterCache=SessionBroadcasterCache.class, supportSession=true)
 public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(NativeSocketIOAtmosphereHandler.class);

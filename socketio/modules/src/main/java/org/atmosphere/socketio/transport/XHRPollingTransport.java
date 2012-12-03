@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Sebastien Dionne  : sebastien.dionne@gmail.com
@@ -33,6 +34,8 @@ public class XHRPollingTransport extends XHRTransport {
     private static final Logger logger = LoggerFactory.getLogger(XHRPollingTransport.class);
 
     public static final String TRANSPORT_NAME = "xhr-polling";
+    
+    private final ReentrantLock lock = new ReentrantLock();
 
     public XHRPollingTransport(int bufferSize) {
         super(bufferSize);
@@ -60,9 +63,14 @@ public class XHRPollingTransport extends XHRTransport {
 
         @Override
         protected void writeData(AtmosphereResponse response, String data) throws IOException {
-            logger.trace("calling from " + this.getClass().getName() + " : " + "writeData(string) = " + data);
-            response.getOutputStream().write(data.getBytes("UTF-8"));
-            logger.trace("WRITE SUCCESS calling from " + this.getClass().getName() + " : " + "writeData(string) = " + data);
+        	lock.lock();
+        	try {
+	            logger.trace("calling from " + this.getClass().getName() + " : " + "writeData(string) = " + data);
+	            response.getOutputStream().write(data.getBytes("UTF-8"));
+	            logger.trace("WRITE SUCCESS calling from " + this.getClass().getName() + " : " + "writeData(string) = " + data);
+            } finally {
+            	lock.unlock();
+            }
         }
 
         protected void finishSend(AtmosphereResponse response) throws IOException {

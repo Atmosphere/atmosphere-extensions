@@ -599,6 +599,7 @@ public class AtmosphereClient implements UserInterface {
             if (transport instanceof WebSocketCometTransport && webSocketSuccessful == false) {
                 // server doesn't support WebSocket's degrade the connection ...
                 logger.info("Server does not support WebSockets");
+                webSocketsEnabled = false;
                 transport = GWT.create(CometTransport.class);
                 transport.initiate(AtmosphereClient.this, this);
                 transport.connect(++connectionCount);

@@ -280,18 +280,7 @@ public class GwtAtmosphereResourceImpl implements GwtAtmosphereResource {
     private final Serializer serializer = new Serializer() {
         @Override
         public void write(OutputStream out, Object o) throws IOException {
-            if (o instanceof Serializable) {
-                try {
-                    writer.write((Serializable) o);
-                } catch (IOException e) {
-                    if (writer.isTerminated()) {
-                        logger.debug("broadcast failed, connection terminated:" + e.getMessage(), e);
-                    }
-                    throw e;
-                } catch (SerializationException e) {
-                    throw new IOException(e);
-                }
-            } else if (o instanceof List) {
+            if (o instanceof List) {
                 List<?> list = (List) o;
                 if (list.size() > 0) {
                     if (!(list.get(0) instanceof Serializable)) {
@@ -302,6 +291,17 @@ public class GwtAtmosphereResourceImpl implements GwtAtmosphereResource {
                     } catch (SerializationException ex) {
                         throw new IOException(ex);
                     }
+                }
+            } else if (o instanceof Serializable) {
+                try {
+                    writer.write((Serializable) o);
+                } catch (IOException e) {
+                    if (writer.isTerminated()) {
+                        logger.debug("broadcast failed, connection terminated:" + e.getMessage(), e);
+                    }
+                    throw e;
+                } catch (SerializationException e) {
+                    throw new IOException(e);
                 }
             } else {
                 logger.warn("Failed to write an object that is not serializable");

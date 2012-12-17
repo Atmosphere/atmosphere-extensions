@@ -236,6 +236,9 @@ public class GwtAtmosphereResourceImpl implements GwtAtmosphereResource {
     private GwtResponseWriterImpl createResponseWriter() throws IOException {
 
         String transport = atmResource.getRequest().getParameter("tr");
+        if (transport == null || transport.isEmpty()) {
+            throw new IllegalStateException("Failed to determine transport");
+        }
         if ("WebSocket".equals(transport)) {
             logger.debug("atmosphere-gwt Using websocket");
             return new WebsocketResponseWriter(this);
@@ -255,7 +258,7 @@ public class GwtAtmosphereResourceImpl implements GwtAtmosphereResource {
             logger.debug("atmosphere-gwt Using IE html file iframe");
             return new IEHTMLFileResponseWriter(this);
         } else {
-            throw new IllegalStateException("Failed to determine responsewriter");
+            throw new IllegalStateException("Failed to determine responsewriter for transport: " + transport);
         }
     }
 

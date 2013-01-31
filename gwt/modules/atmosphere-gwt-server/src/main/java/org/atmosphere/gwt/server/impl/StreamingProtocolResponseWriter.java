@@ -145,11 +145,12 @@ abstract public class StreamingProtocolResponseWriter extends ManagedStreamRespo
                 } else {
                     writer.append(']');
                 }
+                writer.append(string).append('\n');
             } else {
                 string = serialize(message);
+                writer.append('f').append(";").append(string).append('\n');
             }
 
-            writer.append(string).append('\n');
         }
     }
 

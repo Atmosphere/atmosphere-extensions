@@ -130,7 +130,7 @@ abstract public class StreamingProtocolTransport extends BaseCometTransport {
                 case 'r':
                 case 'f':
                     try {
-                        messages.add(parse(message));
+                    	 messages.add(parse(message.substring(2)));
                     } catch (SerializationException e) {
                         listener.onError(e, true);
                     }

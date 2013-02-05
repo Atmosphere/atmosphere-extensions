@@ -146,7 +146,8 @@ abstract public class StreamingProtocolResponseWriter extends ManagedStreamRespo
                     writer.append(']');
                 }
             } else {
-                string = serialize(message);
+              writer.append('^'); // special char for serialized messages
+              string = serialize(message);
             }
 
             writer.append(string).append('\n');

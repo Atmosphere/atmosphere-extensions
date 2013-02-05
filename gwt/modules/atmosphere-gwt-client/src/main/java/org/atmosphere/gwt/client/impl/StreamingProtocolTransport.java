@@ -85,7 +85,7 @@ abstract public class StreamingProtocolTransport extends BaseCometTransport {
         } else {
             char c = message.charAt(0);
             switch (c) {
-                case '!':
+                case '!': // initiate connection
                     String initParameters = message.substring(1);
                     try {
                         String[] params = initParameters.split(":");
@@ -95,7 +95,7 @@ abstract public class StreamingProtocolTransport extends BaseCometTransport {
                         listener.onError(new AtmosphereClientException("Unexpected init parameters: " + initParameters), true);
                     }
                     break;
-                case '$':
+                case '$': // error message
                     String parameters = message.substring(1);
                     try {
                         String[] params = parameters.split(":");
@@ -106,7 +106,7 @@ abstract public class StreamingProtocolTransport extends BaseCometTransport {
                         listener.onError(new AtmosphereClientException("Unexpected error parameters: " + parameters), true);
                     }
                     break;
-                case '?':
+                case '?': // terminate
                     // clean disconnection
                     expectingDisconnection = true;
                     break;
@@ -119,18 +119,15 @@ abstract public class StreamingProtocolTransport extends BaseCometTransport {
                 case '*':
                     // ignore padding
                     break;
-                case '|':
+                case '|': // a plain string
                     messages.add(message.substring(1));
                     break;
-                case ']':
+                case ']': // a plain string using escaping
                     messages.add(unescape(message.substring(1)));
                     break;
-                case '[':
-                case 'R':
-                case 'r':
-                case 'f':
+                case '^': // a serialized message
                     try {
-                        messages.add(parse(message));
+                        messages.add(parse(message.substring(1)));
                     } catch (SerializationException e) {
                         listener.onError(e, true);
                     }

@@ -60,6 +60,9 @@ public final class AtmosphereRequest extends JavaScriptObject {
         @Override
         public void onMessage(AtmosphereResponse response) {
             try {
+                if (response.getResponseBody().trim().length() == 0) {
+                  return;
+                }
                 Object message = serializer.deserialize(response.getResponseBody());
                 response.setMessageObject(message);
                 if (messageHandler != null) {
@@ -127,7 +130,7 @@ public final class AtmosphereRequest extends JavaScriptObject {
         setTransportImpl(transport.toString());
     }
     
-    public native void setTransportImpl(String transport) /*-{
+    private native void setTransportImpl(String transport) /*-{
       this.transport = transport;
     }-*/;
     
@@ -135,7 +138,7 @@ public final class AtmosphereRequest extends JavaScriptObject {
         setFallbackTransportImpl(transport.toString());
     }
     
-    public native void setFallbackTransportImpl(String transport) /*-{
+    private native void setFallbackTransportImpl(String transport) /*-{
       this.fallbackTransport = transport;
     }-*/;
     
@@ -164,7 +167,7 @@ public final class AtmosphereRequest extends JavaScriptObject {
     public void setMessageHandler(AtmosphereMessageHandler handler) {
         getRequestWrapper().messageHandler = handler;
     }
-    
+        
     private native void setMessageHandlerImpl(AtmosphereMessageHandler handler) /*-{
         var self = this;
         if (handler != null) {

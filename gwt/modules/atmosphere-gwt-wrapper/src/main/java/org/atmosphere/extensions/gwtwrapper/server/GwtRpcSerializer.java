@@ -64,6 +64,7 @@ public class GwtRpcSerializer implements Serializer {
             payload = (String) o;
         }
         out.write(payload.getBytes(outputEncoding));
+        out.flush();
     }
     
     public String serialize(Object message) {

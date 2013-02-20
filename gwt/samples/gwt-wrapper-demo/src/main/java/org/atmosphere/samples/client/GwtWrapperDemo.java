@@ -38,6 +38,9 @@ public class GwtWrapperDemo implements EntryPoint {
         
         AtmosphereRequest request = AtmosphereRequest.create(serializer);
         request.setUrl(GWT.getModuleBaseURL() + "atmosphere");
+        request.setContentType("text/x-gwt-rpc");
+        request.setTransport(AtmosphereRequest.Transport.STREAMING);
+        request.setFallbackTransport(AtmosphereRequest.Transport.LONG_POLLING);
         request.setOpenHandler(new AtmosphereOpenHandler() {
             @Override
             public void onOpen(AtmosphereResponse response) {
@@ -55,7 +58,7 @@ public class GwtWrapperDemo implements EntryPoint {
             public void onMessage(AtmosphereResponse response) {
                 Event event = (Event) response.getMessageObject();
                 if (event != null) {
-                    Window.alert(event.getData());
+                    logger.info(event.getData());
                 }
             }
         });

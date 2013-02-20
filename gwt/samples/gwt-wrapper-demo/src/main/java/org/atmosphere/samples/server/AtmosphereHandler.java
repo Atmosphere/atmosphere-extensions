@@ -16,7 +16,9 @@
 package org.atmosphere.samples.server;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
 import org.atmosphere.samples.client.Event;
 
@@ -25,9 +27,9 @@ import org.atmosphere.samples.client.Event;
  */
 public class AtmosphereHandler extends AbstractReflectorAtmosphereHandler {
 
+  static final Logger logger = Logger.getLogger("AtmosphereHandler");
     @Override
     public void onRequest(AtmosphereResource ar) throws IOException {
-        ar.getBroadcaster().broadcast(new Event("Connected"), ar);
         ar.suspend();
     }
 

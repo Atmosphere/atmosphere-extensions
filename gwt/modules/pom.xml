@@ -26,6 +26,7 @@
         <module>atmosphere-gwt-poll</module>
         <module>atmosphere-gwt-server</module>
         <module>atmosphere-gwt-jackson</module>
-    </modules>
+    <module>atmosphere-gwt-wrapper</module>
+  </modules>
 
 </project>

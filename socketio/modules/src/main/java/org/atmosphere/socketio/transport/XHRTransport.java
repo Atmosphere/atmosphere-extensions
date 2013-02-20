@@ -15,6 +15,10 @@
  */
 package org.atmosphere.socketio.transport;
 
+import static org.atmosphere.cpr.ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID;
+
+import org.atmosphere.cache.UUIDBroadcasterCache;
+import org.atmosphere.cache.UUIDBroadcasterCache.CacheMessage;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereHandler;
@@ -31,6 +35,7 @@ import org.atmosphere.socketio.SocketIOPacket;
 import org.atmosphere.socketio.SocketIOSession;
 import org.atmosphere.socketio.SocketIOSessionFactory;
 import org.atmosphere.socketio.SocketIOSessionOutbound;
+import org.atmosphere.socketio.cache.SocketIOBroadcasterCache;
 import org.atmosphere.socketio.cpr.SocketIOAtmosphereHandler;
 import org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
 import org.slf4j.Logger;
@@ -38,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Sebastien Dionne  : sebastien.dionne@gmail.com
@@ -49,6 +55,8 @@ public abstract class XHRTransport extends AbstractTransport {
     private final int bufferSize;
 
     protected abstract class XHRSessionHelper implements SocketIOSessionOutbound {
+    	private final ReentrantLock lock = new ReentrantLock();
+    	
         protected final SocketIOSession session;
         private volatile boolean is_open = false;
         private final boolean isStreamingConnection;
@@ -195,6 +203,7 @@ public abstract class XHRTransport extends AbstractTransport {
 
                                 session.clearTimeoutTimer();
                                 request.setAttribute(SESSION_KEY, session);
+                                boolean resume = false;
 
                                 StringBuilder data = new StringBuilder();
                                 // if there is a Broadcaster cache, retrieve the messages from the cache, and send them
@@ -203,7 +212,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                     List<Object> cachedMessages = resource.getBroadcaster().getBroadcasterConfig().getBroadcasterCache()
                                             .retrieveFromCache(resource.getBroadcaster().getID(), resource);
 
-                                    if (cachedMessages != null) {
+                                    if (cachedMessages != null && !cachedMessages.isEmpty()) {
                                         if (cachedMessages.size() > 1) {
                                             for (Object object : cachedMessages) {
                                                 String msg = object.toString();
@@ -214,22 +223,27 @@ public abstract class XHRTransport extends AbstractTransport {
                                         } else if (cachedMessages.size() == 1) {
                                             data.append(cachedMessages.get(0));
                                         }
-                                    }
+                                        
+                                        // something to send ?
+                                        if (!data.toString().isEmpty()) {
+                                            startSend(response);
+                                            writeData(response, data.toString());
+                                            finishSend(response);
 
-                                    // something to send ?
-                                    if (data.toString().length() > 0) {
-                                        startSend(response);
-                                        writeData(response, data.toString());
-                                        finishSend(response);
-
-                                        // force a resume, because we sent data
-                                        resource.resume();
+                                            // force a resume, because we sent data
+                                            resource.resume();
+                                            
+                                            resume = true;
+                                        }
                                     }
+                                    
                                 }
-
-                                resource.disableSuspend(false);
-                                resource.suspend(session.getRequestSuspendTime());
-                                resource.disableSuspend(true);
+                                
+                                if(!resume){
+	                                resource.disableSuspend(false);
+	                                resource.suspend(session.getRequestSuspendTime());
+	                                resource.disableSuspend(true);
+                                }
                             }
                         } else {
                             // won't happend, by should be for xhr-streaming transport
@@ -258,9 +272,12 @@ public abstract class XHRTransport extends AbstractTransport {
 
                                         // send message on the suspended request
                                         session.onMessage(session.getAtmosphereResourceImpl(), session.getTransportHandler(), msg.getData());
+                                        
+                                        // send completion flag on the post request
                                         writeData(response, SocketIOPacketImpl.POST_RESPONSE);
 
                                     } else {
+                                    	// send completion flag on the post request
                                         writeData(response, SocketIOPacketImpl.POST_RESPONSE);
                                     }
                                 }
@@ -346,7 +363,7 @@ public abstract class XHRTransport extends AbstractTransport {
 
         AtmosphereRequest request = resource.getRequest();
         AtmosphereResponse response = resource.getResponse();
-
+        
         Object obj = request.getAttribute(SESSION_KEY);
         SocketIOSession session = null;
         String sessionId = null;

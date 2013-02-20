@@ -15,6 +15,8 @@
  */
 package org.atmosphere.socketio.transport;
 
+import static org.atmosphere.cpr.ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID;
+
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
@@ -75,7 +77,8 @@ public class WebSocketTransport extends AbstractTransport {
         if (!isDisconnectRequest) {
             if ("GET".equals(request.getMethod()) && "WebSocket".equalsIgnoreCase(request.getHeader("Upgrade"))) {
                 session = sessionFactory.getSession(sessionId);
-
+                
+                request.setAttribute(SUSPENDED_ATMOSPHERE_RESOURCE_UUID, session.getSessionId());
                 request.setAttribute(SocketIOAtmosphereHandler.SOCKETIO_SESSION_ID, session.getSessionId());
 
                 // add a default websocketListener

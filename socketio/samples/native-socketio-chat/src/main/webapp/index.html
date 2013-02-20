@@ -26,7 +26,7 @@
 
         socket.on('connect', function () {
             $('#chat').addClass('connected');
-            console.log(this.socket.transports);
+            console.log("Connect : " + this.socket.transports);
 
             $.each(this.socket.transports, function(index, item) {
                 $("#transport").append(new Option(item, item));
@@ -38,12 +38,14 @@
         });
 
         socket.on('announcement', function (msg) {
+        	console.log("announcement=" + msg);
             $('#lines').append($('<p>').append($('<em>').text(msg)));
         });
 
         socket.on('nicknames', function (nicknames) {
             $('#nicknames').empty().append($('<span>Online: </span>'));
             for (var i in nicknames) {
+            	console.log("nicknames=" + nicknames[i]);
                 $('#nicknames').append($('<b>').text(nicknames[i]));
 
             }
@@ -70,6 +72,7 @@
         });
 
         function message(from, msg) {
+        	console.log("message from =" + from + "  msg = " + msg);
             $('#lines').append($('<p>').append($('<b>').text(from), msg));
         }
 
@@ -78,6 +81,7 @@
             $('#set-nickname').submit(function (ev) {
 
                 socket.emit('nickname', $('#nick').val(), function (set) {
+                	console.log("message set = " + set);
                     if (!set) {
                         clear();
                         return $('#chat').addClass('nickname-set');
@@ -164,4 +168,4 @@
 </div>
 </body>
 </html>
->
+

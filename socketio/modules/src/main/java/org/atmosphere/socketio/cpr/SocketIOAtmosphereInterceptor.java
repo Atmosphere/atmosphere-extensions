@@ -143,7 +143,9 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
             } else if (protocol == null && version != null) {
                 // create a session and send the available transports to the client
                 response.setStatus(200);
-
+                
+                response.setContentType("plain/text");
+                
                 SocketIOSession session = getSessionManager(version).createSession((AtmosphereResourceImpl) r, atmosphereHandler);
                 response.getWriter().print(session.getSessionId() + ":" + heartbeatInterval + ":" + timeout + ":" + availableTransports);
 

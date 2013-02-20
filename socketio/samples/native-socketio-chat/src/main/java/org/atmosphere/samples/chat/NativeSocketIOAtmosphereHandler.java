@@ -15,25 +15,26 @@
  */
 package org.atmosphere.samples.chat;
 
-import org.atmosphere.cache.SessionBroadcasterCache;
-import org.atmosphere.config.service.AtmosphereHandlerService;
-import org.atmosphere.cpr.AtmosphereRequest;
-import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.Broadcaster;
-import org.atmosphere.socketio.SocketIOSessionOutbound;
-import org.atmosphere.socketio.cpr.SocketIOAtmosphereHandler;
-import org.atmosphere.socketio.transport.DisconnectReason;
-import org.atmosphere.socketio.transport.SocketIOPacketImpl;
-import org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+
+import org.atmosphere.cache.UUIDBroadcasterCache;
+import org.atmosphere.config.service.AtmosphereHandlerService;
+import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.Broadcaster;
+import org.atmosphere.socketio.SocketIOSessionOutbound;
+import org.atmosphere.socketio.cache.SocketIOBroadcasterCache;
+import org.atmosphere.socketio.cpr.SocketIOAtmosphereHandler;
+import org.atmosphere.socketio.transport.DisconnectReason;
+import org.atmosphere.socketio.transport.SocketIOPacketImpl;
+import org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
+import org.atmosphere.util.ExcludeSessionBroadcaster;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Simple SocketIOAtmosphereHandler that implements the logic to build a
@@ -41,7 +42,11 @@ import java.util.concurrent.ConcurrentSkipListMap;
  *
  * @author Sebastien Dionne : sebastien.dionne@gmail.com
  */
-@AtmosphereHandlerService(path = "/*", broadcasterCache=SessionBroadcasterCache.class, supportSession=true)
+@AtmosphereHandlerService(
+		path = "/*",
+		supportSession=true,
+		//broadcasterCache=UUIDBroadcasterCache.class)		
+		broadcasterCache=SocketIOBroadcasterCache.class)
 public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(NativeSocketIOAtmosphereHandler.class);
@@ -60,13 +65,12 @@ public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
             return;
         }
 
-        AtmosphereRequest request = r.getRequest();
         try {
             logger.debug("onMessage on SessionID=" + outbound.getSessionId() + "  : Message Received = " + message);
             ChatJSONObject chat = mapper.readValue(message, ChatJSONObject.class);
 
             if (ChatJSONObject.LOGIN.equalsIgnoreCase(chat.name)) {
-                request.getSession().setAttribute("LOGINNAME", chat.getArgs().toArray()[0]);
+            	r.session().setAttribute("LOGINNAME", chat.getArgs().toArray()[0]);
                 String username = (String) chat.getArgs().toArray()[0];
 
                 // username already in use ?
@@ -79,13 +83,13 @@ public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
                         ChatJSONObject out = new ChatJSONObject();
 
                         out.setName(ChatJSONObject.USERCONNECTEDLIST);
-                        List list = new ArrayList();
+                        List<ConcurrentMap<String, String>> list = new ArrayList<ConcurrentMap<String, String>>();
 
                         list.add(loggedUserMap);
 
                         out.setArgs(list);
 
-                        List<SocketIOPacketImpl> loginMessagesList = new ArrayList(2);
+                        List<SocketIOPacketImpl> loginMessagesList = new ArrayList<SocketIOPacketImpl>(2);
 
                         // send login confirmation
                         loginMessagesList.add(new SocketIOPacketImpl(PacketType.ACK, "1+[false]"));
@@ -102,6 +106,9 @@ public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
                         // send a Event to all clients telling that a new user was connected
                         broadcaster.broadcast("{\"args\":[\"" + chat.getArgs().toArray()[0] + " connected\"],\"name\":\"announcement\"}", r);
 
+                        
+                        logger.trace("Broadcasting on SessionID=" + outbound.getSessionId() + "  LOGIN is completed");
+                        
                     } catch (Exception e) {
                         logger.error("", e);
                         outbound.disconnect();
@@ -124,7 +131,8 @@ public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
 
                 // broadcast the message to all other users
                 broadcaster.broadcast(mapper.writeValueAsString(out), r);
-
+                
+                logger.trace("Broadcasting on SessionID=" + outbound.getSessionId() + "  MESSAGE is completed");
             }
 
         } catch (IOException e) {
@@ -150,7 +158,7 @@ public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
 
         ChatJSONObject out = new ChatJSONObject();
         out.setName(ChatJSONObject.USERCONNECTEDLIST);
-        List list = new ArrayList();
+        List<ConcurrentMap<String, String>> list = new ArrayList<ConcurrentMap<String, String>>();
         list.add(loggedUserMap);
         out.setArgs(list);
 
@@ -159,6 +167,8 @@ public class NativeSocketIOAtmosphereHandler extends SocketIOAtmosphereHandler {
         } catch (Exception e) {
             logger.error("", e);
         }
+        
+        logger.trace("Broadcasting on SessionID=" + outbound.getSessionId() + "  DISCONNECT is completed");
 
     }
 

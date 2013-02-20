@@ -106,7 +106,7 @@ public abstract class SocketIOAtmosphereHandler implements AtmosphereHandler {
                         outbound.sendMessage(messages);
                     }
                 } else if (event.getMessage() instanceof String) {
-
+                	// je viens de recevoir un message
                     logger.trace("onStateChange Sending message on resume : message = " + event.getMessage().toString());
 
                     List<SocketIOPacketImpl> messages = SocketIOPacketImpl.parse(event.getMessage().toString());

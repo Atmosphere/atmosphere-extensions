@@ -32,8 +32,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.6.1</version>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.2</version>
 		</dependency>
 		<!-- This is ONLY required if you use Atmosphere's annotation. If you use 
 			atmosphere.xml, not required -->

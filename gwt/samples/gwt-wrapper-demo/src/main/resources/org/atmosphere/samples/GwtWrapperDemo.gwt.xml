@@ -7,7 +7,7 @@
     <inherits name="org.atmosphere.extensions.gwtwrapper.GwtWrapper"/>
     <inherits name="com.google.gwt.logging.Logging"/>
     <set-property name="gwt.logging.logLevel" value="FINEST"/>
-
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
     <!--  inherit css based theme -->
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
 

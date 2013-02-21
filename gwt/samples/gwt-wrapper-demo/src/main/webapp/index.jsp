@@ -13,6 +13,15 @@
         <script type="text/javascript" language="javascript" src="javascript/portal-1.0rc1.js"></script>
         <script type="text/javascript" language="javascript" src="javascript/atmosphere.js"></script>
         <script type="text/javascript" language="javascript" src="GwtWrapperDemo/GwtWrapperDemo.nocache.js"></script>
+        
+      <style>
+        
+        #logger {
+            border: 2px solid;
+            overflow: scroll;
+            height: 200px;
+        }
+      </style>
 
     </head>
     <body>
@@ -21,5 +30,7 @@
             style="position:absolute;width:0;height:0;border:0"></iframe>
 
         <h1>GWT wrapper for atmosphere.js</h1>
+        <div id="buttonbar"></div>
+        <div id="logger"></div>
     </body>
 </html>

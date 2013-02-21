@@ -36,6 +36,18 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         }
     };
     
+    public enum Flags {
+      enableXDR,
+			rewriteURL,
+			attachHeadersAsQueryString,
+			withCredentials,
+			trackMessageLength,
+			shared,
+			readResponsesHeaders,
+			dropAtmosphereHeaders,
+			executeCallbackBeforeReconnect
+    }
+    
     public static AtmosphereRequestConfig create(GwtClientSerializer serializer) {
         AtmosphereRequestConfig r = createImpl();
         AtmosphereRequestWrapper w = r.new AtmosphereRequestWrapper(serializer);
@@ -44,44 +56,17 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         return r;
     }
     
-    private static AtmosphereRequestConfig createImpl() {
-      return (AtmosphereRequestConfig) JavaScriptObject.createObject();
+    public void setFlags(Flags... flags) {
+      for (Flags f :flags) {
+        setFlagImpl(f.name(), true);
+      }
     }
     
-    private class AtmosphereRequestWrapper implements AtmosphereMessageHandler {
-
-        GwtClientSerializer serializer;
-        AtmosphereMessageHandler messageHandler;
-        
-        public AtmosphereRequestWrapper(GwtClientSerializer serializer) {
-            this.serializer = serializer;
-        }
-       
-        @Override
-        public void onMessage(AtmosphereResponse response) {
-            try {
-                if (response.getResponseBody().trim().length() == 0) {
-                  return;
-                }
-                Object message = serializer.deserialize(response.getResponseBody());
-                response.setMessageObject(message);
-                if (messageHandler != null) {
-                    messageHandler.onMessage(response);
-                }
-            } catch (SerializationException ex) {
-                logger.log(Level.SEVERE, "Failed to deserialize message", ex);
-            }
-        }
+    public void clearFlags(Flags... flags) {
+      for (Flags f :flags) {
+        setFlagImpl(f.name(), false);
+      }
     }
-    
-    private native void setRequestWrapper(AtmosphereRequestWrapper wrapper) /*-{
-        this.requestWrapper = wrapper;
-    }-*/;
-    
-    private native AtmosphereRequestWrapper getRequestWrapper() /*-{
-        return this.requestWrapper;
-    }-*/;
-    
     
     public native void setHeader(String name, String value) /*-{
        if (typeof this.headers == 'undefined') {
@@ -114,33 +99,17 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         setMethodImpl(method.toString());
     }
     
-    private native void setMethodImpl(String method) /*-{
-      this.method = method;
-    }-*/;
-    
     public void setFallbackMethod(Method method) {
         setFallbackMethodImpl(method.toString());
     }
     
-    private native void setFallbackMethodImpl(String method) /*-{
-       this.fallbackMethod = method;
-    }-*/;
-
     public void setTransport(Transport transport) {
         setTransportImpl(transport.toString());
     }
     
-    private native void setTransportImpl(String transport) /*-{
-      this.transport = transport;
-    }-*/;
-    
     public void setFallbackTransport(Transport transport) {
         setFallbackTransportImpl(transport.toString());
     }
-    
-    private native void setFallbackTransportImpl(String transport) /*-{
-      this.fallbackTransport = transport;
-    }-*/;
     
     public native void setOpenHandler(AtmosphereOpenHandler handler) /*-{
         var self = this;
@@ -167,17 +136,6 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
     public void setMessageHandler(AtmosphereMessageHandler handler) {
         getRequestWrapper().messageHandler = handler;
     }
-        
-    private native void setMessageHandlerImpl(AtmosphereMessageHandler handler) /*-{
-        var self = this;
-        if (handler != null) {
-            this.onMessage = $entry(function(response) {
-                handler.@org.atmosphere.extensions.gwtwrapper.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/extensions/gwtwrapper/client/AtmosphereResponse;)(response);
-            });
-        } else {
-            this.onMessage = null;
-        }
-    }-*/;
     
     public native void setErrorHandler(AtmosphereErrorHandler handler) /*-{
         var self = this;
@@ -227,4 +185,72 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
     protected AtmosphereRequestConfig() {
     }
     
+    private static AtmosphereRequestConfig createImpl() {
+      return (AtmosphereRequestConfig) JavaScriptObject.createObject();
+    }
+    
+    private native void setMethodImpl(String method) /*-{
+      this.method = method;
+    }-*/;
+  
+    private class AtmosphereRequestWrapper implements AtmosphereMessageHandler {
+
+        GwtClientSerializer serializer;
+        AtmosphereMessageHandler messageHandler;
+        
+        public AtmosphereRequestWrapper(GwtClientSerializer serializer) {
+            this.serializer = serializer;
+        }
+       
+        @Override
+        public void onMessage(AtmosphereResponse response) {
+            try {
+                if (response.getResponseBody().trim().length() == 0) {
+                  return;
+                }
+                Object message = serializer.deserialize(response.getResponseBody());
+                response.setMessageObject(message);
+                if (messageHandler != null) {
+                    messageHandler.onMessage(response);
+                }
+            } catch (SerializationException ex) {
+                logger.log(Level.SEVERE, "Failed to deserialize message", ex);
+            }
+        }
+    }
+    
+    private native void setRequestWrapper(AtmosphereRequestWrapper wrapper) /*-{
+        this.requestWrapper = wrapper;
+    }-*/;
+    
+    private native AtmosphereRequestWrapper getRequestWrapper() /*-{
+        return this.requestWrapper;
+    }-*/;
+    
+    private native void setTransportImpl(String transport) /*-{
+      this.transport = transport;
+    }-*/;
+    
+    private native void setFallbackTransportImpl(String transport) /*-{
+      this.fallbackTransport = transport;
+    }-*/;
+        
+    private native void setMessageHandlerImpl(AtmosphereMessageHandler handler) /*-{
+        var self = this;
+        if (handler != null) {
+            this.onMessage = $entry(function(response) {
+                handler.@org.atmosphere.extensions.gwtwrapper.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/extensions/gwtwrapper/client/AtmosphereResponse;)(response);
+            });
+        } else {
+            this.onMessage = null;
+        }
+    }-*/;
+
+    private native void setFallbackMethodImpl(String method) /*-{
+       this.fallbackMethod = method;
+    }-*/;
+
+    private native void setFlagImpl(String flagname, boolean value) /*-{
+      this[flagname] = value;
+    }-*/;
 }

@@ -5,7 +5,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.HasWidgetsLogHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -20,6 +19,7 @@ import org.atmosphere.extensions.gwtwrapper.client.AtmosphereCloseHandler;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereMessageHandler;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereOpenHandler;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereRequestConfig;
+import org.atmosphere.extensions.gwtwrapper.client.AtmosphereRequestConfig.Flags;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereResponse;
 
 /**
@@ -82,9 +82,7 @@ public class GwtWrapperDemo implements EntryPoint {
         Logger.getLogger("").addHandler(new HasWidgetsLogHandler(logPanel));
         
         Serializer serializer = GWT.create(Serializer.class);
-        
-        Atmosphere atmosphere = Atmosphere.create();
-        
+                
         AtmosphereRequestConfig request = AtmosphereRequestConfig.create(serializer);
         request.setUrl(GWT.getModuleBaseURL() + "atmosphere");
         request.setContentType("text/x-gwt-rpc");
@@ -111,6 +109,10 @@ public class GwtWrapperDemo implements EntryPoint {
                 }
             }
         });
+        // trackMessageLength is not required but makes the connection more robust
+        request.setFlags(Flags.trackMessageLength);
+        
+        Atmosphere atmosphere = Atmosphere.create();
         atmosphere.subscribe(request);
         
     }

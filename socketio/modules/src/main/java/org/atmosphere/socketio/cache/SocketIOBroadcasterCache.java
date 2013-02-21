@@ -3,12 +3,6 @@ package org.atmosphere.socketio.cache;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.atmosphere.cache.AbstractBroadcasterCache;
 import org.atmosphere.cache.SessionBroadcasterCache;
@@ -29,29 +23,30 @@ public class SocketIOBroadcasterCache extends UUIDBroadcasterCache {
 	
 	@Override
 	public CacheMessage addCacheCandidate(String broadcasterID, AtmosphereResource resource, Object msg) {
-		logger.trace("addToCache broadcasterID[" + broadcasterID + "]  AtmosphereResource = " + "[" + resource + "] message=" + msg);
+		logger.trace("addCacheCandidate broadcasterID[" + broadcasterID + "]  AtmosphereResource UUID = " + "[" + uuid(resource) + "] message=" + msg);
 		return super.addCacheCandidate(broadcasterID, resource, msg);
 	}
 
 	@Override
 	public void addToCache(String broadcasterID, AtmosphereResource resource, Message msg) {
-		logger.trace("addToCache broadcasterID[" + broadcasterID + "]  AtmosphereResource = " + "[" + resource + "] message=" + msg.message);
+		logger.trace("addToCache broadcasterID[" + broadcasterID + "]  AtmosphereResource UUID = " + "[" + uuid(resource) + "] message=" + msg.message);
 		super.addToCache(broadcasterID, resource, msg);
 	}
 
 	@Override
 	public void clearCache(String broadcasterID, AtmosphereResourceImpl resource, CacheMessage message) {
-		logger.trace("addToCache broadcasterID[" + broadcasterID + "]  AtmosphereResource = " + "[" + resource + "] message=" + message);
+		logger.trace("clearCache broadcasterID[" + broadcasterID + "]  AtmosphereResource UUID = " + "[" + uuid(resource) + "] message=" + message);
 		super.clearCache(broadcasterID, resource, message);
 	}
 
 	@Override
 	public List<Object> retrieveFromCache(String broadcasterID, AtmosphereResource resource) {
-		logger.trace("retrieveFromCache broadcasterID[" + broadcasterID + "]  AtmosphereResource = " + "[" + resource + "]");
+		logger.trace("retrieveFromCache broadcasterID[" + broadcasterID + "]  AtmosphereResource UUID = " + "[" + uuid(resource) + "]");
 		return super.retrieveFromCache(broadcasterID, resource);
 	}
 	
 	protected String uuid(AtmosphereResource r) {
+		if(r==null)return null;
 		
 		String uuid = (String) r.getRequest().getAttribute(ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID);
 		if(uuid==null){

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Jeanfrancois Arcand
+ * Copyright 2013 Jeanfrancois Arcand
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -127,20 +127,26 @@ public class RedisUtil {
      * {@inheritDoc}
      */
     public void destroy() {
-        Object lockingObject = getLockingObject();
-        synchronized (lockingObject) {
-            try {
-                disconnectPublisher();
-                disconnectSubscriber();
-                if (jedisPool != null) {
-                    jedisPool.destroy();
+        if (!sharedPool) {
+            Object lockingObject = getLockingObject();
+            synchronized (lockingObject) {
+                try {
+                    disconnectPublisher();
+                    disconnectSubscriber();
+                    if (jedisPool != null) {
+                        jedisPool.destroy();
+                    }
+                } catch (Throwable t) {
+                    logger.warn("Jedis error on close", t);
+                } finally {
+                    config.properties().put(REDIS_SHARED_POOL, null);
                 }
-            } catch (Throwable t) {
-                logger.warn("Jedis error on close", t);
-            } finally {
-                config.properties().put(REDIS_SHARED_POOL, null);
             }
         }
+    }
+
+    public boolean isShared(){
+        return sharedPool;
     }
 
     /**

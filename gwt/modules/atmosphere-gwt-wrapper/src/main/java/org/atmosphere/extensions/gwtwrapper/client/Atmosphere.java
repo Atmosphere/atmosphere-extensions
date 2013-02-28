@@ -14,7 +14,7 @@ public final class Atmosphere extends JavaScriptObject {
     public static final String MESSAGE_OBJECT = "gwt_deserialized_object";
  
     public static native Atmosphere create() /*-{
-        return $wnd.atmosphere;
+        return $wnd.jQuery.atmosphere;
     }-*/;
     
     public AtmosphereRequest subscribe(AtmosphereRequestConfig requestConfig) {

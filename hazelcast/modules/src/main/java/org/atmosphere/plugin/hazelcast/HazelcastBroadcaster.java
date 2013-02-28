@@ -16,9 +16,8 @@
 package org.atmosphere.plugin.hazelcast;
 
 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.ITopic;
-import com.hazelcast.core.MessageListener;
+import com.hazelcast.config.Config;
+import com.hazelcast.core.*;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.slf4j.Logger;
@@ -36,6 +35,8 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     private static final Logger logger = LoggerFactory.getLogger(org.atmosphere.plugin.hazelcast.HazelcastBroadcaster.class);
     private ITopic topic;
 
+    private final static HazelcastInstance HAZELCAST_INSTANCE = Hazelcast.newHazelcastInstance();
+
     public HazelcastBroadcaster(String id, AtmosphereConfig config) {
         this(id, URI.create("http://localhost:6379"), config);
     }
@@ -45,11 +46,11 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     }
 
     public void setUp() {
-        topic = Hazelcast.<String>getTopic(getID());
+        topic = HAZELCAST_INSTANCE.<String>getTopic(getID());
         topic.addMessageListener(new MessageListener<String>() {
             @Override
-            public void onMessage(String message) {
-                broadcastReceivedMessage(message);
+            public void onMessage(Message<String> message) {
+                broadcastReceivedMessage(message.getMessageObject());
             }
         });
     }

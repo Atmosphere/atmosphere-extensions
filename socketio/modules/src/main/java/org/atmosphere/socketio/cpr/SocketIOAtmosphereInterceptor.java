@@ -58,12 +58,12 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
     public final static String SOCKETIO_PACKET = SocketIOSessionManagerImpl.SocketIOProtocol.class.getName();
     private static final Logger logger = LoggerFactory.getLogger(SocketIOAtmosphereInterceptor.class);
     private static final int BUFFER_SIZE_DEFAULT = 8192;
-    private SocketIOSessionManager sessionManager = null;
+    private final SocketIOSessionManager sessionManager = new SocketIOSessionManagerImpl();;
     private static int heartbeatInterval = 15000;
     private static int timeout = 25000;
     private static int suspendTime = 20000;
     private final Map<String, Transport> transports = new HashMap<String, Transport>();
-    private String availableTransports = "websocket,xhr-polling,jsonp-polling";
+    private String availableTransports;
 
     public static final String BUFFER_SIZE_INIT_PARAM = "socketio-bufferSize";
     public static final String SOCKETIO_TRANSPORT = "socketio-transport";
@@ -244,6 +244,10 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
         String s = config.getInitParameter(SOCKETIO_TRANSPORT);
         availableTransports = s;
 
+        if (availableTransports == null) {
+            availableTransports = "websocket,xhr-polling,jsonp-polling";
+        }
+
         String timeoutWebXML = config.getInitParameter(SOCKETIO_TIMEOUT);
         if (timeoutWebXML != null) {
             timeout = Integer.parseInt(timeoutWebXML);
@@ -267,7 +271,6 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
         transports.put(xhrPollingTransport1.getName() + "-1", xhrPollingTransport1);
         transports.put(jsonpPollingTransport1.getName() + "-1", jsonpPollingTransport1);
 
-        sessionManager = new SocketIOSessionManagerImpl();
         sessionManager.setTimeout(timeout);
         sessionManager.setHeartbeatInterval(heartbeatInterval);
         sessionManager.setRequestSuspendTime(suspendTime);

@@ -11,6 +11,7 @@ public final class Atmosphere extends JavaScriptObject {
     
     public static final String STRONG_NAME_PARAMETER = "gwt_strong_name";
     public static final String MODULE_BASE_PARAMETER = "gwt_module_base";
+    public static final String MESSAGE_OBJECT = "gwt_deserialized_object";
  
     public static native Atmosphere create() /*-{
         return $wnd.atmosphere;
@@ -20,7 +21,9 @@ public final class Atmosphere extends JavaScriptObject {
         requestConfig.setHeader(MODULE_BASE_PARAMETER, GWT.getModuleBaseURL());
         requestConfig.setHeader(STRONG_NAME_PARAMETER, GWT.getPermutationStrongName());
         requestConfig.setContentType("text/x-gwt-rpc");
-        return subscribeImpl(requestConfig);
+        AtmosphereRequest r = subscribeImpl(requestConfig);
+        r.setSerializer(requestConfig.getMessageHandlerWrapper().serializer);
+        return r;
     }
     
     public native void unsubscribe() /*-{

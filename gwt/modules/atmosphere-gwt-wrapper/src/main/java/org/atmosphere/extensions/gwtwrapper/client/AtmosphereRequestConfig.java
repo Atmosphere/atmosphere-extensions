@@ -50,9 +50,10 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
     
     public static AtmosphereRequestConfig create(GwtClientSerializer serializer) {
         AtmosphereRequestConfig r = createImpl();
-        AtmosphereRequestWrapper w = r.new AtmosphereRequestWrapper(serializer);
-        r.setRequestWrapper(w);
+        MessageHandlerWrapper w = new MessageHandlerWrapper(serializer);
         r.setMessageHandlerImpl(w);
+        w = new MessageHandlerWrapper(serializer);
+        r.setLocalMessageHandlerImpl(w);
         return r;
     }
     
@@ -134,7 +135,11 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
     }-*/;
     
     public void setMessageHandler(AtmosphereMessageHandler handler) {
-        getRequestWrapper().messageHandler = handler;
+        getMessageHandlerWrapper().messageHandler = handler;
+    }
+    
+    public void setLocalMessageHandler(AtmosphereMessageHandler handler) {
+        getLocalMessageHandlerWrapper().messageHandler = handler;
     }
     
     public native void setErrorHandler(AtmosphereErrorHandler handler) /*-{
@@ -193,12 +198,12 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
       this.method = method;
     }-*/;
   
-    private class AtmosphereRequestWrapper implements AtmosphereMessageHandler {
+    static class MessageHandlerWrapper implements AtmosphereMessageHandler {
 
         GwtClientSerializer serializer;
         AtmosphereMessageHandler messageHandler;
         
-        public AtmosphereRequestWrapper(GwtClientSerializer serializer) {
+        public MessageHandlerWrapper(GwtClientSerializer serializer) {
             this.serializer = serializer;
         }
        
@@ -219,12 +224,12 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         }
     }
     
-    private native void setRequestWrapper(AtmosphereRequestWrapper wrapper) /*-{
-        this.requestWrapper = wrapper;
+    native MessageHandlerWrapper getMessageHandlerWrapper() /*-{
+        return this.messageHandler;
     }-*/;
     
-    private native AtmosphereRequestWrapper getRequestWrapper() /*-{
-        return this.requestWrapper;
+    native MessageHandlerWrapper getLocalMessageHandlerWrapper() /*-{
+        return this.localMessageHandler;
     }-*/;
     
     private native void setTransportImpl(String transport) /*-{
@@ -237,12 +242,25 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         
     private native void setMessageHandlerImpl(AtmosphereMessageHandler handler) /*-{
         var self = this;
+        this.messageHandler = handler;
         if (handler != null) {
             this.onMessage = $entry(function(response) {
                 handler.@org.atmosphere.extensions.gwtwrapper.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/extensions/gwtwrapper/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onMessage = null;
+        }
+    }-*/;
+  
+    private native void setLocalMessageHandlerImpl(AtmosphereMessageHandler handler) /*-{
+        var self = this;
+        this.localMessageHandler = handler;
+        if (handler != null) {
+            this.onLocalMessage = $entry(function(response) {
+                handler.@org.atmosphere.extensions.gwtwrapper.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/extensions/gwtwrapper/client/AtmosphereResponse;)(response);
+            });
+        } else {
+            this.onLocalMessage = null;
         }
     }-*/;
 

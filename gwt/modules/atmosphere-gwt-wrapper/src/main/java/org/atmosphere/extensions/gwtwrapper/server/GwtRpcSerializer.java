@@ -43,7 +43,7 @@ public class GwtRpcSerializer implements Serializer {
         }
     };
     
-    private final SerializationPolicyProvider serializationPolicyProvider = new SerializationPolicyProvider() {
+    private final static SerializationPolicyProvider serializationPolicyProvider = new SerializationPolicyProvider() {
         @Override
         public SerializationPolicy getSerializationPolicy(String moduleBaseURL, String serializationPolicyStrongName) {
             return serializationPolicy;
@@ -58,11 +58,11 @@ public class GwtRpcSerializer implements Serializer {
     @Override
     public void write(OutputStream out, Object o) throws IOException {
         String payload;
-        if (!(o instanceof String)) {
+//        if (!(o instanceof String)) {
             payload = serialize(o);
-        } else {
-            payload = (String) o;
-        }
+//        } else {
+//            payload = (String) o;
+//        }
         out.write(payload.getBytes(outputEncoding));
         out.flush();
     }

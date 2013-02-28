@@ -18,9 +18,8 @@ package org.atmosphere.samples.server;
 import java.io.IOException;
 import java.util.logging.Logger;
 import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.AtmosphereResourceEvent;
+import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
-import org.atmosphere.samples.client.Event;
 
 /**
  * @author p.havelaar
@@ -30,8 +29,17 @@ public class AtmosphereHandler extends AbstractReflectorAtmosphereHandler {
   static final Logger logger = Logger.getLogger("AtmosphereHandler");
     @Override
     public void onRequest(AtmosphereResource ar) throws IOException {
+      if (ar.getRequest().getMethod().equals("GET") ) {
         ar.suspend();
+      } else if (ar.getRequest().getMethod().equals("POST") ) {
+        Object msg = ar.getRequest().getAttribute(Atmosphere.MESSAGE_OBJECT);
+        if (msg != null) {
+          logger.info("received post: " + msg.toString());
+          ar.getBroadcaster().broadcast(msg);
+        }
+      }
     }
+    
 
     @Override
     public void destroy() {

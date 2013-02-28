@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.HasWidgetsLogHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -18,6 +19,7 @@ import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereCloseHandler;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereMessageHandler;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereOpenHandler;
+import org.atmosphere.extensions.gwtwrapper.client.AtmosphereRequest;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereRequestConfig;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereRequestConfig.Flags;
 import org.atmosphere.extensions.gwtwrapper.client.AtmosphereResponse;
@@ -58,15 +60,10 @@ public class GwtWrapperDemo implements EntryPoint {
         buttons.add(messageInput);
         
         Button send = new Button("send");
-        send.addClickHandler(new ClickHandler() {
-          @Override
-          public void onClick(ClickEvent event) {
-            if (messageInput.getText().trim().length() > 0) {
-              service.sendEvent(new Event(messageInput.getText()), callback);
-            }
-          }
-        });
         buttons.add(send);
+        
+        Button sendLocal = new Button("send local");
+        buttons.add(sendLocal);
         
         RootPanel.get("buttonbar").add(buttons);
         
@@ -83,24 +80,24 @@ public class GwtWrapperDemo implements EntryPoint {
         
         Serializer serializer = GWT.create(Serializer.class);
                 
-        AtmosphereRequestConfig request = AtmosphereRequestConfig.create(serializer);
-        request.setUrl(GWT.getModuleBaseURL() + "atmosphere");
-        request.setContentType("text/x-gwt-rpc");
-        request.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
-        request.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
-        request.setOpenHandler(new AtmosphereOpenHandler() {
+        AtmosphereRequestConfig requestConfig = AtmosphereRequestConfig.create(serializer);
+        requestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere");
+        requestConfig.setContentType("text/x-gwt-rpc");
+        requestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
+        requestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        requestConfig.setOpenHandler(new AtmosphereOpenHandler() {
             @Override
             public void onOpen(AtmosphereResponse response) {
                 logger.info("Connection opened");
             }
         });
-        request.setCloseHandler(new AtmosphereCloseHandler() {
+        requestConfig.setCloseHandler(new AtmosphereCloseHandler() {
             @Override
             public void onClose(AtmosphereResponse response) {
                 logger.info("Connection closed");
             }
         });
-        request.setMessageHandler(new AtmosphereMessageHandler() {
+        requestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
                 Event event = (Event) response.getMessageObject();
@@ -109,11 +106,47 @@ public class GwtWrapperDemo implements EntryPoint {
                 }
             }
         });
+        requestConfig.setLocalMessageHandler(new AtmosphereMessageHandler() {
+            @Override
+            public void onMessage(AtmosphereResponse response) {
+                Event event = (Event) response.getMessageObject();
+                if (event != null) {
+                    logger.info("local message: " + event.getData());
+                }
+            }
+        });
         // trackMessageLength is not required but makes the connection more robust
-        request.setFlags(Flags.trackMessageLength);
+        requestConfig.setFlags(Flags.trackMessageLength);
         
         Atmosphere atmosphere = Atmosphere.create();
-        atmosphere.subscribe(request);
+        final AtmosphereRequest request = atmosphere.subscribe(requestConfig);
+        
+        send.addClickHandler(new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent event) {
+            if (messageInput.getText().trim().length() > 0) {
+              try {
+                //              service.sendEvent(new Event(messageInput.getText()), callback);
+                              request.push(new Event(messageInput.getText()));
+              } catch (SerializationException ex) {
+                logger.log(Level.SEVERE, "Failed to serializer message", ex);
+              }
+            }
+          }
+        });
+        
+        sendLocal.addClickHandler(new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent event) {
+            if (messageInput.getText().trim().length() > 0) {
+              try {
+                   request.pushLocal(new Event(messageInput.getText()));
+              } catch (SerializationException ex) {
+                logger.log(Level.SEVERE, "Failed to serializer message", ex);
+              }
+            }
+          }
+        });
         
     }
 

@@ -287,8 +287,8 @@ public class AtmosphereGwtHandler extends AbstractReflectorAtmosphereHandler
                 }
                 String action = data.readLine();
 
-                if (logger.isTraceEnabled()) {
-                    logger.trace("[" + connectionUUID + "] Server message received: " + event + ";" + action);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("[" + connectionUUID + "] Server message received: " + event + ";" + action);
                 }
                 if (event.equals("o") || event.equals("s")) {
                     int length = Integer.parseInt(data.readLine());

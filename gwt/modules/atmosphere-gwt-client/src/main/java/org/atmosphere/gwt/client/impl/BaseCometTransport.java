@@ -110,6 +110,7 @@ public abstract class BaseCometTransport implements CometTransport {
         void send(String message, final AsyncCallback<Void> callback) {
             RequestBuilder request = new RequestBuilder(RequestBuilder.POST, serviceUrl());
             request.setHeader("X-Atmosphere-tracking-id", connectionUUID);
+            request.setHeader("Content-Type" , "text/plain; charset=utf8");
             try {
                 logger.fine("Sending message to server: " + message);
                 request.sendRequest(message, new RequestCallback() {

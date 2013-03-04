@@ -25,7 +25,7 @@ import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
  * @author p.havelaar
  */
 public class AtmosphereHandler extends AbstractReflectorAtmosphereHandler {
-
+    
   static final Logger logger = Logger.getLogger("AtmosphereHandler");
     @Override
     public void onRequest(AtmosphereResource ar) throws IOException {

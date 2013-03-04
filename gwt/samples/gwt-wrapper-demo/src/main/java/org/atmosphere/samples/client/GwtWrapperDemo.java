@@ -82,7 +82,7 @@ public class GwtWrapperDemo implements EntryPoint {
                 
         AtmosphereRequestConfig requestConfig = AtmosphereRequestConfig.create(serializer);
         requestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere");
-        requestConfig.setContentType("text/x-gwt-rpc");
+//        requestConfig.setContentType("text/x-gwt-rpc5; charset=utf8");
         requestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
         requestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
         requestConfig.setOpenHandler(new AtmosphereOpenHandler() {
@@ -115,8 +115,10 @@ public class GwtWrapperDemo implements EntryPoint {
                 }
             }
         });
-        // trackMessageLength is not required but makes the connection more robust
-        requestConfig.setFlags(Flags.trackMessageLength);
+        // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
+        // unicode characters
+//        requestConfig.setFlags(Flags.trackMessageLength);
+        requestConfig.clearFlags(Flags.dropAtmosphereHeaders);
         
         Atmosphere atmosphere = Atmosphere.create();
         final AtmosphereRequest request = atmosphere.subscribe(requestConfig);

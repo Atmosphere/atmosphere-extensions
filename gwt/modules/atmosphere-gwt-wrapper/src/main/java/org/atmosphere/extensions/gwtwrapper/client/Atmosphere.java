@@ -20,7 +20,6 @@ public final class Atmosphere extends JavaScriptObject {
     public AtmosphereRequest subscribe(AtmosphereRequestConfig requestConfig) {
         requestConfig.setHeader(MODULE_BASE_PARAMETER, GWT.getModuleBaseURL());
         requestConfig.setHeader(STRONG_NAME_PARAMETER, GWT.getPermutationStrongName());
-        requestConfig.setContentType("text/x-gwt-rpc");
         AtmosphereRequest r = subscribeImpl(requestConfig);
         r.setSerializer(requestConfig.getMessageHandlerWrapper().serializer);
         return r;

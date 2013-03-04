@@ -7,10 +7,10 @@ import com.google.gwt.user.server.rpc.impl.ServerSerializationStreamReader;
 import com.google.gwt.user.server.rpc.impl.ServerSerializationStreamWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -18,7 +18,7 @@ import org.atmosphere.cpr.Serializer;
  */
 public class GwtRpcSerializer implements Serializer {
     
-    private final static Logger logger = Logger.getLogger(GwtRpcSerializer.class.getName());
+    private final static Logger logger = LoggerFactory.getLogger(GwtRpcSerializer.class.getName());
 
     private final AtmosphereResource resource;
     private final String outputEncoding;
@@ -63,6 +63,9 @@ public class GwtRpcSerializer implements Serializer {
 //        } else {
 //            payload = (String) o;
 //        }
+        if (logger.isTraceEnabled()) {
+            logger.trace("Writing to outputstream with encoding: " + outputEncoding + " data: " + payload);
+        }
         out.write(payload.getBytes(outputEncoding));
         out.flush();
     }
@@ -74,7 +77,7 @@ public class GwtRpcSerializer implements Serializer {
             streamWriter.writeObject(message);
             return streamWriter.toString();
         } catch (SerializationException ex) {
-            logger.log(Level.SEVERE, "Failed to serialize message", ex);
+            logger.error("Failed to serialize message", ex);
             return null;
         }
     }
@@ -85,7 +88,7 @@ public class GwtRpcSerializer implements Serializer {
             reader.prepareToRead(data);
             return reader.readObject();
         } catch (SerializationException ex) {
-            logger.log(Level.SEVERE, "Failed to deserialize RPC data", ex);
+            logger.error("Failed to deserialize RPC data", ex);
             return null;
         }
     }

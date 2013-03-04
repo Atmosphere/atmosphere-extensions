@@ -37,8 +37,9 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
           
             if (r.getRequest().getMethod().equals("GET")) {
 
+                r.getResponse().setContentType(r.getRequest().getContentType());
+                r.getResponse().setCharacterEncoding(r.getRequest().getCharacterEncoding());
                 r.setSerializer(new GwtRpcSerializer(r));
-                r.getResponse().setContentType("text/x-gwt-rpc");
 
             } else if (r.getRequest().getMethod().equals("POST")) {
 

@@ -34,4 +34,4 @@ gwt/samples/gwt-demo/src/main/webapp/gwtDemo/
 gwt/samples/gwt-demo/src/main/webapp/WEB-INF/classes/
 gwt/samples/gwt-demo/src/main/webapp/WEB-INF/deploy/
 gwt/samples/gwt-demo/src/main/webapp/WEB-INF/lib/
-
+overlays

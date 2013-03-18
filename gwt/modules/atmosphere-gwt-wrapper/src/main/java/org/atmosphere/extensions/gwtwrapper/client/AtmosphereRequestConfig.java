@@ -15,6 +15,7 @@
  */
 package org.atmosphere.extensions.gwtwrapper.client;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -63,13 +64,30 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
 			executeCallbackBeforeReconnect
     }
     
+    /**
+     * use the same serializer for inbound and outbound
+     * @param serializer
+     * @return 
+     */
     public static AtmosphereRequestConfig create(GwtClientSerializer serializer) {
+        return create(serializer, serializer);
+    }
+    
+    /**
+     * specify a different serializer for inbound and outbound
+     * 
+     * @param inbound
+     * @param outbound
+     * @return 
+     */
+    public static AtmosphereRequestConfig create(GwtClientSerializer inbound, GwtClientSerializer outbound) {
         AtmosphereRequestConfig r = createImpl();
-        MessageHandlerWrapper w = new MessageHandlerWrapper(serializer);
+        MessageHandlerWrapper w = new MessageHandlerWrapper(inbound);
         r.setMessageHandlerImpl(w);
-        w = new MessageHandlerWrapper(serializer);
+        w = new MessageHandlerWrapper(inbound);
         r.setLocalMessageHandlerImpl(w);
-        r.setContentType("text/x-gwt-rpc; charset=UTF8");
+        r.setContentType(Atmosphere.GWT_RPC_MEDIA_TYPE + "; charset=UTF8");
+        r.setOutboundSerializer(outbound);
         return r;
     }
     
@@ -200,6 +218,14 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         } else {
             this.onTransportFailure = null;
         }
+    }-*/;
+    
+    native void setOutboundSerializer(GwtClientSerializer serializer) /*-{
+      this.serializer = serializer;
+    }-*/;
+
+    native GwtClientSerializer getOutboundSerializer() /*-{
+      return this.serializer;
     }-*/;
     
     

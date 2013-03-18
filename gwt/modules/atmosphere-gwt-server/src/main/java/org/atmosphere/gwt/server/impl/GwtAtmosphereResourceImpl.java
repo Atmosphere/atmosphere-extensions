@@ -38,7 +38,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import org.atmosphere.gwt.server.SerializationException;
+import org.atmosphere.gwt.shared.server.SerializationException;
 
 /**
  * @author p.havelaar

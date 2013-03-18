@@ -28,6 +28,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.autobean.shared.AutoBean;
+import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
@@ -46,6 +48,8 @@ import org.atmosphere.extensions.gwtwrapper.client.AtmosphereResponse;
 public class GwtWrapperDemo implements EntryPoint {
 
     static final Logger logger = Logger.getLogger(GwtWrapperDemo.class.getName());
+    
+    private MyBeanFactory beanFactory = GWT.create(MyBeanFactory.class);
 
     @Override
     public void onModuleLoad() {
@@ -57,29 +61,18 @@ public class GwtWrapperDemo implements EntryPoint {
             }
         });
         
-        
-        final ApplicationServiceAsync service = ApplicationServiceAsync.Util.getInstance();
-        final AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                logger.log(Level.SEVERE, "Failed application RPC call", caught);
-            }
-            @Override
-            public void onSuccess(Void result) {
-            }
-        };
-        
-        
+      
         HorizontalPanel buttons = new HorizontalPanel();
         final TextBox messageInput = new TextBox();
         buttons.add(messageInput);
         
-        Button send = new Button("send");
-        buttons.add(send);
+        Button sendRPC = new Button("send (GWT-RPC)");
+        buttons.add(sendRPC);
         
-        Button sendLocal = new Button("send local");
-        buttons.add(sendLocal);
+        Button sendJSON = new Button("send (JSON)");
+        buttons.add(sendJSON);
         
+                
         RootPanel.get("buttonbar").add(buttons);
         
         
@@ -93,77 +86,110 @@ public class GwtWrapperDemo implements EntryPoint {
         RootPanel.get("logger").add(logPanel);
         Logger.getLogger("").addHandler(new HasWidgetsLogHandler(logPanel));
         
-        Serializer serializer = GWT.create(Serializer.class);
                 
-        AtmosphereRequestConfig requestConfig = AtmosphereRequestConfig.create(serializer);
-        requestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere");
+        RPCSerializer rpc_serializer = GWT.create(RPCSerializer.class);
+        JSONSerializer json_serializer = new JSONSerializer();
+        json_serializer.registerBeanFactory(beanFactory, Event.class);        
+                
+        AtmosphereRequestConfig rpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
+        rpcRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/rpc");
 //        requestConfig.setContentType("text/x-gwt-rpc5; charset=utf8");
-        requestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
-        requestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
-        requestConfig.setOpenHandler(new AtmosphereOpenHandler() {
+        rpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
+        rpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        rpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
             @Override
             public void onOpen(AtmosphereResponse response) {
-                logger.info("Connection opened");
+                logger.info("RPC Connection opened");
             }
         });
-        requestConfig.setCloseHandler(new AtmosphereCloseHandler() {
+        rpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
             @Override
             public void onClose(AtmosphereResponse response) {
-                logger.info("Connection closed");
+                logger.info("RPC Connection closed");
             }
         });
-        requestConfig.setMessageHandler(new AtmosphereMessageHandler() {
+        rpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
-                Event event = (Event) response.getMessageObject();
+                RPCEvent event = (RPCEvent) response.getMessageObject();
                 if (event != null) {
-                    logger.info(event.getData());
+                    logger.info("received message through RPC: " + event.getData());
                 }
             }
         });
-        requestConfig.setLocalMessageHandler(new AtmosphereMessageHandler() {
-            @Override
-            public void onMessage(AtmosphereResponse response) {
-                Event event = (Event) response.getMessageObject();
-                if (event != null) {
-                    logger.info("local message: " + event.getData());
-                }
-            }
-        });
+        
         // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
         // unicode characters
-//        requestConfig.setFlags(Flags.trackMessageLength);
-        requestConfig.clearFlags(Flags.dropAtmosphereHeaders);
+//        rpcRequestConfig.setFlags(Flags.trackMessageLength);
+        rpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
+        
+        
+        // setup JSON Atmosphere connection
+        AtmosphereRequestConfig jsonRequestConfig = AtmosphereRequestConfig.create(json_serializer);
+        jsonRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/json");
+        jsonRequestConfig.setContentType("application/json; charset=UTF8");
+        jsonRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
+        jsonRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        jsonRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
+            @Override
+            public void onOpen(AtmosphereResponse response) {
+                logger.info("JSON Connection opened");
+            }
+        });
+        jsonRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
+            @Override
+            public void onClose(AtmosphereResponse response) {
+                logger.info("JSON Connection closed");
+            }
+        });
+        jsonRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
+            @Override
+            public void onMessage(AtmosphereResponse response) {
+                Event event = (Event) response.getMessageObject();
+                if (event != null) {
+                    logger.info("received message through JSON: " + event.getData());
+                }
+            }
+        });
+        jsonRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
+        
         
         Atmosphere atmosphere = Atmosphere.create();
-        final AtmosphereRequest request = atmosphere.subscribe(requestConfig);
+        final AtmosphereRequest rpcRequest = atmosphere.subscribe(rpcRequestConfig);
+        final AtmosphereRequest jsonRequest = atmosphere.subscribe(jsonRequestConfig);
         
-        send.addClickHandler(new ClickHandler() {
+        sendRPC.addClickHandler(new ClickHandler() {
           @Override
           public void onClick(ClickEvent event) {
             if (messageInput.getText().trim().length() > 0) {
               try {
                 //              service.sendEvent(new Event(messageInput.getText()), callback);
-                              request.push(new Event(messageInput.getText()));
+                  RPCEvent myevent = new RPCEvent();
+                  myevent.setData(messageInput.getText());
+                  rpcRequest.push(myevent);
               } catch (SerializationException ex) {
-                logger.log(Level.SEVERE, "Failed to serializer message", ex);
+                logger.log(Level.SEVERE, "Failed to serialize message", ex);
               }
             }
           }
         });
         
-        sendLocal.addClickHandler(new ClickHandler() {
+        sendJSON.addClickHandler(new ClickHandler() {
           @Override
           public void onClick(ClickEvent event) {
             if (messageInput.getText().trim().length() > 0) {
               try {
-                   request.pushLocal(new Event(messageInput.getText()));
+                //              service.sendEvent(new Event(messageInput.getText()), callback);
+                  Event myevent = beanFactory.create(Event.class).as();
+                  myevent.setData(messageInput.getText());
+                  jsonRequest.push(myevent);
               } catch (SerializationException ex) {
-                logger.log(Level.SEVERE, "Failed to serializer message", ex);
+                logger.log(Level.SEVERE, "Failed to serialize message", ex);
               }
             }
           }
         });
+        
         
     }
 

@@ -18,6 +18,8 @@ package org.atmosphere.gwt.server;
 
 
 
+import org.atmosphere.gwt.shared.server.SerializationException;
+import org.atmosphere.gwt.shared.server.JSONDeserializer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import org.atmosphere.cpr.FrameworkConfig;
 import org.atmosphere.cpr.HeaderConfig;
 import org.atmosphere.gwt.server.impl.GwtAtmosphereResourceImpl;
 import org.atmosphere.gwt.server.impl.GwtRpcDeserializer;
-import org.atmosphere.gwt.server.spi.JSONSerializerProvider;
+import org.atmosphere.gwt.shared.server.JSONSerializerProvider;
 import org.atmosphere.gwt.shared.Constants;
 import org.atmosphere.gwt.shared.SerialMode;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;

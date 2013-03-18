@@ -2,8 +2,8 @@ package org.atmosphere.jackson;
 
 import java.io.IOException;
 import java.util.Map;
-import org.atmosphere.gwt.server.JSONDeserializer;
-import org.atmosphere.gwt.server.SerializationException;
+import org.atmosphere.gwt.shared.server.JSONDeserializer;
+import org.atmosphere.gwt.shared.server.SerializationException;
 
 /**
  *

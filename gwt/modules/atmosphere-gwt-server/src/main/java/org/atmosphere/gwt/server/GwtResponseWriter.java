@@ -30,6 +30,7 @@
  */
 package org.atmosphere.gwt.server;
 
+import org.atmosphere.gwt.shared.server.SerializationException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;

@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.List;
-import org.atmosphere.gwt.server.SerializationException;
+import org.atmosphere.gwt.shared.server.SerializationException;
 
 /**
  * @author p.havelaar

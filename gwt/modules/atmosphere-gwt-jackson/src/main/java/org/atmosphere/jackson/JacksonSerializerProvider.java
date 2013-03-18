@@ -1,8 +1,8 @@
 package org.atmosphere.jackson;
 
-import org.atmosphere.gwt.server.JSONDeserializer;
-import org.atmosphere.gwt.server.JSONSerializer;
-import org.atmosphere.gwt.server.spi.JSONSerializerProvider;
+import org.atmosphere.gwt.shared.server.JSONDeserializer;
+import org.atmosphere.gwt.shared.server.JSONSerializer;
+import org.atmosphere.gwt.shared.server.JSONSerializerProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.slf4j.Logger;

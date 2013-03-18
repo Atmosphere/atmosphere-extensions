@@ -1,10 +1,8 @@
 package org.atmosphere.jackson;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.atmosphere.gwt.server.JSONSerializer;
-import org.atmosphere.gwt.server.SerializationException;
+import org.atmosphere.gwt.shared.server.JSONSerializer;
+import org.atmosphere.gwt.shared.server.SerializationException;
 
 /**
  *

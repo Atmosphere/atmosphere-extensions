@@ -1,7 +1,4 @@
-package org.atmosphere.gwt.server.spi;
-
-import org.atmosphere.gwt.server.JSONDeserializer;
-import org.atmosphere.gwt.server.JSONSerializer;
+package org.atmosphere.gwt.shared.server;
 
 /**
  *

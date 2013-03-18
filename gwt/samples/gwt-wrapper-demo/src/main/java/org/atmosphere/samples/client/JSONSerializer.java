@@ -13,26 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atmosphere.samples.server;
+package org.atmosphere.samples.client;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import org.atmosphere.cpr.Broadcaster;
-import org.atmosphere.cpr.BroadcasterFactory;
-import org.atmosphere.samples.client.ApplicationService;
-import org.atmosphere.samples.client.Event;
+import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.client.rpc.impl.Serializer;
+import org.atmosphere.extensions.gwtwrapper.client.GwtClientSerializer;
 
 /**
  *
  * @author jotec
  */
-public class ApplicationServlet extends RemoteServiceServlet
-    implements ApplicationService {
+public class JSONSerializer extends GwtClientSerializer {
 
     @Override
-    public void sendEvent(Event e) {
-        for (Broadcaster b : BroadcasterFactory.getDefault().lookupAll()) {
-            b.broadcast(e);
-        }
+    public Object deserialize(String message) throws SerializationException {
+        return deserializeJSON(message);
     }
 
+    @Override
+    public String serialize(Object message) throws SerializationException {
+        return serializeJSON(message);
+    }
+
+    @Override
+    protected Serializer getRPCSerializer() {
+        return null;
+    }
 }

@@ -23,13 +23,13 @@ public class GwtRpcDeserializer {
         }
     };
     
-    public Serializable deserialize(String data) throws org.atmosphere.gwt.server.SerializationException {
+    public Serializable deserialize(String data) throws org.atmosphere.gwt.shared.server.SerializationException {
         try {
             ServerSerializationStreamReader reader = new ServerSerializationStreamReader(getClass().getClassLoader(), cometSerializationPolicyProvider);
             reader.prepareToRead(data);
             return (Serializable) reader.readObject();
         } catch (SerializationException ex) {
-          throw new org.atmosphere.gwt.server.SerializationException("Failed to deserialize RPC data: " + data + " \n  reason: " + ex.getMessage(), ex);
+          throw new org.atmosphere.gwt.shared.server.SerializationException("Failed to deserialize RPC data: " + data + " \n  reason: " + ex.getMessage(), ex);
         }
     }
 

@@ -17,7 +17,6 @@ package org.atmosphere.extensions.gwtwrapper.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.SerializationException;
-import java.io.Serializable;
 import java.util.logging.Logger;
 
 /**
@@ -32,16 +31,16 @@ public final class AtmosphereRequest extends JavaScriptObject {
     this.open();
   }-*/;
   
-  public void push(Serializable message) throws SerializationException {
-    this.pushImpl(getSerializer().serialize(message));
+  public void push(Object message) throws SerializationException {
+    this.pushImpl(getOutboundSerializer().serialize(message));
   }
   
   public native void pushImpl(String message) /*-{
     this.push(message);
   }-*/;
   
-  public void pushLocal(Serializable message) throws SerializationException {
-    this.pushLocalImpl(getSerializer().serialize(message));
+  public void pushLocal(Object message) throws SerializationException {
+    this.pushLocalImpl(getOutboundSerializer().serialize(message));
   }
   
   public native void pushLocalImpl(String message) /*-{
@@ -52,11 +51,11 @@ public final class AtmosphereRequest extends JavaScriptObject {
     
   }
   
-  native void setSerializer(GwtClientSerializer serializer) /*-{
+  native void setOutboundSerializer(GwtClientSerializer serializer) /*-{
     this.serializer = serializer;
   }-*/;
 
-  native GwtClientSerializer getSerializer() /*-{
+  native GwtClientSerializer getOutboundSerializer() /*-{
     return this.serializer;
   }-*/;
 }

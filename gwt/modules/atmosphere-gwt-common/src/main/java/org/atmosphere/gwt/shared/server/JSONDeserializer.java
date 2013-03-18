@@ -1,4 +1,4 @@
-package org.atmosphere.gwt.server;
+package org.atmosphere.gwt.shared.server;
 
 /**
  *

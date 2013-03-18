@@ -15,7 +15,7 @@
  */
 package org.atmosphere.samples.client;
 
-import org.atmosphere.samples.client.Event;
+import com.google.gwt.user.client.rpc.SerializationException;
 import org.atmosphere.extensions.gwtwrapper.client.GwtClientSerializer;
 import org.atmosphere.extensions.gwtwrapper.client.GwtSerialTypes;
 
@@ -23,7 +23,17 @@ import org.atmosphere.extensions.gwtwrapper.client.GwtSerialTypes;
  *
  * @author jotec
  */
-@GwtSerialTypes(Event.class)
-abstract public class Serializer extends GwtClientSerializer {
+@GwtSerialTypes(RPCEvent.class)
+abstract public class RPCSerializer extends GwtClientSerializer {
 
+    @Override
+    public Object deserialize(String message) throws SerializationException {
+        return deserializeRPC(message);
+    }
+
+    @Override
+    public String serialize(Object message) throws SerializationException {
+        return serializeRPC(message);
+    }
+    
 }

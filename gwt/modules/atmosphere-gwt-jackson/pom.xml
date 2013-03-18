@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>org.atmosphere</groupId>
-            <artifactId>atmosphere-gwt-server</artifactId>
+            <artifactId>atmosphere-gwt-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

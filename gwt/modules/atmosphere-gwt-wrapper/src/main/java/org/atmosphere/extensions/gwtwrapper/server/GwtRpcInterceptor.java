@@ -39,21 +39,21 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
 
     @Override
     public Action inspect(AtmosphereResource r) {
-      
-        String module_base = r.getRequest().getHeader(Atmosphere.MODULE_BASE_PARAMETER);
-        if (module_base == null) {
-          module_base = r.getRequest().getParameter(Atmosphere.MODULE_BASE_PARAMETER);
-        }
-      
-        logger.debug("Inspecting Atmosphere request. base: " + module_base
-                + " method: " + r.getRequest().getMethod());
         
-        if (module_base != null && !(r.getSerializer() instanceof GwtRpcSerializer)) {
+        if (!r.getRequest().getContentType().startsWith(Atmosphere.GWT_RPC_MEDIA_TYPE)) {
+            return Action.CONTINUE;
+        }
+              
+        logger.debug("Found GWT-RPC Atmosphere request. method: " + r.getRequest().getMethod());
+        
+        if (!(r.getSerializer() instanceof GwtRpcSerializer)) {
           
             if (r.getRequest().getMethod().equals("GET")) {
 
-                r.getResponse().setContentType(r.getRequest().getContentType());
-                r.getResponse().setCharacterEncoding(r.getRequest().getCharacterEncoding());
+                String contentType = r.getRequest().getContentType();
+                String charEncoding = r.getRequest().getCharacterEncoding();
+                r.getResponse().setContentType(contentType);
+                r.getResponse().setCharacterEncoding(charEncoding);
                 r.setSerializer(new GwtRpcSerializer(r));
 
             } else if (r.getRequest().getMethod().equals("POST")) {

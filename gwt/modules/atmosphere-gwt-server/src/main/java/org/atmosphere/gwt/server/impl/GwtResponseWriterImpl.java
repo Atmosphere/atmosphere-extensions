@@ -35,9 +35,9 @@ import javax.servlet.http.HttpSession;
 import org.atmosphere.gwt.server.GwtResponseWriter;
 import org.atmosphere.gwt.server.deflate.DeflaterOutputStream;
 
-import org.atmosphere.gwt.server.JSONSerializer;
-import org.atmosphere.gwt.server.SerializationException;
-import org.atmosphere.gwt.server.spi.JSONSerializerProvider;
+import org.atmosphere.gwt.shared.server.JSONSerializer;
+import org.atmosphere.gwt.shared.server.SerializationException;
+import org.atmosphere.gwt.shared.server.JSONSerializerProvider;
 
 import org.atmosphere.gwt.shared.Constants;
 import org.atmosphere.gwt.shared.SerialMode;

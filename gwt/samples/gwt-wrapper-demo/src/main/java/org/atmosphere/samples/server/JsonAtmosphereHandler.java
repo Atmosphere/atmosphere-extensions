@@ -24,48 +24,26 @@ import java.util.logging.Logger;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.DefaultBroadcasterFactory;
 import org.atmosphere.cpr.Serializer;
-import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
 import org.atmosphere.gwt.shared.server.JSONSerializer;
 import org.atmosphere.gwt.shared.server.SerializationException;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
 import org.atmosphere.jackson.JacksonSerializerProvider;
 
 /**
+ * This is a simple handler to show how to use JSON with the gwt-wrapper client
+ * 
  * @author p.havelaar
  */
-public class AtmosphereHandler extends AbstractReflectorAtmosphereHandler {
+public class JsonAtmosphereHandler extends AbstractReflectorAtmosphereHandler {
     
   static final Logger logger = Logger.getLogger("AtmosphereHandler");
     @Override
     public void onRequest(AtmosphereResource ar) throws IOException {
       if (ar.getRequest().getMethod().equals("GET") ) {
-          if (ar.getRequest().getPathInfo().startsWith("/rpc")) {
-              RPCGet(ar);
-          } else if (ar.getRequest().getPathInfo().startsWith("/json")) {
-              JSONGet(ar);
-          }
+        JSONGet(ar);
       } else if (ar.getRequest().getMethod().equals("POST") ) {
-          if (ar.getRequest().getPathInfo().startsWith("/rpc")) {
-              RPCPost(ar);
-          } else if (ar.getRequest().getPathInfo().startsWith("/json")) {
-              JSONPost(ar);
-          }
+        JSONPost(ar);
       }
-    }
-    
-    public void RPCGet(AtmosphereResource ar) {
-        
-        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("RPC", true));
-        
-        ar.suspend();
-    }
-    
-    public void RPCPost(AtmosphereResource ar) {
-        Object msg = ar.getRequest().getAttribute(Atmosphere.MESSAGE_OBJECT);
-        if (msg != null) {
-          logger.info("received RPC post: " + msg.toString());
-          DefaultBroadcasterFactory.getDefault().lookup("RPC").broadcast(msg);
-        }
     }
     
     private JacksonSerializerProvider jacksonProvider = new JacksonSerializerProvider();

@@ -20,7 +20,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.logging.client.HasWidgetsLogHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -28,8 +27,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
@@ -93,7 +90,6 @@ public class GwtWrapperDemo implements EntryPoint {
                 
         AtmosphereRequestConfig rpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
         rpcRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/rpc");
-//        requestConfig.setContentType("text/x-gwt-rpc5; charset=utf8");
         rpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
         rpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
         rpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
@@ -127,7 +123,7 @@ public class GwtWrapperDemo implements EntryPoint {
         // setup JSON Atmosphere connection
         AtmosphereRequestConfig jsonRequestConfig = AtmosphereRequestConfig.create(json_serializer);
         jsonRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/json");
-        jsonRequestConfig.setContentType("application/json; charset=UTF8");
+        jsonRequestConfig.setContentType("application/json; charset=UTF-8");
         jsonRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
         jsonRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
         jsonRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {

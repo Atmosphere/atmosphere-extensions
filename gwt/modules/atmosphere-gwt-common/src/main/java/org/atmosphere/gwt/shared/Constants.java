@@ -25,4 +25,6 @@ public class Constants {
     public static final String STRONG_NAME_PARAMETER = "p";
     public static final String CLIENT_SERIALZE_MODE_PARAMETER = "sm";
     public static final String CLIENT_DESERIALZE_MODE_PARAMETER = "dsm";
+    public static final String GWT_RPC_MEDIA_TYPE = "text/x-gwt-rpc";
+    public static final String MESSAGE_OBJECT = "gwt_deserialized_object";
 }

@@ -15,7 +15,6 @@
  */
 package org.atmosphere.extensions.gwtwrapper.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
@@ -23,9 +22,6 @@ import com.google.gwt.core.client.JavaScriptObject;
  * @author jotec
  */
 public final class Atmosphere extends JavaScriptObject {
-    
-    public static final String GWT_RPC_MEDIA_TYPE = "text/x-gwt-rpc";
-    public static final String MESSAGE_OBJECT = "gwt_deserialized_object";
  
     public static native Atmosphere create() /*-{
         return $wnd.jQuery.atmosphere;

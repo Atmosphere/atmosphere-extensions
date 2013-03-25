@@ -15,12 +15,12 @@
  */
 package org.atmosphere.extensions.gwtwrapper.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.user.client.rpc.SerializationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.atmosphere.gwt.shared.Constants;
 
 /**
  *
@@ -86,7 +86,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         r.setMessageHandlerImpl(w);
         w = new MessageHandlerWrapper(inbound);
         r.setLocalMessageHandlerImpl(w);
-        r.setContentType(Atmosphere.GWT_RPC_MEDIA_TYPE + "; charset=UTF-8");
+        r.setContentType(Constants.GWT_RPC_MEDIA_TYPE + "; charset=UTF-8");
         r.setOutboundSerializer(outbound);
         return r;
     }

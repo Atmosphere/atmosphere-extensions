@@ -27,6 +27,7 @@
         <module>atmosphere-gwt-server</module>
         <module>atmosphere-gwt-jackson</module>
     <module>atmosphere-gwt-wrapper</module>
+    <module>atmosphere-gwt-jersey</module>
   </modules>
 
 </project>

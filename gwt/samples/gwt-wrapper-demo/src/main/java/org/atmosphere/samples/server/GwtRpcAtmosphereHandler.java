@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.DefaultBroadcasterFactory;
 import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
+import org.atmosphere.gwt.shared.Constants;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
 
 /**
@@ -47,7 +48,7 @@ public class GwtRpcAtmosphereHandler extends AbstractReflectorAtmosphereHandler 
     }
     
     public void RPCPost(AtmosphereResource ar) {
-        Object msg = ar.getRequest().getAttribute(Atmosphere.MESSAGE_OBJECT);
+        Object msg = ar.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
         if (msg != null) {
           logger.info("received RPC post: " + msg.toString());
           DefaultBroadcasterFactory.getDefault().lookup("RPC").broadcast(msg);

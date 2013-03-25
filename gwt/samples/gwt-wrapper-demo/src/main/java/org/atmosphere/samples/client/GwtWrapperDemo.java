@@ -66,6 +66,9 @@ public class GwtWrapperDemo implements EntryPoint {
         Button sendRPC = new Button("send (GWT-RPC)");
         buttons.add(sendRPC);
         
+        Button sendJerseyRPC = new Button("send (GWT-RPC with Jersey)");
+        buttons.add(sendJerseyRPC);
+        
         Button sendJSON = new Button("send (JSON)");
         buttons.add(sendJSON);
         
@@ -119,6 +122,37 @@ public class GwtWrapperDemo implements EntryPoint {
 //        rpcRequestConfig.setFlags(Flags.trackMessageLength);
         rpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
         
+        AtmosphereRequestConfig jerseyRpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
+        jerseyRpcRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/jersey/rpc");
+        jerseyRpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
+        jerseyRpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        jerseyRpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
+            @Override
+            public void onOpen(AtmosphereResponse response) {
+                logger.info("Jersey RPC Connection opened");
+            }
+        });
+        jerseyRpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
+            @Override
+            public void onClose(AtmosphereResponse response) {
+                logger.info("Jersey RPC Connection closed");
+            }
+        });
+        jerseyRpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
+            @Override
+            public void onMessage(AtmosphereResponse response) {
+                RPCEvent event = (RPCEvent) response.getMessageObject();
+                if (event != null) {
+                    logger.info("received message through Jersey RPC: " + event.getData());
+                }
+            }
+        });
+        
+        // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
+        // unicode characters
+//        rpcRequestConfig.setFlags(Flags.trackMessageLength);
+        jerseyRpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
+        
         
         // setup JSON Atmosphere connection
         AtmosphereRequestConfig jsonRequestConfig = AtmosphereRequestConfig.create(json_serializer);
@@ -152,6 +186,7 @@ public class GwtWrapperDemo implements EntryPoint {
         
         Atmosphere atmosphere = Atmosphere.create();
         final AtmosphereRequest rpcRequest = atmosphere.subscribe(rpcRequestConfig);
+        final AtmosphereRequest jerseyRpcRequest = atmosphere.subscribe(jerseyRpcRequestConfig);
         final AtmosphereRequest jsonRequest = atmosphere.subscribe(jsonRequestConfig);
         
         sendRPC.addClickHandler(new ClickHandler() {
@@ -169,6 +204,24 @@ public class GwtWrapperDemo implements EntryPoint {
             }
           }
         });
+        
+        
+        sendJerseyRPC.addClickHandler(new ClickHandler() {
+          @Override
+          public void onClick(ClickEvent event) {
+            if (messageInput.getText().trim().length() > 0) {
+              try {
+                //              service.sendEvent(new Event(messageInput.getText()), callback);
+                  RPCEvent myevent = new RPCEvent();
+                  myevent.setData(messageInput.getText());
+                  jerseyRpcRequest.push(myevent);
+              } catch (SerializationException ex) {
+                logger.log(Level.SEVERE, "Failed to serialize message", ex);
+              }
+            }
+          }
+        });
+        
         
         sendJSON.addClickHandler(new ClickHandler() {
           @Override

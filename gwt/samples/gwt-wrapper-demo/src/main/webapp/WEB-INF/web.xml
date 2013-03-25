@@ -11,6 +11,10 @@
             <param-name>org.atmosphere.cpr.AtmosphereInterceptor</param-name>
             <param-value>org.atmosphere.extensions.gwtwrapper.server.GwtRpcInterceptor</param-value>
         </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>org.atmosphere.samples.server</param-value>
+        </init-param>
         <!--<init-param>
             <param-name>org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults</param-name>
             <param-value>true</param-value>

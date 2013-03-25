@@ -21,13 +21,13 @@ import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.extensions.gwtwrapper.client.Atmosphere;
+import org.atmosphere.gwt.shared.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author jotec
+ * @author p.havelaar
  */
 public class GwtRpcInterceptor implements AtmosphereInterceptor {
   
@@ -40,7 +40,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
     @Override
     public Action inspect(AtmosphereResource r) {
         
-        if (!r.getRequest().getContentType().startsWith(Atmosphere.GWT_RPC_MEDIA_TYPE)) {
+        if (!r.getRequest().getContentType().startsWith(Constants.GWT_RPC_MEDIA_TYPE)) {
             return Action.CONTINUE;
         }
               
@@ -70,7 +70,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
                     if (logger.isDebugEnabled()) {
                       logger.debug("Received message from client: " + data.toString());
                     }
-                    r.getRequest().setAttribute(Atmosphere.MESSAGE_OBJECT, new GwtRpcSerializer(r).deserialize(data.toString()));
+                    r.getRequest().setAttribute(Constants.MESSAGE_OBJECT, new GwtRpcSerializer(r).deserialize(data.toString()));
                 } catch (IOException ex) {
                     logger.error("Failed to read request data", ex);
                 }

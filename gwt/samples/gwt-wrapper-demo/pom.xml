@@ -103,6 +103,12 @@
             <artifactId>atmosphere-gwt-wrapper</artifactId>
             <version>1.1.0-SNAPSHOT</version>
         </dependency>
+        <!-- only needed if you want to make use of jersey -->
+        <dependency>
+            <groupId>org.atmosphere.extensions</groupId>
+            <artifactId>atmosphere-gwt-jersey</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-gwt-jackson</artifactId>

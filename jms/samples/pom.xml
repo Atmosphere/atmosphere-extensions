@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jms</artifactId>
-            <version>${atmosphere-version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.samples</groupId>

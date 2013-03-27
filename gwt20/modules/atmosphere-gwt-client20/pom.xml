@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.atmosphere.extensions</groupId>
+    <artifactId>atmosphere-gwt20</artifactId>
+    <version>1.1.0-SNAPSHOT</version>
+  </parent>
+  
+  <groupId>org.atmosphere.extensions</groupId>
+  <artifactId>atmosphere-gwt-client20</artifactId>
+  <name>atmosphere-gwt-client20</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>org/atmosphere/extensions/gwt20/client/**</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.atmosphere</groupId>
+      <artifactId>atmosphere-jquery</artifactId>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.atmosphere.extensions</groupId>
+      <artifactId>atmosphere-gwt-common20</artifactId>
+    </dependency>    
+    <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-user</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.google.gwt</groupId>
+        <artifactId>gwt-dev</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
+</project>

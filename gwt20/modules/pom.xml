@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.atmosphere.extensions</groupId>
+        <artifactId>atmosphere-gwt-project20</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.atmosphere.extensions</groupId>
+    <artifactId>atmosphere-gwt20</artifactId>
+    <packaging>pom</packaging>
+    <name>atmosphere-gwt20</name>
+
+    <description>A rework of atmosphere-gwt to become a lightweight GWT implementation on top of Atmosphere</description>
+
+    <modules>
+        <module>atmosphere-gwt-client20</module>
+        <module>atmosphere-gwt-jersey</module>
+        <module>atmosphere-gwt-common20</module>
+        <module>atmosphere-gwt-server20</module>
+  </modules>
+
+</project>

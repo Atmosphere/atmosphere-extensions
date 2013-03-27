@@ -36,12 +36,6 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.impl.ClientSerializationStreamReader;
 import com.google.gwt.user.client.rpc.impl.ClientSerializationStreamWriter;
 import com.google.gwt.user.client.rpc.impl.Serializer;
-import com.google.web.bindery.autobean.shared.AutoBean;
-import com.google.web.bindery.autobean.shared.AutoBeanCodex;
-import com.google.web.bindery.autobean.shared.AutoBeanFactory;
-import com.google.web.bindery.autobean.shared.AutoBeanUtils;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The base class for serializers. To instantiate this class follow this example:
@@ -70,21 +64,10 @@ import java.util.Map;
  * 
  * </code></pre>
  */
-public abstract class GwtClientSerializer {
+public abstract class GwtRpcClientSerializer implements ClientSerializer {
     
-    /**
-     * You need to implement this method in your serializer and call the respective implementations
-     * like deserializeRPC
-     */
-    abstract public Object deserialize(String message) throws SerializationException;
-    
-    /**
-     * You need to implement this method in your serializer and call the respective implementations
-     * like serializeRPC
-     */
-    abstract public String serialize(Object message) throws SerializationException;
-    
-    public Object deserializeRPC(String message) throws SerializationException {
+    @Override
+    public Object deserialize(String message) throws SerializationException {
         try {
             Serializer serializer = getRPCSerializer();
             ClientSerializationStreamReader reader = new ClientSerializationStreamReader(serializer);
@@ -95,7 +78,8 @@ public abstract class GwtClientSerializer {
         }
     }
 
-    public String serializeRPC(Object message) throws SerializationException {
+    @Override
+    public String serialize(Object message) throws SerializationException {
         try {
             Serializer serializer = getRPCSerializer();
             ClientSerializationStreamWriter writer = new ClientSerializationStreamWriter(serializer, GWT.getModuleBaseURL(), GWT.getPermutationStrongName());
@@ -107,64 +91,6 @@ public abstract class GwtClientSerializer {
         }
     }
     
-    private Map<Class, AutoBeanFactory> beanFactories;
-    private AutoBeanFactory activeBeanFactory;
-    private Class<Object> activeBeanClass;
-    
-    public void registerBeanFactory(Class<AutoBeanFactory> factoryClass, Class forBean) {
-        registerBeanFactory((AutoBeanFactory)GWT.create(factoryClass), forBean);
-    }
-    
-    public void registerBeanFactory(AutoBeanFactory factory, Class forBean) {
-        if (beanFactories == null) {
-            beanFactories = new HashMap<Class, AutoBeanFactory>();
-        }
-        beanFactories.put(forBean, factory);
-        if (activeBeanFactory == null) {
-            setActiveBeanFactory(forBean);
-        }
-    }
-    
-    public void setActiveBeanFactory(Class forBean) {
-        if (beanFactories == null) {
-            throw new IllegalStateException("No bean factory available");
-        }
-        AutoBeanFactory factory = beanFactories.get(forBean);
-        if (factory == null) {
-            throw new IllegalStateException("No bean factory available");
-        }
-        activeBeanFactory = factory;
-        activeBeanClass = forBean;
-    }
-    
-    public Object deserializeJSON(String message) throws SerializationException {
-        try {
-
-            Object event = AutoBeanCodex.decode(activeBeanFactory, activeBeanClass, message).as();
-
-            return event;
-
-        } catch (RuntimeException e) {
-
-            throw new SerializationException(e);
-
-        }
-    }
-    
-    public String serializeJSON(Object message) throws SerializationException {
-        try {
-
-            AutoBean<Object> bean = AutoBeanUtils.getAutoBean(message);
-
-            return AutoBeanCodex.encode(bean).getPayload();
-
-        } catch (RuntimeException e) {
-
-            throw new SerializationException(e);
-
-        }
-    }
-
     protected abstract Serializer getRPCSerializer();
 
 }

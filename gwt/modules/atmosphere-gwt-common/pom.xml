@@ -27,6 +27,10 @@
         </resources>
     </build>
 
-    <dependencies>
+    <dependencies>   
+      <dependency>
+          <groupId>com.google.gwt</groupId>
+          <artifactId>gwt-user</artifactId>
+      </dependency>
     </dependencies>
 </project>

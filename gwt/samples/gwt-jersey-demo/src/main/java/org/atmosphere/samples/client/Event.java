@@ -15,14 +15,14 @@
  */
 package org.atmosphere.samples.client;
 
-import org.atmosphere.extensions.gwtwrapper.client.GwtRpcClientSerializer;
-import org.atmosphere.extensions.gwtwrapper.client.GwtRpcSerialTypes;
-
 /**
- *
+ * simple event
  * @author jotec
  */
-@GwtRpcSerialTypes(RPCEvent.class)
-abstract public class RPCSerializer extends GwtRpcClientSerializer {
+public interface Event {
 
+    String getData();
+
+    void setData(String data);
+      
 }

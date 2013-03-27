@@ -30,7 +30,7 @@
  */
 package org.atmosphere.extensions.gwtwrapper.client;
 
-public @interface GwtSerialTypes {
+public @interface GwtRpcSerialTypes {
     Class<?>[] value();
 
 }

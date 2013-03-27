@@ -15,13 +15,15 @@
  */
 package org.atmosphere.extensions.gwtwrapper.server;
 
-import java.io.BufferedReader;
+import org.atmosphere.gwt.shared.server.GwtRpcUtil;
+import com.google.gwt.user.client.rpc.SerializationException;
 import java.io.IOException;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.gwt.shared.Constants;
+import org.atmosphere.handler.ReflectorServletProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,43 +42,48 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
     @Override
     public Action inspect(AtmosphereResource r) {
         
-        if (!r.getRequest().getContentType().startsWith(Constants.GWT_RPC_MEDIA_TYPE)) {
+        if (r.getRequest().getContentType() == null
+                || !r.getRequest().getContentType().startsWith(Constants.GWT_RPC_MEDIA_TYPE)
+                || isHandledByJersey(r)) {
             return Action.CONTINUE;
         }
               
         logger.debug("Found GWT-RPC Atmosphere request. method: " + r.getRequest().getMethod());
         
-        if (!(r.getSerializer() instanceof GwtRpcSerializer)) {
+        if (r.getRequest().getMethod().equals("GET")) {
+            
+            if (!(r.getSerializer() instanceof GwtRpcSerializer)) {
           
-            if (r.getRequest().getMethod().equals("GET")) {
-
                 String contentType = r.getRequest().getContentType();
                 String charEncoding = r.getRequest().getCharacterEncoding();
                 r.getResponse().setContentType(contentType);
                 r.getResponse().setCharacterEncoding(charEncoding);
                 r.setSerializer(new GwtRpcSerializer(r));
 
-            } else if (r.getRequest().getMethod().equals("POST")) {
-
-                StringBuilder data = new StringBuilder();
-                BufferedReader requestReader;
-                try {
-                    requestReader = r.getRequest().getReader();
-                    char[] buf = new char[5120];
-                    int read = -1;
-                    while ((read = requestReader.read(buf)) > 0) {
-                      data.append(buf, 0, read);
-                    }
-                    if (logger.isDebugEnabled()) {
-                      logger.debug("Received message from client: " + data.toString());
-                    }
-                    r.getRequest().setAttribute(Constants.MESSAGE_OBJECT, new GwtRpcSerializer(r).deserialize(data.toString()));
-                } catch (IOException ex) {
-                    logger.error("Failed to read request data", ex);
+            }
+        } else if (r.getRequest().getMethod().equals("POST")) {
+            try {
+                String data = GwtRpcUtil.readerToString(r.getRequest().getReader());
+                if (logger.isDebugEnabled()) {
+                  logger.debug("Received message from client: " + data);
                 }
+                r.getRequest().setAttribute(Constants.MESSAGE_OBJECT, GwtRpcUtil.deserialize(data));
+            } catch (IOException ex) {
+                logger.error("Failed to read request data", ex);
+            } catch (SerializationException ex) {
+                logger.error("Failed to deserialize GWT RPC data");
             }
         }
         return Action.CONTINUE;
+    }
+    
+    protected boolean isHandledByJersey(AtmosphereResource r) {
+        if (r.getAtmosphereHandler() instanceof ReflectorServletProcessor) {
+            return ReflectorServletProcessor.class.cast(r.getAtmosphereHandler()).getServletClassName()
+                    .equals("com.sun.jersey.spi.container.servlet.ServletContainer");
+        } else {
+            return false;
+        }
     }
     
     @Override

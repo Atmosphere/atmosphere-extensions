@@ -11,14 +11,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import org.atmosphere.annotation.Broadcast;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.annotation.Suspend;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.BroadcasterFactory;
-import org.atmosphere.extensions.gwt.jersey.GwtPayload;
 import org.atmosphere.gwt.shared.Constants;
-import org.atmosphere.jersey.Broadcastable;
 import org.atmosphere.jersey.JerseyBroadcaster;
 import org.atmosphere.samples.client.RPCEvent;
 
@@ -28,27 +25,23 @@ import org.atmosphere.samples.client.RPCEvent;
  * @author p.havelaar
  */
 @Path("/jersey/rpc")
-@Produces(Constants.GWT_RPC_MEDIA_TYPE)
-@Consumes(Constants.GWT_RPC_MEDIA_TYPE)
 public class JerseyGwtRpc {
     
     private final static Logger logger = Logger.getLogger(JerseyGwtRpc.class.getName());
     
     @GET    
     @Suspend
-    public Broadcastable gwtRpcHandler(@Context AtmosphereResource ar) {
+    @Produces(Constants.GWT_RPC_MEDIA_TYPE)
+    public String connect(@Context AtmosphereResource ar) {
         logger.info("Suspending Jersey GWT RPC request");
-        ar.setBroadcaster(
-            BroadcasterFactory.getDefault().lookup(JerseyBroadcaster.class, "jersey-rpc", true)
-        );
-        return new Broadcastable(ar.getBroadcaster());
+        return "";
     }
     
     @POST
-    @Broadcast
-    public Broadcastable gwtRpcHandler(@GwtPayload RPCEvent event, @Context Broadcaster b) {
+    @Consumes(Constants.GWT_RPC_MEDIA_TYPE)
+    public void receive(RPCEvent event, @Context Broadcaster b) {
         logger.info("Received RPC event on Jersey: " + event.getData());
-        return new Broadcastable(event, b);
+        b.broadcast(event);
     }
     
     

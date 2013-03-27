@@ -17,6 +17,6 @@
     <inherits name="com.google.gwt.logging.Logging"/>
     
     <generate-with class="org.atmosphere.extensions.gwtwrapper.rebind.SerializerGenerator">
-        <when-type-assignable class="org.atmosphere.extensions.gwtwrapper.client.GwtClientSerializer"/>
+        <when-type-assignable class="org.atmosphere.extensions.gwtwrapper.client.GwtRpcClientSerializer"/>
     </generate-with>
 </module>

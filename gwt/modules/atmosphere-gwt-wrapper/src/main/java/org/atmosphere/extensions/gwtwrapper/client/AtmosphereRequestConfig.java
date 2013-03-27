@@ -69,7 +69,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
      * @param serializer
      * @return 
      */
-    public static AtmosphereRequestConfig create(GwtClientSerializer serializer) {
+    public static AtmosphereRequestConfig create(ClientSerializer serializer) {
         return create(serializer, serializer);
     }
     
@@ -80,7 +80,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
      * @param outbound
      * @return 
      */
-    public static AtmosphereRequestConfig create(GwtClientSerializer inbound, GwtClientSerializer outbound) {
+    public static AtmosphereRequestConfig create(ClientSerializer inbound, ClientSerializer outbound) {
         AtmosphereRequestConfig r = createImpl();
         MessageHandlerWrapper w = new MessageHandlerWrapper(inbound);
         r.setMessageHandlerImpl(w);
@@ -220,11 +220,11 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         }
     }-*/;
     
-    native void setOutboundSerializer(GwtClientSerializer serializer) /*-{
+    native void setOutboundSerializer(ClientSerializer serializer) /*-{
       this.serializer = serializer;
     }-*/;
 
-    native GwtClientSerializer getOutboundSerializer() /*-{
+    native ClientSerializer getOutboundSerializer() /*-{
       return this.serializer;
     }-*/;
     
@@ -242,10 +242,10 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
   
     static class MessageHandlerWrapper implements AtmosphereMessageHandler {
 
-        GwtClientSerializer serializer;
+        ClientSerializer serializer;
         AtmosphereMessageHandler messageHandler;
         
-        public MessageHandlerWrapper(GwtClientSerializer serializer) {
+        public MessageHandlerWrapper(ClientSerializer serializer) {
             this.serializer = serializer;
         }
        

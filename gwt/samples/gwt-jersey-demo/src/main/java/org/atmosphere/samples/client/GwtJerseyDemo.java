@@ -43,9 +43,9 @@ import org.atmosphere.extensions.gwtwrapper.client.AutoBeanClientSerializer;
  *
  * @author jotec
  */
-public class GwtWrapperDemo implements EntryPoint {
+public class GwtJerseyDemo implements EntryPoint {
 
-    static final Logger logger = Logger.getLogger(GwtWrapperDemo.class.getName());
+    static final Logger logger = Logger.getLogger(GwtJerseyDemo.class.getName());
     
     private MyBeanFactory beanFactory = GWT.create(MyBeanFactory.class);
 
@@ -67,9 +67,6 @@ public class GwtWrapperDemo implements EntryPoint {
         Button sendRPC = new Button("send (GWT-RPC)");
         buttons.add(sendRPC);
         
-        Button sendJSON = new Button("send (JSON)");
-        buttons.add(sendJSON);
-        
                 
         RootPanel.get("buttonbar").add(buttons);
         
@@ -86,31 +83,29 @@ public class GwtWrapperDemo implements EntryPoint {
         
                 
         RPCSerializer rpc_serializer = GWT.create(RPCSerializer.class);
-        AutoBeanClientSerializer json_serializer = new AutoBeanClientSerializer();
-        json_serializer.registerBeanFactory(beanFactory, Event.class);        
-                
-        AtmosphereRequestConfig rpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
-        rpcRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/rpc");
-        rpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
-        rpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
-        rpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
+            
+        AtmosphereRequestConfig jerseyRpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
+        jerseyRpcRequestConfig.setUrl(GWT.getHostPageBaseURL() + "atmo/jersey/rpc");
+        jerseyRpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
+        jerseyRpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        jerseyRpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
             @Override
             public void onOpen(AtmosphereResponse response) {
-                logger.info("RPC Connection opened");
+                logger.info("Jersey RPC Connection opened");
             }
         });
-        rpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
+        jerseyRpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
             @Override
             public void onClose(AtmosphereResponse response) {
-                logger.info("RPC Connection closed");
+                logger.info("Jersey RPC Connection closed");
             }
         });
-        rpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
+        jerseyRpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
                 RPCEvent event = (RPCEvent) response.getMessageObject();
                 if (event != null) {
-                    logger.info("received message through RPC: " + event.getData());
+                    logger.info("received message through Jersey RPC: " + event.getData());
                 }
             }
         });
@@ -118,41 +113,11 @@ public class GwtWrapperDemo implements EntryPoint {
         // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
         // unicode characters
 //        rpcRequestConfig.setFlags(Flags.trackMessageLength);
-        rpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
-        
-        // setup JSON Atmosphere connection
-        AtmosphereRequestConfig jsonRequestConfig = AtmosphereRequestConfig.create(json_serializer);
-        jsonRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/json");
-        jsonRequestConfig.setContentType("application/json; charset=UTF-8");
-        jsonRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
-        jsonRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
-        jsonRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
-            @Override
-            public void onOpen(AtmosphereResponse response) {
-                logger.info("JSON Connection opened");
-            }
-        });
-        jsonRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
-            @Override
-            public void onClose(AtmosphereResponse response) {
-                logger.info("JSON Connection closed");
-            }
-        });
-        jsonRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
-            @Override
-            public void onMessage(AtmosphereResponse response) {
-                Event event = (Event) response.getMessageObject();
-                if (event != null) {
-                    logger.info("received message through JSON: " + event.getData());
-                }
-            }
-        });
-        jsonRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
+        jerseyRpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
         
         
         Atmosphere atmosphere = Atmosphere.create();
-        final AtmosphereRequest rpcRequest = atmosphere.subscribe(rpcRequestConfig);
-        final AtmosphereRequest jsonRequest = atmosphere.subscribe(jsonRequestConfig);
+        final AtmosphereRequest jerseyRpcRequest = atmosphere.subscribe(jerseyRpcRequestConfig);
         
         sendRPC.addClickHandler(new ClickHandler() {
           @Override
@@ -162,7 +127,7 @@ public class GwtWrapperDemo implements EntryPoint {
                 //              service.sendEvent(new Event(messageInput.getText()), callback);
                   RPCEvent myevent = new RPCEvent();
                   myevent.setData(messageInput.getText());
-                  rpcRequest.push(myevent);
+                  jerseyRpcRequest.push(myevent);
               } catch (SerializationException ex) {
                 logger.log(Level.SEVERE, "Failed to serialize message", ex);
               }
@@ -170,22 +135,6 @@ public class GwtWrapperDemo implements EntryPoint {
           }
         });
         
-        
-        sendJSON.addClickHandler(new ClickHandler() {
-          @Override
-          public void onClick(ClickEvent event) {
-            if (messageInput.getText().trim().length() > 0) {
-              try {
-                //              service.sendEvent(new Event(messageInput.getText()), callback);
-                  Event myevent = beanFactory.create(Event.class).as();
-                  myevent.setData(messageInput.getText());
-                  jsonRequest.push(myevent);
-              } catch (SerializationException ex) {
-                logger.log(Level.SEVERE, "Failed to serialize message", ex);
-              }
-            }
-          }
-        });
         
         
     }

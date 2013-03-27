@@ -51,11 +51,11 @@ public final class AtmosphereRequest extends JavaScriptObject {
     
   }
   
-  native void setOutboundSerializer(GwtClientSerializer serializer) /*-{
+  native void setOutboundSerializer(ClientSerializer serializer) /*-{
     this.serializer = serializer;
   }-*/;
 
-  native GwtClientSerializer getOutboundSerializer() /*-{
+  native ClientSerializer getOutboundSerializer() /*-{
     return this.serializer;
   }-*/;
 }

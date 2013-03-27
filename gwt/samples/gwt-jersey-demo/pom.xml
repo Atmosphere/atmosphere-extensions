@@ -10,20 +10,20 @@
     </parent>
 
     <groupId>org.atmosphere.samples</groupId>
-    <artifactId>gwt-wrapper-demo</artifactId>
+    <artifactId>gwt-jersey-demo</artifactId>
     <packaging>war</packaging>
-    <name>gwt-wrapper-demo</name>
+    <name>gwt-jersey-demo</name>
 
     <properties>
-        <gwtModuleName>GwtWrapperDemo</gwtModuleName>
-        <gwtModule>org.atmosphere.samples.GwtWrapperDemo</gwtModule>
+        <gwtModuleName>GwtJerseyDemo</gwtModuleName>
+        <gwtModule>org.atmosphere.samples.GwtJerseyDemo</gwtModule>
         <war.target>${basedir}/src/main/webapp</war.target>
         <gwt.compiler.force>false</gwt.compiler.force>
         <gwt.draftCompile>true</gwt.draftCompile>
         <gwt.style>PRETTY</gwt.style>
         <gwt.compiler.strict>true</gwt.compiler.strict>
         <outputDir>${war.target}/WEB-INF/classes</outputDir>
-        <netbeans.hint.deploy.server>Tomcat70</netbeans.hint.deploy.server>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
     </properties>
 
     <build>
@@ -103,11 +103,12 @@
             <artifactId>atmosphere-gwt-wrapper</artifactId>
             <version>1.1.0-SNAPSHOT</version>
         </dependency>
+        <!-- only needed if you want to make use of jersey -->
         <dependency>
-            <groupId>org.atmosphere</groupId>
-            <artifactId>atmosphere-gwt-jackson</artifactId>
+            <groupId>org.atmosphere.extensions</groupId>
+            <artifactId>atmosphere-gwt-jersey</artifactId>
             <version>1.1.0-SNAPSHOT</version>
-        </dependency>        
+        </dependency> 
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>

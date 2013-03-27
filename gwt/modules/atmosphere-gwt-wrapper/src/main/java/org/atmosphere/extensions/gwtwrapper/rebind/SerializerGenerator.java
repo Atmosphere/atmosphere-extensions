@@ -55,7 +55,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.atmosphere.extensions.gwtwrapper.client.GwtSerialTypes;
+import org.atmosphere.extensions.gwtwrapper.client.GwtRpcSerialTypes;
 
 public class SerializerGenerator extends IncrementalGenerator {
 
@@ -78,7 +78,7 @@ public class SerializerGenerator extends IncrementalGenerator {
 
             try {
                 JClassType type = typeOracle.getType(typeName);
-                GwtSerialTypes annotation = type.getAnnotation(GwtSerialTypes.class);
+                GwtRpcSerialTypes annotation = type.getAnnotation(GwtRpcSerialTypes.class);
                 if (annotation == null) {
                     logger.log(TreeLogger.ERROR, "No SerialTypes annotation on CometSerializer type: " + typeName);
                     throw new UnableToCompleteException();
@@ -149,7 +149,6 @@ public class SerializerGenerator extends IncrementalGenerator {
                 composerFactory.addImport(Serializable.class.getName());
                 
                 composerFactory.setSuperclass(typeName);
-                // TODO is the SERIALIZER required for DE RPC?
                 SourceWriter sourceWriter = composerFactory.createSourceWriter(context, printWriter);
                 sourceWriter.print("private Serializer SERIALIZER = new " + realize + "();");
                 sourceWriter.print("protected Serializer getRPCSerializer() {return SERIALIZER;}");

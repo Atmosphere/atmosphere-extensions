@@ -16,8 +16,11 @@
 package org.atmosphere.plugin.hazelcast;
 
 
-import com.hazelcast.config.Config;
-import com.hazelcast.core.*;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.ITopic;
+import com.hazelcast.core.Message;
+import com.hazelcast.core.MessageListener;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.slf4j.Logger;
@@ -67,6 +70,8 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     @Override
     public void destroy() {
         topic.destroy();
+        topic = null;
+        super.destroy();
     }
 
     /**

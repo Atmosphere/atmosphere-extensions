@@ -53,15 +53,16 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
     };
     
     public enum Flags {
-      enableXDR,
-			rewriteURL,
-			attachHeadersAsQueryString,
-			withCredentials,
-			trackMessageLength,
-			shared,
-			readResponsesHeaders,
-			dropAtmosphereHeaders,
-			executeCallbackBeforeReconnect
+        enableXDR,
+        rewriteURL,
+        attachHeadersAsQueryString,
+        withCredentials,
+        trackMessageLength,
+        shared,
+        readResponsesHeaders,
+        dropAtmosphereHeaders,
+        executeCallbackBeforeReconnect,
+        enableProtocol
     }
     
     /**
@@ -87,6 +88,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         w = new MessageHandlerWrapper(inbound);
         r.setLocalMessageHandlerImpl(w);
         r.setContentType(Constants.GWT_RPC_MEDIA_TYPE + "; charset=UTF-8");
+        r.clearFlags(Flags.enableProtocol);
         r.setOutboundSerializer(outbound);
         return r;
     }
@@ -261,7 +263,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
                     messageHandler.onMessage(response);
                 }
             } catch (SerializationException ex) {
-                logger.log(Level.SEVERE, "Failed to deserialize message", ex);
+                logger.log(Level.SEVERE, "Failed to deserialize message: " + response.getResponseBody(), ex);
             }
         }
     }

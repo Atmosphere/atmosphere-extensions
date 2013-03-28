@@ -14,9 +14,7 @@ import javax.ws.rs.core.Context;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.annotation.Suspend;
 import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.gwt.shared.Constants;
-import org.atmosphere.jersey.JerseyBroadcaster;
 import org.atmosphere.samples.client.RPCEvent;
 
 /**

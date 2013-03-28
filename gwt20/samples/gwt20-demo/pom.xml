@@ -23,7 +23,7 @@
         <gwt.style>PRETTY</gwt.style>
         <gwt.compiler.strict>true</gwt.compiler.strict>
         <outputDir>${war.target}/WEB-INF/classes</outputDir>
-        <netbeans.hint.deploy.server>Tomcat70</netbeans.hint.deploy.server>
+        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
     </properties>
 
     <build>

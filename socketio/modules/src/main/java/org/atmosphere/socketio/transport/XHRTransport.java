@@ -261,6 +261,9 @@ public abstract class XHRTransport extends AbstractTransport {
                         if (data == null) {
                             data = decodePostData(request.getContentType(), extractString(request.getReader()));
                         }
+                        if (data == null || data.length() == 0) {
+                            data = SocketIOSessionManagerImpl.mapper.readValue(request.getParameter("d"), String.class);
+                        }
                         if (data != null && data.length() > 0) {
 
                             List<SocketIOPacketImpl> list = SocketIOPacketImpl.parse(data);

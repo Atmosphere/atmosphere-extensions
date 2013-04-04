@@ -133,6 +133,9 @@ public abstract class AbstractTransport implements Transport {
         } else if ("POST".equals(request.getMethod())) {
             try {
                 String data = decodePostData(request.getContentType(), extractString(request.getReader()));
+                if (data == null || data.length() == 0) {
+                    data = SocketIOSessionManagerImpl.mapper.readValue(request.getParameter("d"), String.class);
+                }
                 request.setAttribute(POST_MESSAGE_RECEIVED, data);
                 // Set back the body
                 request.body(data);

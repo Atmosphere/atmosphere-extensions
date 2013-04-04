@@ -15,6 +15,7 @@
  */
 package org.atmosphere.socketio.transport;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
@@ -51,7 +52,7 @@ public class JSONPPollingTransport extends XHRTransport {
             logger.trace("calling from " + this.getClass().getName() + " : " + "writeData(string) = " + data);
 
             response.setContentType("text/javascript; charset=UTF-8");
-            response.getOutputStream().print("io.j[" + jsonpIndex + "](\"" + data + "\");");
+            response.getOutputStream().print("io.j[" + jsonpIndex + "](\"" + StringEscapeUtils.escapeEcmaScript(data) + "\");");
 
             logger.trace("WRITE SUCCESS calling from " + this.getClass().getName() + " : " + "writeData(string) = " + data);
 

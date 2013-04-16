@@ -29,14 +29,14 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.atmosphere.extensions.gwt20.client.Atmosphere;
-import org.atmosphere.extensions.gwt20.client.AtmosphereCloseHandler;
-import org.atmosphere.extensions.gwt20.client.AtmosphereMessageHandler;
-import org.atmosphere.extensions.gwt20.client.AtmosphereOpenHandler;
-import org.atmosphere.extensions.gwt20.client.AtmosphereRequest;
-import org.atmosphere.extensions.gwt20.client.AtmosphereRequestConfig;
-import org.atmosphere.extensions.gwt20.client.AtmosphereRequestConfig.Flags;
-import org.atmosphere.extensions.gwt20.client.AtmosphereResponse;
+import org.atmosphere.gwt20.client.Atmosphere;
+import org.atmosphere.gwt20.client.AtmosphereCloseHandler;
+import org.atmosphere.gwt20.client.AtmosphereMessageHandler;
+import org.atmosphere.gwt20.client.AtmosphereOpenHandler;
+import org.atmosphere.gwt20.client.AtmosphereRequest;
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Flags;
+import org.atmosphere.gwt20.client.AtmosphereResponse;
 
 /**
  *

@@ -13,16 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atmosphere.samples.client;
-
-import org.atmosphere.gwt20.client.GwtRpcClientSerializer;
-import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
+package org.atmosphere.gwt20.client;
 
 /**
  *
  * @author jotec
  */
-@GwtRpcSerialTypes(RPCEvent.class)
-abstract public class RPCSerializer extends GwtRpcClientSerializer {
-
+public interface AtmosphereErrorHandler {
+    public void onError(AtmosphereResponse response);
 }

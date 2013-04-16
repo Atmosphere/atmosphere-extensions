@@ -29,15 +29,15 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.atmosphere.extensions.gwt20.client.Atmosphere;
-import org.atmosphere.extensions.gwt20.client.AtmosphereCloseHandler;
-import org.atmosphere.extensions.gwt20.client.AtmosphereMessageHandler;
-import org.atmosphere.extensions.gwt20.client.AtmosphereOpenHandler;
-import org.atmosphere.extensions.gwt20.client.AtmosphereRequest;
-import org.atmosphere.extensions.gwt20.client.AtmosphereRequestConfig;
-import org.atmosphere.extensions.gwt20.client.AtmosphereRequestConfig.Flags;
-import org.atmosphere.extensions.gwt20.client.AtmosphereResponse;
-import org.atmosphere.extensions.gwt20.client.AutoBeanClientSerializer;
+import org.atmosphere.gwt20.client.Atmosphere;
+import org.atmosphere.gwt20.client.AtmosphereCloseHandler;
+import org.atmosphere.gwt20.client.AtmosphereMessageHandler;
+import org.atmosphere.gwt20.client.AtmosphereOpenHandler;
+import org.atmosphere.gwt20.client.AtmosphereRequest;
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Flags;
+import org.atmosphere.gwt20.client.AtmosphereResponse;
+import org.atmosphere.gwt20.client.AutoBeanClientSerializer;
 
 /**
  *
@@ -118,7 +118,6 @@ public class GwtWrapperDemo implements EntryPoint {
         // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
         // unicode characters
 //        rpcRequestConfig.setFlags(Flags.trackMessageLength);
-        rpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
         
         // setup JSON Atmosphere connection
         AtmosphereRequestConfig jsonRequestConfig = AtmosphereRequestConfig.create(json_serializer);
@@ -147,7 +146,6 @@ public class GwtWrapperDemo implements EntryPoint {
                 }
             }
         });
-        jsonRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
         
         
         Atmosphere atmosphere = Atmosphere.create();

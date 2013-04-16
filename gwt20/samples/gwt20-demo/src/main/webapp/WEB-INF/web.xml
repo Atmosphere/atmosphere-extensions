@@ -9,7 +9,7 @@
         <servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>
         <init-param>
             <param-name>org.atmosphere.cpr.AtmosphereInterceptor</param-name>
-            <param-value>org.atmosphere.extensions.gwt20.server.GwtRpcInterceptor</param-value>
+            <param-value>org.atmosphere.gwt20.server.GwtRpcInterceptor</param-value>
         </init-param>
         <!--<init-param>
             <param-name>org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults</param-name>

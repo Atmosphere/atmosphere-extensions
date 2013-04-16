@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.DefaultBroadcasterFactory;
-import org.atmosphere.gwt.shared.Constants;
+import org.atmosphere.gwt20.shared.Constants;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
 
 /**

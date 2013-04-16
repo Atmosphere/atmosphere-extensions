@@ -15,8 +15,8 @@
  */
 package org.atmosphere.samples.client;
 
-import org.atmosphere.extensions.gwt20.client.GwtRpcClientSerializer;
-import org.atmosphere.extensions.gwt20.client.GwtRpcSerialTypes;
+import org.atmosphere.gwt20.client.GwtRpcClientSerializer;
+import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
 /**
  *

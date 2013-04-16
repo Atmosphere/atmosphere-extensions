@@ -13,16 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atmosphere.samples.client;
 
-import org.atmosphere.gwt20.client.GwtRpcClientSerializer;
-import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
+package org.atmosphere.gwt20.shared;
 
 /**
- *
- * @author jotec
+ * @author p.havelaar
  */
-@GwtRpcSerialTypes(RPCEvent.class)
-abstract public class RPCSerializer extends GwtRpcClientSerializer {
+public class Constants {
 
+    public static final String MODULE_BASE_HEADER = "X-GWT-Module-Base";
+    public static final String STRONG_NAME_HEADER = "X-GWT-Permutation";
+    public static final String GWT_RPC_MEDIA_TYPE = "text/x-gwt-rpc";
+    public static final String MESSAGE_OBJECT = "gwt_deserialized_object";
 }

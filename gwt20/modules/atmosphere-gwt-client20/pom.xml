@@ -24,7 +24,7 @@
             <resource>
                 <directory>src/main/java</directory>
                 <includes>
-                    <include>org/atmosphere/extensions/gwt20/client/**</include>
+                    <include>org/atmosphere/gwt20/client/**</include>
                 </includes>
             </resource>
         </resources>

@@ -23,9 +23,6 @@
                 <includes>
                     <include>org/atmosphere/gwt/shared/**</include>
                 </includes>
-                <excludes>
-                    <exclude>org/atmosphere/gwt/shared/server/**</exclude>
-                </excludes>
             </resource>
         </resources>
     </build>

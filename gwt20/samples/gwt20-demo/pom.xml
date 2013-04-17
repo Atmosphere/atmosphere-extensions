@@ -4,19 +4,18 @@
 
     <parent>
         <groupId>org.atmosphere.extensions</groupId>
-        <artifactId>atmosphere-gwt-project20</artifactId>
+        <artifactId>atmosphere-gwt20</artifactId>
         <version>1.1.0-SNAPSHOT</version>
-        <relativePath>../..</relativePath>
     </parent>
 
     <groupId>org.atmosphere.samples</groupId>
-    <artifactId>gwt20-demo</artifactId>
+    <artifactId>gwt20-rpc</artifactId>
     <packaging>war</packaging>
-    <name>gwt20-demo</name>
+    <name>gwt20-rpc</name>
 
     <properties>
-        <gwtModuleName>GwtWrapperDemo</gwtModuleName>
-        <gwtModule>org.atmosphere.samples.GwtWrapperDemo</gwtModule>
+        <gwtModuleName>GwtRpcDemo</gwtModuleName>
+        <gwtModule>org.atmosphere.samples.${gwtModuleName}</gwtModule>
         <war.target>${basedir}/src/main/webapp</war.target>
         <gwt.compiler.force>false</gwt.compiler.force>
         <gwt.draftCompile>true</gwt.draftCompile>
@@ -99,17 +98,12 @@
     <dependencies>
         <dependency>
             <groupId>org.atmosphere.extensions</groupId>
-            <artifactId>atmosphere-gwt-client20</artifactId>
+            <artifactId>atmosphere-gwt20-client</artifactId>
         </dependency>
 		<dependency>
             <groupId>org.atmosphere.extensions</groupId>
-            <artifactId>atmosphere-gwt-server20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.atmosphere</groupId>
-            <artifactId>atmosphere-gwt-jackson</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
-        </dependency>        
+            <artifactId>atmosphere-gwt20-server</artifactId>
+        </dependency>       
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>

@@ -37,15 +37,17 @@ import org.atmosphere.gwt20.client.AtmosphereRequest;
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Flags;
 import org.atmosphere.gwt20.client.AtmosphereResponse;
+import org.atmosphere.gwt20.client.AutoBeanClientSerializer;
 
 /**
  *
  * @author jotec
  */
-public class GwtJerseyDemo implements EntryPoint {
+public class GwtJsonDemo implements EntryPoint {
 
-    static final Logger logger = Logger.getLogger(GwtJerseyDemo.class.getName());
+    static final Logger logger = Logger.getLogger(GwtJsonDemo.class.getName());
     
+    private MyBeanFactory beanFactory = GWT.create(MyBeanFactory.class);
 
     @Override
     public void onModuleLoad() {
@@ -62,8 +64,8 @@ public class GwtJerseyDemo implements EntryPoint {
         final TextBox messageInput = new TextBox();
         buttons.add(messageInput);
         
-        Button sendRPC = new Button("send (GWT-RPC)");
-        buttons.add(sendRPC);
+        Button sendJSON = new Button("send (JSON)");
+        buttons.add(sendJSON);
         
                 
         RootPanel.get("buttonbar").add(buttons);
@@ -80,59 +82,57 @@ public class GwtJerseyDemo implements EntryPoint {
         Logger.getLogger("").addHandler(new HasWidgetsLogHandler(logPanel));
         
                 
-        RPCSerializer rpc_serializer = GWT.create(RPCSerializer.class);
-            
-        AtmosphereRequestConfig jerseyRpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
-        jerseyRpcRequestConfig.setUrl(GWT.getHostPageBaseURL() + "atmo/jersey/rpc");
-        jerseyRpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
-        jerseyRpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
-        jerseyRpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
+        AutoBeanClientSerializer json_serializer = new AutoBeanClientSerializer();
+        json_serializer.registerBeanFactory(beanFactory, Event.class);        
+                       
+        // setup JSON Atmosphere connection
+        AtmosphereRequestConfig jsonRequestConfig = AtmosphereRequestConfig.create(json_serializer);
+        jsonRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/json");
+        jsonRequestConfig.setContentType("application/json; charset=UTF-8");
+        jsonRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
+        jsonRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        jsonRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
             @Override
             public void onOpen(AtmosphereResponse response) {
-                logger.info("Jersey RPC Connection opened");
+                logger.info("JSON Connection opened");
             }
         });
-        jerseyRpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
+        jsonRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {
             @Override
             public void onClose(AtmosphereResponse response) {
-                logger.info("Jersey RPC Connection closed");
+                logger.info("JSON Connection closed");
             }
         });
-        jerseyRpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
+        jsonRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
-                RPCEvent event = (RPCEvent) response.getMessageObject();
+                Event event = (Event) response.getMessageObject();
                 if (event != null) {
-                    logger.info("received message through Jersey RPC: " + event.getData());
+                    logger.info("received message through JSON: " + event.getData());
                 }
             }
         });
         
-        // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
-        // unicode characters
-//        rpcRequestConfig.setFlags(Flags.trackMessageLength);
-        jerseyRpcRequestConfig.clearFlags(Flags.dropAtmosphereHeaders);
-        
         
         Atmosphere atmosphere = Atmosphere.create();
-        final AtmosphereRequest jerseyRpcRequest = atmosphere.subscribe(jerseyRpcRequestConfig);
+        final AtmosphereRequest jsonRequest = atmosphere.subscribe(jsonRequestConfig);
+      
         
-        sendRPC.addClickHandler(new ClickHandler() {
+        sendJSON.addClickHandler(new ClickHandler() {
           @Override
           public void onClick(ClickEvent event) {
             if (messageInput.getText().trim().length() > 0) {
               try {
                 //              service.sendEvent(new Event(messageInput.getText()), callback);
-                  RPCEvent myevent = new RPCEvent();
+                  Event myevent = beanFactory.create(Event.class).as();
                   myevent.setData(messageInput.getText());
-                  jerseyRpcRequest.push(myevent);
+                  jsonRequest.push(myevent);
               } catch (SerializationException ex) {
                 logger.log(Level.SEVERE, "Failed to serialize message", ex);
               }
             }
           }
         });
-        
         
         
     }

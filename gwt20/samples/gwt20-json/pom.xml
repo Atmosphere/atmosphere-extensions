@@ -9,12 +9,12 @@
     </parent>
 
     <groupId>org.atmosphere.samples</groupId>
-    <artifactId>gwt20-jersey-rpc</artifactId>
+    <artifactId>gwt20-json</artifactId>
     <packaging>war</packaging>
-    <name>gwt20-jersey-rpc</name>
+    <name>gwt20-json</name>
 
     <properties>
-        <gwtModuleName>GwtJerseyDemo</gwtModuleName>
+        <gwtModuleName>GwtJsonDemo</gwtModuleName>
         <gwtModule>org.atmosphere.samples.${gwtModuleName}</gwtModule>
         <war.target>${basedir}/src/main/webapp</war.target>
         <gwt.compiler.force>false</gwt.compiler.force>
@@ -100,10 +100,14 @@
             <groupId>org.atmosphere.extensions</groupId>
             <artifactId>atmosphere-gwt20-client</artifactId>
         </dependency>
+		<dependency>
+            <groupId>org.atmosphere.extensions</groupId>
+            <artifactId>atmosphere-gwt20-server</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.atmosphere.extensions</groupId>
-            <artifactId>atmosphere-gwt20-jersey</artifactId>
-        </dependency> 
+            <artifactId>atmosphere-gwt20-jackson</artifactId>
+        </dependency>        
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>

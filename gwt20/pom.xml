@@ -9,8 +9,8 @@
     </parent>
 
     <groupId>org.atmosphere.extensions</groupId>
-    <artifactId>atmosphere-gwt-project20</artifactId>
-    <name>atmosphere-gwt-project20</name>
+    <artifactId>atmosphere-gwt20</artifactId>
+    <name>atmosphere-gwt20</name>
     <version>1.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -22,7 +22,11 @@
     </properties>
 
     <modules>
-        <module>modules</module>
+        <module>atmosphere-gwt20-client</module>
+        <module>atmosphere-gwt20-jersey</module>
+        <module>atmosphere-gwt20-common</module>
+        <module>atmosphere-gwt20-server</module>
+        <module>atmosphere-gwt20-jackson</module>
     </modules>
 
     <build>
@@ -51,25 +55,30 @@
         <dependencies>
             <dependency>
                 <groupId>org.atmosphere.extensions</groupId>
-                <artifactId>atmosphere-gwt-common20</artifactId>
+                <artifactId>atmosphere-gwt20-common</artifactId>
                 <version>1.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.atmosphere.extensions</groupId>
-                <artifactId>atmosphere-gwt-client20</artifactId>
+                <artifactId>atmosphere-gwt20-client</artifactId>
                 <version>1.1.0-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.atmosphere.extensions</groupId>
-                <artifactId>atmosphere-gwt-server20</artifactId>
+                <artifactId>atmosphere-gwt20-server</artifactId>
                 <version>1.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.atmosphere.extensions</groupId>
-                <artifactId>atmosphere-gwt-jersey</artifactId>
+                <artifactId>atmosphere-gwt20-jersey</artifactId>
                 <version>1.1.0-SNAPSHOT</version>
-            </dependency>			
+            </dependency>
+            <dependency>
+                <groupId>org.atmosphere.extensions</groupId>
+                <artifactId>atmosphere-gwt20-jackson</artifactId>
+                <version>1.1.0-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>com.google.gwt</groupId>
                 <artifactId>gwt-user</artifactId>

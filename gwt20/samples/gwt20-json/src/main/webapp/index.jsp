@@ -3,7 +3,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>GWT RPC demo for atmosphere</title>
+        <title>GWT JSON demo for atmosphere</title>
         
         <!--                                           -->
         <!-- This script loads your compiled module.   -->
@@ -21,7 +21,7 @@
         <script type="text/javascript" language="javascript" src="jquery/jquery.atmosphere.js"></script>
         <!-- end of includes for atmoshere-jquery -->
         
-        <script type="text/javascript" language="javascript" src="GwtRpcDemo/GwtRpcDemo.nocache.js"></script>
+        <script type="text/javascript" language="javascript" src="GwtJsonDemo/GwtJsonDemo.nocache.js"></script>
         
       <style>
         
@@ -38,7 +38,7 @@
         <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1'
             style="position:absolute;width:0;height:0;border:0"></iframe>
 
-        <h1>GWT RPC demo for atmosphere</h1>
+        <h1>GWT JSON demo for atmosphere</h1>
         <div id="buttonbar"></div>
         <div id="logger"></div>
     </body>

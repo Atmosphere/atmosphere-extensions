@@ -21,7 +21,6 @@
         <gwt.draftCompile>false</gwt.draftCompile>
         <gwt.style>PRETTY</gwt.style>
         <outputDir>${war.target}/WEB-INF/classes</outputDir>
-        <netbeans.hint.deploy.server>Tomcat70</netbeans.hint.deploy.server>
     </properties>
 
     <build>
@@ -38,6 +37,7 @@
                     <noServer>false</noServer>
                     <sourcesOnPath>true</sourcesOnPath>
                     <hostedWebapp>${war.target}</hostedWebapp>
+		    <strict>true</strict>
                 </configuration>
                 <executions>
                     <execution>

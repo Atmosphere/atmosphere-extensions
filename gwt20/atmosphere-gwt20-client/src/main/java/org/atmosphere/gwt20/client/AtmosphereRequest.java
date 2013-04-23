@@ -27,10 +27,6 @@ public final class AtmosphereRequest extends JavaScriptObject {
   
   static final Logger logger = Logger.getLogger("AtmosphereRequest");
   
-  public native void open() /*-{
-    this.open();
-  }-*/;
-  
   public void push(Object message) throws SerializationException {
     this.pushImpl(getOutboundSerializer().serialize(message));
   }

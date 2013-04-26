@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Jeanfrancois Arcand
+ * Copyright 2012 Jeanfrancois Arcand
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -20,7 +20,7 @@ package org.atmosphere.gwt.server.impl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import org.atmosphere.gwt.shared.server.SerializationException;
+import org.atmosphere.gwt.server.SerializationException;
 
 /**
  * @author p.havelaar
@@ -34,9 +34,9 @@ public class IFrameResponseWriter extends ManagedStreamResponseWriter {
     // IE requires padding to start processing the page.
     private static final int PADDING_REQUIRED = 256;
 
-    private static final String HEAD = "<html><body onload='parent.d()'><script>";
-    private static final String MID = "parent.c(";
-    private static final String TAIL = ");var m=parent.m;var h=parent.h;</script>";
+    private static final String HEAD = "<html><body onload='parent.window.d()'><script>";
+    private static final String MID = "parent.window.c(";
+    private static final String TAIL = ");</script>";
 
     private static final String PADDING_STRING;
 
@@ -98,7 +98,7 @@ public class IFrameResponseWriter extends ManagedStreamResponseWriter {
     @Override
     protected void doSendError(int statusCode, String message) throws IOException {
         getResponse().setContentType("text/html");
-        writer.append("<html><script>parent.e(").append(Integer.toString(statusCode));
+        writer.append("<html><script>parent.window.e(").append(Integer.toString(statusCode));
         if (message != null) {
             writer.append(",'").append(escapeString(message)).append('\'');
         }
@@ -107,7 +107,7 @@ public class IFrameResponseWriter extends ManagedStreamResponseWriter {
 
     @Override
     protected void doWrite(List<? extends Serializable> messages) throws IOException, SerializationException {
-        writer.append("<script>m(");
+        writer.append("<script>parent.window.m(");
         boolean first = true;
         for (Serializable message : messages) {
             CharSequence string;
@@ -128,17 +128,17 @@ public class IFrameResponseWriter extends ManagedStreamResponseWriter {
 
     @Override
     protected void doHeartbeat() throws IOException {
-        writer.append("<script>h();</script>");
+        writer.append("<script>parent.window.h();</script>");
     }
 
     @Override
     protected void doTerminate() throws IOException {
-        writer.append("<script>parent.t();</script>");
+        writer.append("<script>parent.window.t();</script>");
     }
 
     @Override
     protected void doRefresh() throws IOException {
-        writer.append("<script>parent.r();</script>");
+        writer.append("<script>parent.window.r();</script>");
     }
 
     @Override

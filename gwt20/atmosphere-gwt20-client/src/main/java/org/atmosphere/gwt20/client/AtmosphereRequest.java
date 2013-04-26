@@ -54,4 +54,8 @@ public final class AtmosphereRequest extends JavaScriptObject {
   native ClientSerializer getOutboundSerializer() /*-{
     return this.serializer;
   }-*/;
+
+  public native String getUUID() /*-{
+        return this.getUUID();
+    }-*/;
 }

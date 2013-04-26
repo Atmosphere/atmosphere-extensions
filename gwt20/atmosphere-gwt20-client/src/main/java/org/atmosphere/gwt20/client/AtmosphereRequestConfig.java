@@ -226,8 +226,8 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
     public native void setTransportFailureHandler(AtmosphereTransportFailureHandler handler) /*-{
         var self = this;
         if (handler != null) {
-            this.onTransportFailure = $entry(function(errorMsg, response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereTransportFailureHandler::onTransportFailure(Ljava/lang/String;Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(errorMsg, response);
+            this.onTransportFailure = $entry(function(errorMsg, request) {
+                handler.@org.atmosphere.gwt20.client.AtmosphereTransportFailureHandler::onTransportFailure(Ljava/lang/String;Lorg/atmosphere/gwt20/client/AtmosphereRequest;)(errorMsg, request);
             });
         } else {
             this.onTransportFailure = null;

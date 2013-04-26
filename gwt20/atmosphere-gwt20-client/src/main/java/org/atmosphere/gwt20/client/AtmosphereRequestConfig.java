@@ -160,6 +160,17 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         }
     }-*/;
     
+    public native void setReopenHandler(AtmosphereReopenHandler handler) /*-{
+        var self = this;
+        if (handler != null) {
+            this.onReopen = $entry(function(response) {
+                handler.@org.atmosphere.gwt20.client.AtmosphereReopenHandler::onReopen(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
+            });
+        } else {
+            this.onReopen = null;
+        }
+    }-*/;
+    
     public native void setCloseHandler(AtmosphereCloseHandler handler) /*-{
         var self = this;
         if (handler != null) {

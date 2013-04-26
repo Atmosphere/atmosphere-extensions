@@ -33,11 +33,10 @@ import org.atmosphere.gwt20.client.Atmosphere;
 import org.atmosphere.gwt20.client.AtmosphereCloseHandler;
 import org.atmosphere.gwt20.client.AtmosphereMessageHandler;
 import org.atmosphere.gwt20.client.AtmosphereOpenHandler;
+import org.atmosphere.gwt20.client.AtmosphereReopenHandler;
 import org.atmosphere.gwt20.client.AtmosphereRequest;
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
-import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Flags;
 import org.atmosphere.gwt20.client.AtmosphereResponse;
-import org.atmosphere.gwt20.client.AutoBeanClientSerializer;
 
 /**
  *
@@ -90,6 +89,12 @@ public class GwtRpcDemo implements EntryPoint {
             @Override
             public void onOpen(AtmosphereResponse response) {
                 logger.info("RPC Connection opened");
+            }
+        });
+        rpcRequestConfig.setReopenHandler(new AtmosphereReopenHandler() {
+            @Override
+            public void onReopen(AtmosphereResponse response) {
+                logger.info("RPC Connection reopened");
             }
         });
         rpcRequestConfig.setCloseHandler(new AtmosphereCloseHandler() {

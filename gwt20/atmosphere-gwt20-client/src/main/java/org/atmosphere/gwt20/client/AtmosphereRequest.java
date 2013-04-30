@@ -56,6 +56,6 @@ public final class AtmosphereRequest extends JavaScriptObject {
   }-*/;
 
   public native String getUUID() /*-{
-        return this.getUUID();
-    }-*/;
+    return String(this.getUUID());
+  }-*/;
 }

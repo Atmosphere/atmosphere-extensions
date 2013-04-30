@@ -50,6 +50,15 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
                 case WEBSOCKET: return "websocket";
             }
         }
+
+        public static Transport fromString(String s) {
+            for (Transport t : Transport.values()) {
+                if (t.toString().equals(s)) {
+                    return t;
+                }
+            }
+            return null;
+        }
     };
     
     public enum Flags {

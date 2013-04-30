@@ -253,8 +253,6 @@
     </profiles>
 
     <modules>
-        <module>gwt</module>
-		<module>gwt20</module>
         <module>guice/</module>
         <module>spring/</module>
         <module>jgroups/</module>
@@ -265,6 +263,8 @@
         <module>weblogic/</module>
         <module>socketio/</module>
         <module>cometd/</module>
+        <module>gwt</module>
+		<module>gwt20</module>
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

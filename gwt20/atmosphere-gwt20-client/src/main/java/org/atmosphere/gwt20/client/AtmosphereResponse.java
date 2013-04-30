@@ -17,6 +17,8 @@ package org.atmosphere.gwt20.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Transport;
+
 /**
  *
  * @author jotec
@@ -85,6 +87,15 @@ public final class AtmosphereResponse extends JavaScriptObject {
         return this.state;
     }-*/;
     
+
+    public Transport getTransport() {
+        return Transport.fromString(getTransportImpl());
+    }
+
+    private native String getTransportImpl() /*-{
+        return this.transport;
+    }-*/;
+
     protected AtmosphereResponse() {
     }
 }

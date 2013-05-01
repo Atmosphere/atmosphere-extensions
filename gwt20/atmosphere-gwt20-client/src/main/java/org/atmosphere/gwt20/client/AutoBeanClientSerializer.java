@@ -37,8 +37,11 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * The base class for serializers. To instantiate this class follow this example:
@@ -68,6 +71,8 @@ import java.util.Map;
  * </code></pre>
  */
 public class AutoBeanClientSerializer implements ClientSerializer {
+   
+   private static final Logger logger = Logger.getLogger(AutoBeanClientSerializer.class.getName());
     
     private Map<Class, AutoBeanFactory> beanFactories;
     private AutoBeanFactory activeBeanFactory;
@@ -100,18 +105,48 @@ public class AutoBeanClientSerializer implements ClientSerializer {
     }
     
     @Override
-    public Object deserialize(String message) throws SerializationException {
+    public Object deserialize(String raw) throws SerializationException {
+       
+//       buffer.append(raw); // TODO buffer messages in case we receive a chunked message
+//       buffer.
+       
+      // split up in different parts - based on the {}
+      // this is necessary because multiple objects can be chunked in one single string
+      int brackets = 0;
+      int start = 0;
+      List<String> messages = new ArrayList<String>();
+      for (int i = 0; i < raw.length(); i++) {
+
+          // detect brackets
+          if (raw.charAt(i) == '{') {
+             ++brackets;
+          }
+          else if (raw.charAt(i) == '}') --brackets;
+
+          // new message
+          if (brackets == 0) {
+              messages.add(raw.substring(start, i + 1));
+              start = i + 1;
+          }
+      }
+
+      // create the objects
+      List<Object> objects = new ArrayList<Object>(messages.size());
+      for (String message : messages) {
         try {
 
+           logger.info("Deserialize " + message + " from " + raw);
             Object event = AutoBeanCodex.decode(activeBeanFactory, activeBeanClass, message).as();
 
-            return event;
+            objects.add(event);
 
         } catch (RuntimeException e) {
 
             throw new SerializationException(e);
 
         }
+      }
+      return objects;
     }
     
     @Override

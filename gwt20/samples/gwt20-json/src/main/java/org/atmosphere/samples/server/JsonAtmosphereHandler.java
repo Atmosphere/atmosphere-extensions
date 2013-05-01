@@ -40,20 +40,21 @@ public class JsonAtmosphereHandler extends AbstractReflectorAtmosphereHandler {
     @Override
     public void onRequest(AtmosphereResource ar) throws IOException {
       if (ar.getRequest().getMethod().equals("GET") ) {
-        JSONGet(ar);
+        doGet(ar);
       } else if (ar.getRequest().getMethod().equals("POST") ) {
-        JSONPost(ar);
+        doPost(ar);
       }
     }
     
     private ServerSerializer serializer = new JacksonSerializerProvider().getServerSerializer();
     
-    public void JSONGet(final AtmosphereResource ar) {
+    public void doGet(final AtmosphereResource ar) {
         
         ar.getResponse().setCharacterEncoding(ar.getRequest().getCharacterEncoding());
         ar.getResponse().setContentType("application/json");
         
-        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("JSON", true));
+        // lookup the broadcaster, if not found create it. Name is arbitrary
+        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster", true));
         
         ar.setSerializer(new Serializer() {
             Charset charset = Charset.forName(ar.getResponse().getCharacterEncoding());
@@ -73,7 +74,7 @@ public class JsonAtmosphereHandler extends AbstractReflectorAtmosphereHandler {
         ar.suspend();
     }
     
-    public void JSONPost(AtmosphereResource ar) throws IOException {
+    public void doPost(AtmosphereResource ar) throws IOException {
         StringBuilder data = new StringBuilder();
         BufferedReader requestReader;
         try {
@@ -86,7 +87,7 @@ public class JsonAtmosphereHandler extends AbstractReflectorAtmosphereHandler {
             logger.info("Received json message from client: " + data.toString());
         
             Object message = serializer.deserialize(data.toString());
-            DefaultBroadcasterFactory.getDefault().lookup("JSON").broadcast(message);
+            DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster").broadcast(message);
             
         } catch (SerializationException ex) {
             logger.log(Level.SEVERE, "Failed to read request data", ex);

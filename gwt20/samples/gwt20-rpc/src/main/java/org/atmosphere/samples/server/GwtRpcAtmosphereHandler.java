@@ -33,24 +33,29 @@ public class GwtRpcAtmosphereHandler extends AbstractReflectorAtmosphereHandler 
     @Override
     public void onRequest(AtmosphereResource ar) throws IOException {
       if (ar.getRequest().getMethod().equals("GET") ) {
-        RPCGet(ar);
+        doGet(ar);
       } else if (ar.getRequest().getMethod().equals("POST") ) {
-        RPCPost(ar);
+        doPost(ar);
       }
     }
     
-    public void RPCGet(AtmosphereResource ar) {
+    public void doGet(AtmosphereResource ar) {
         
-        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("RPC", true));
+       // lookup the broadcaster, if not found create it. Name is arbitrary
+        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster", true));
         
         ar.suspend();
     }
     
-    public void RPCPost(AtmosphereResource ar) {
+    /**
+     * receive push message from client
+     **/
+    public void doPost(AtmosphereResource ar) {
         Object msg = ar.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
         if (msg != null) {
           logger.info("received RPC post: " + msg.toString());
-          DefaultBroadcasterFactory.getDefault().lookup("RPC").broadcast(msg);
+          // for demonstration purposes we will broadcast the message to all connections
+          DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster").broadcast(msg);
         }
     }
 

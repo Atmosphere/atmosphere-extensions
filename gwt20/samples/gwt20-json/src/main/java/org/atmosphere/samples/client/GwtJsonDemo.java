@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.atmosphere.gwt20.client.Atmosphere;
@@ -106,8 +107,8 @@ public class GwtJsonDemo implements EntryPoint {
         jsonRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
-                Event event = (Event) response.getMessageObject();
-                if (event != null) {
+                List<Event> events = response.getMessages();
+                for (Event event : events) {
                     logger.info("received message through JSON: " + event.getData());
                 }
             }

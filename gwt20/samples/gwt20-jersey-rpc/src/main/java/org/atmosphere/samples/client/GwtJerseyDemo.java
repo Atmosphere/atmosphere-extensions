@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.atmosphere.gwt20.client.Atmosphere;
@@ -101,8 +102,8 @@ public class GwtJerseyDemo implements EntryPoint {
         jerseyRpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
-                RPCEvent event = (RPCEvent) response.getMessageObject();
-                if (event != null) {
+                List<RPCEvent> events = response.getMessages();
+                for (RPCEvent event : events) {
                     logger.info("received message through Jersey RPC: " + event.getData());
                 }
             }

@@ -16,6 +16,8 @@
 package org.atmosphere.gwt20.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -61,6 +63,17 @@ public final class AtmosphereResponse extends JavaScriptObject {
        return this.status;
     }-*/;
     
+    public <T> List<T> getMessages() {
+       Object containedMessage = getMessageObject();
+       if (containedMessage == null) {
+          return Collections.emptyList();
+       } else if (containedMessage instanceof List) {
+          return (List)containedMessage;
+       } else {
+          return (List<T>) Collections.singletonList(containedMessage);
+       }
+    }
+    
     public native String getResponseBody() /*-{
         return this.responseBody;
     }-*/;
@@ -69,22 +82,23 @@ public final class AtmosphereResponse extends JavaScriptObject {
         return this.headers[name];
     }-*/;
     
-    public native void setMessageObject(Object message) /*-{
-        this.messageObject = message;
-    }-*/;
-    
-    public native Object getMessageObject() /*-{
-        return this.messageObject;
-    }-*/;
-    
     public State getState() {
         return State.fromString(getStateImpl());
     }
+        
+    protected AtmosphereResponse() {
+    }
+    
+    native void setMessageObject(Object message) /*-{
+        this.messageObject = message;
+    }-*/;
+    
+    native Object getMessageObject() /*-{
+        return this.messageObject;
+    }-*/;
     
     private native String getStateImpl() /*-{
         return this.state;
     }-*/;
     
-    protected AtmosphereResponse() {
-    }
 }

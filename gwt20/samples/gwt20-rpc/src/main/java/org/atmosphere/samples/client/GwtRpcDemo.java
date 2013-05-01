@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.atmosphere.gwt20.client.Atmosphere;
@@ -106,10 +107,10 @@ public class GwtRpcDemo implements EntryPoint {
         rpcRequestConfig.setMessageHandler(new AtmosphereMessageHandler() {
             @Override
             public void onMessage(AtmosphereResponse response) {
-                RPCEvent event = (RPCEvent) response.getMessageObject();
-                if (event != null) {
-                    logger.info("received message through RPC: " + event.getData());
-                }
+               List<RPCEvent> messages = response.getMessages();
+               for (RPCEvent event : messages) {
+                  logger.info("received message through RPC: " + event.getData());
+               }
             }
         });
         

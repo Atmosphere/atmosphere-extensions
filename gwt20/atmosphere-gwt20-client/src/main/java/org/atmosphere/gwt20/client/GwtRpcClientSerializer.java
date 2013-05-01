@@ -71,34 +71,35 @@ public abstract class GwtRpcClientSerializer implements ClientSerializer {
    
    private static final Logger logger = Logger.getLogger(GwtRpcClientSerializer.class.getName());
    
+   // buffer in order to capture split messages
    private StringBuffer buffer = new StringBuffer(16100);
    
     
     @Override
     public Object deserialize(String raw) throws SerializationException {
 
-//       buffer.append(raw); // TODO buffer messages in case we receive a chunked message
-//       buffer.
+       buffer.append(raw);
        
       // split up in different parts - based on the []
       // this is necessary because multiple objects can be chunked in one single string
       int brackets = 0;
       int start = 0;
       List<String> messages = new ArrayList<String>();
-      for (int i = 0; i < raw.length(); i++) {
+      for (int i = 0; i < buffer.length(); i++) {
 
           // detect brackets
-          if (raw.charAt(i) == '[') {
+          if (buffer.charAt(i) == '[') {
              ++brackets;
           }
-          else if (raw.charAt(i) == ']') --brackets;
+          else if (buffer.charAt(i) == ']') --brackets;
 
           // new message
           if (brackets == 0) {
-              messages.add(raw.substring(start, i + 1));
+              messages.add(buffer.substring(start, i + 1));
               start = i + 1;
           }
       }
+      buffer.delete(0, start);
 
       // create the objects
       List<Object> objects = new ArrayList<Object>(messages.size());

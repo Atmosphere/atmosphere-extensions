@@ -15,72 +15,54 @@
  */
 package org.atmosphere.samples.server;
 
-import org.atmosphere.config.service.Get;
-import org.atmosphere.config.service.ManagedService;
-import org.atmosphere.config.service.Post;
-import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.AtmosphereResourceEvent;
-import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter;
-import org.atmosphere.cpr.Broadcaster;
-import org.atmosphere.cpr.BroadcasterFactory;
-import org.atmosphere.gwt20.server.GwtRpcInterceptor;
-import org.atmosphere.gwt20.shared.Constants;
-import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
-import org.atmosphere.samples.client.RPCEvent;
-
+import java.io.IOException;
 import java.util.logging.Logger;
+import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.DefaultBroadcasterFactory;
+import org.atmosphere.gwt20.shared.Constants;
+import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
 
 /**
  * This is a simple handler example to show how to use GWT RPC serialization
- *
+ * 
  * @author p.havelaar
  */
-@ManagedService(path = "/GwtRpcDemo/atmosphere/rpc", interceptors = {
-        AtmosphereResourceLifecycleInterceptor.class,
-        GwtRpcInterceptor.class
-})
-public class GwtRpcAtmosphereHandler {
-
-    static final Logger logger = Logger.getLogger("AtmosphereHandler");
-
-    public final Broadcaster connectedUsers = BroadcasterFactory.getDefault().lookup("Connected users", true);
-
-    @Get
-    public void get(final AtmosphereResource ar) {
-        // Make sure the connection is fully suspended and ready
-        ar.addEventListener(new AtmosphereResourceEventListenerAdapter(){
-            @Override
-           public void onSuspend(AtmosphereResourceEvent event) {
-                logger.info("received RPC GET");
-                connectedUsers.addAtmosphereResource(ar);
-                RPCEvent e = new RPCEvent();
-                e.setData("User " + ar.uuid() + " connected");
-                connectedUsers.broadcast(e);
-           }
-
-            @Override
-            public void onDisconnect(AtmosphereResourceEvent event) {
-                //
-                if (event.isCancelled()) {
-                    logger.info("User:" + event.getResource().uuid() + " unexpectedly disconnected");
-                } else if (event.isClosedByClient()) {
-                    logger.info("User:" + event.getResource().uuid() + " closed the connection");
-                }
-            }
-        });
+public class GwtRpcAtmosphereHandler extends AbstractReflectorAtmosphereHandler {
+    
+  static final Logger logger = Logger.getLogger("AtmosphereHandler");
+    @Override
+    public void onRequest(AtmosphereResource ar) throws IOException {
+      if (ar.getRequest().getMethod().equals("GET") ) {
+        doGet(ar);
+      } else if (ar.getRequest().getMethod().equals("POST") ) {
+        doPost(ar);
+      }
     }
-
+    
+    public void doGet(AtmosphereResource ar) {
+        
+       // lookup the broadcaster, if not found create it. Name is arbitrary
+        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster", true));
+        
+        ar.suspend();
+    }
+    
     /**
      * receive push message from client
-     */
-    @Post
+     **/
     public void doPost(AtmosphereResource ar) {
         Object msg = ar.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
-        logger.info("Transport: " + ar.transport().toString());
         if (msg != null) {
-            logger.info("received RPC post: " + msg.toString());
-            // Here we lookup the default broadcaster, mapped to /GwtRpcDemo/atmosphere/rpc
-            ar.getBroadcaster().broadcast(msg);
+          logger.info("received RPC post: " + msg.toString());
+          // for demonstration purposes we will broadcast the message to all connections
+          DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster").broadcast(msg);
         }
     }
+
+
+    @Override
+    public void destroy() {
+        
+    }
+
 }

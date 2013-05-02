@@ -24,5 +24,4 @@ import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
  */
 @GwtRpcSerialTypes(RPCEvent.class)
 abstract public class RPCSerializer extends GwtRpcClientSerializer {
-
 }

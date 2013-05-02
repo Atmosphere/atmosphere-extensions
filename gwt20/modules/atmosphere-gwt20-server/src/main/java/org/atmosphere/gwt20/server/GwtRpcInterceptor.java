@@ -22,20 +22,19 @@ import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.gwt20.shared.Constants;
 import org.atmosphere.handler.ReflectorServletProcessor;
-import org.atmosphere.websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 /**
  *
  * @author p.havelaar
  */
 public class GwtRpcInterceptor implements AtmosphereInterceptor {
-  
-  private static final Logger logger = LoggerFactory.getLogger(GwtRpcInterceptor.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(GwtRpcInterceptor.class);
+    public static final String X_WEBSOCKET_GWT = GwtRpcInterceptor.class.getName() + ".useWebSocket";
 
     @Override
     public void configure(AtmosphereConfig config) {
@@ -45,13 +44,9 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
     public Action inspect(AtmosphereResource r) {
 
         boolean jersey = isHandledByJersey(r);
-        // Force websocket support.
-        if (!jersey && r.getRequest().getAttribute(WebSocket.WEBSOCKET_INITIATED) != null)  {
-            try {
-                r.getRequest().contentType(Constants.GWT_RPC_MEDIA_TYPE).setCharacterEncoding("UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        // All WebSocket messages needs to use the Constants.GWT_RPC_MEDIA_TYPE for content type.
+        if (!jersey && r.getRequest().getAttribute(X_WEBSOCKET_GWT) != null) {
+            r.getRequest().contentType(Constants.GWT_RPC_MEDIA_TYPE);
         }
 
         if (r.getRequest().getContentType() == null
@@ -63,9 +58,13 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
         logger.debug("Found GWT-RPC Atmosphere request. method: " + r.getRequest().getMethod());
         
         if (r.getRequest().getMethod().equals("GET")) {
-            
+            // For default content-type.
+            if (r.transport().equals(AtmosphereResource.TRANSPORT.WEBSOCKET)) {
+                r.getRequest().setAttribute(X_WEBSOCKET_GWT, Boolean.TRUE);
+            }
+
             if (!(r.getSerializer() instanceof GwtRpcSerializer)) {
-          
+
                 String contentType = r.getRequest().getContentType();
                 String charEncoding = r.getRequest().getCharacterEncoding();
                 r.getResponse().setContentType(contentType);

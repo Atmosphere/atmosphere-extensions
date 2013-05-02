@@ -27,9 +27,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.atmosphere.gwt20.client.Atmosphere;
 import org.atmosphere.gwt20.client.AtmosphereCloseHandler;
 import org.atmosphere.gwt20.client.AtmosphereMessageHandler;
@@ -38,6 +35,10 @@ import org.atmosphere.gwt20.client.AtmosphereReopenHandler;
 import org.atmosphere.gwt20.client.AtmosphereRequest;
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
 import org.atmosphere.gwt20.client.AtmosphereResponse;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -113,13 +114,8 @@ public class GwtRpcDemo implements EntryPoint {
                }
             }
         });
-        
-        // trackMessageLength is not required but makes the connection more robust, does not seem to work with 
-        // unicode characters
-//        rpcRequestConfig.setFlags(Flags.trackMessageLength);
-        
-        
-        
+        rpcRequestConfig.setFlags(AtmosphereRequestConfig.Flags.enableProtocol);
+
         Atmosphere atmosphere = Atmosphere.create();
         final AtmosphereRequest rpcRequest = atmosphere.subscribe(rpcRequestConfig);
         
@@ -138,8 +134,6 @@ public class GwtRpcDemo implements EntryPoint {
             }
           }
         });
-        
-        
     }
 
 }

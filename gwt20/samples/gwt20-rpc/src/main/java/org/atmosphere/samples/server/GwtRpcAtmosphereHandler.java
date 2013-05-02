@@ -15,54 +15,38 @@
  */
 package org.atmosphere.samples.server;
 
-import java.io.IOException;
-import java.util.logging.Logger;
+import org.atmosphere.config.service.ManagedService;
+import org.atmosphere.config.service.Post;
 import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.DefaultBroadcasterFactory;
+import org.atmosphere.gwt20.server.GwtRpcInterceptor;
 import org.atmosphere.gwt20.shared.Constants;
-import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
+import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
+
+import java.util.logging.Logger;
 
 /**
  * This is a simple handler example to show how to use GWT RPC serialization
- * 
+ *
  * @author p.havelaar
  */
-public class GwtRpcAtmosphereHandler extends AbstractReflectorAtmosphereHandler {
-    
-  static final Logger logger = Logger.getLogger("AtmosphereHandler");
-    @Override
-    public void onRequest(AtmosphereResource ar) throws IOException {
-      if (ar.getRequest().getMethod().equals("GET") ) {
-        doGet(ar);
-      } else if (ar.getRequest().getMethod().equals("POST") ) {
-        doPost(ar);
-      }
-    }
-    
-    public void doGet(AtmosphereResource ar) {
-        
-       // lookup the broadcaster, if not found create it. Name is arbitrary
-        ar.setBroadcaster(DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster", true));
-        
-        ar.suspend();
-    }
-    
+@ManagedService(path = "/GwtRpcDemo/atmosphere/rpc", interceptors = {
+        AtmosphereResourceLifecycleInterceptor.class,
+        GwtRpcInterceptor.class
+})
+public class GwtRpcAtmosphereHandler {
+
+    static final Logger logger = Logger.getLogger("AtmosphereHandler");
+
     /**
      * receive push message from client
-     **/
+     */
+    @Post
     public void doPost(AtmosphereResource ar) {
         Object msg = ar.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
         if (msg != null) {
-          logger.info("received RPC post: " + msg.toString());
-          // for demonstration purposes we will broadcast the message to all connections
-          DefaultBroadcasterFactory.getDefault().lookup("MyBroadcaster").broadcast(msg);
+            logger.info("received RPC post: " + msg.toString());
+            // for demonstration purposes we will broadcast the message to all connections
+            ar.getBroadcaster().broadcast(msg);
         }
     }
-
-
-    @Override
-    public void destroy() {
-        
-    }
-
 }

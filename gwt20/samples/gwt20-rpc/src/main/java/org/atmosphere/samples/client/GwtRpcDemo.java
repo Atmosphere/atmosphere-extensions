@@ -84,8 +84,8 @@ public class GwtRpcDemo implements EntryPoint {
                 
         AtmosphereRequestConfig rpcRequestConfig = AtmosphereRequestConfig.create(rpc_serializer);
         rpcRequestConfig.setUrl(GWT.getModuleBaseURL() + "atmosphere/rpc");
-        rpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.STREAMING);
-        rpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.LONG_POLLING);
+        rpcRequestConfig.setTransport(AtmosphereRequestConfig.Transport.WEBSOCKET);
+        rpcRequestConfig.setFallbackTransport(AtmosphereRequestConfig.Transport.STREAMING);
         rpcRequestConfig.setOpenHandler(new AtmosphereOpenHandler() {
             @Override
             public void onOpen(AtmosphereResponse response) {

@@ -16,15 +16,18 @@
 package org.atmosphere.gwt20.server;
 
 import com.google.gwt.user.client.rpc.SerializationException;
-import java.io.IOException;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.gwt20.shared.Constants;
 import org.atmosphere.handler.ReflectorServletProcessor;
+import org.atmosphere.websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  *
@@ -40,10 +43,20 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
 
     @Override
     public Action inspect(AtmosphereResource r) {
-        
+
+        boolean jersey = isHandledByJersey(r);
+        // Force websocket support.
+        if (!jersey && r.getRequest().getAttribute(WebSocket.WEBSOCKET_INITIATED) != null)  {
+            try {
+                r.getRequest().contentType(Constants.GWT_RPC_MEDIA_TYPE).setCharacterEncoding("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (r.getRequest().getContentType() == null
                 || !r.getRequest().getContentType().startsWith(Constants.GWT_RPC_MEDIA_TYPE)
-                || isHandledByJersey(r)) {
+                || jersey) {
             return Action.CONTINUE;
         }
               

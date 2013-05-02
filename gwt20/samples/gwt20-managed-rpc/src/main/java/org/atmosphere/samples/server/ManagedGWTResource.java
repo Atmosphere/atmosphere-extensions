@@ -21,14 +21,11 @@ import org.atmosphere.config.service.Post;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter;
-import org.atmosphere.cpr.BroadcastFilter;
-import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFactory;
 import org.atmosphere.gwt20.server.GwtRpcInterceptor;
-import org.atmosphere.gwt20.shared.Constants;
 import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
+import org.atmosphere.interceptor.BroadcastOnPostAtmosphereInterceptor;
 import org.atmosphere.interceptor.SuspendTrackerInterceptor;
-import org.atmosphere.samples.client.RPCEvent;
 
 import java.util.logging.Logger;
 
@@ -50,34 +47,19 @@ import java.util.logging.Logger;
          * Make sure our {@link AtmosphereResourceEventListener#onSuspend} is only called once for transport
          * that reconnect on every requests.
          */
-        SuspendTrackerInterceptor.class
+        SuspendTrackerInterceptor.class,
+        /**
+         * Deserialize the GWT message
+         */
+        RPCEventDeserializerInterceptor.class,
+        /**
+         * Echo the messages we are receiving from the client either as w WebSocket message or an HTTP Post.
+         */
+        BroadcastOnPostAtmosphereInterceptor.class
 })
 public class ManagedGWTResource {
 
     static final Logger logger = Logger.getLogger("AtmosphereHandler");
-    /**
-     * Another {@link Broadcaster} that will be used to publish data back to the client.
-     */
-    public final Broadcaster connectedUsers;
-
-    public ManagedGWTResource(){
-        connectedUsers = BroadcasterFactory.getDefault().lookup("Connected users", true);
-        connectedUsers.getBroadcasterConfig().addFilter(new BroadcastFilter() {
-            /**
-             * Wrap message inside our {@link RPCEvent}
-             * @param originalMessage the String message
-             * @param message the String message
-             * @return an RPCEvent instance.
-             */
-            @Override
-            public BroadcastAction filter(Object originalMessage, Object message) {
-                RPCEvent e = new RPCEvent();
-                e.setData("User " + message + " connected");
-                return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, e);
-            }
-        });
-    }
-
 
     @Get
     public void get(final AtmosphereResource ar) {
@@ -88,7 +70,9 @@ public class ManagedGWTResource {
             @Override
             public void onSuspend(AtmosphereResourceEvent event) {
                 logger.info("Received RPC GET");
-                connectedUsers.addAtmosphereResource(ar).broadcast(ar.uuid());
+                // Look up a new Broadcaster used for pushing who is connected.
+                BroadcasterFactory.getDefault().lookup("Connected users", true).addAtmosphereResource(ar)
+                        .broadcast("Browser UUID: " + ar.uuid() + " connected.");
             }
 
             @Override
@@ -104,17 +88,10 @@ public class ManagedGWTResource {
         });
     }
 
-    /**
-     * Receive push message from the browser.
-     */
     @Post
-    public void doPost(AtmosphereResource ar) {
-        Object msg = ar.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
-        logger.info("Transport used: " + ar.transport().toString());
-        if (msg != null) {
-            logger.info("received RPC post: " + msg.toString());
-            // Here we lookup the default broadcaster, mapped to the Broadcaster called /GwtRpcDemo/atmosphere/rpc
-            ar.getBroadcaster().broadcast(msg);
-        }
+    public void post(AtmosphereResource r) {
+        // Don't need to do anything, the interceptor took care of it for us.
+        logger.info("POST received with transport + " + r.transport());
     }
+
 }

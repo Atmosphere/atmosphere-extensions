@@ -16,12 +16,13 @@
 package org.atmosphere.gwt20.server;
 
 import com.google.gwt.user.client.rpc.SerializationException;
-import java.io.IOException;
-import java.io.OutputStream;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *
@@ -36,7 +37,8 @@ public class GwtRpcSerializer implements Serializer {
 
     public GwtRpcSerializer(AtmosphereResource resource) {
         this.resource = resource;
-        this.outputEncoding = resource.getResponse().getCharacterEncoding();
+        // https://github.com/Atmosphere/atmosphere/issues/1063
+        this.outputEncoding = resource.getResponse().getCharacterEncoding() == null ? "UTF-8" : resource.getResponse().getCharacterEncoding();
     }
 
     @Override

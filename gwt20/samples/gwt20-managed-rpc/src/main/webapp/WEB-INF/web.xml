@@ -7,17 +7,7 @@
         <description>AtmosphereServlet</description>
         <servlet-name>AtmosphereServlet</servlet-name>
         <servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>
-        <!--<init-param>-->
-            <!--<param-name>org.atmosphere.cpr.AtmosphereInterceptor</param-name>-->
-            <!--<param-value>org.atmosphere.gwt20.server.GwtRpcInterceptor</param-value>-->
-        <!--</init-param>-->
-        <!--<init-param>
-            <param-name>org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        -->
         <load-on-startup>1</load-on-startup>
-        <!--Uncomment if you want to use Servlet 3.0 Async Support-->
         <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>

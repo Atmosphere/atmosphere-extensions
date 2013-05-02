@@ -6,10 +6,6 @@ package org.atmosphere.samples.client;
 
 import java.io.Serializable;
 
-/**
- *
- * @author rinchen tenpel
- */
 public class RPCEvent implements Serializable {
 
     private String data;

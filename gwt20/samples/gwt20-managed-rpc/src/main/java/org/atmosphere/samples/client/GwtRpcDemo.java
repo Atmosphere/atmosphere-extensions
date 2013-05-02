@@ -40,10 +40,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author jotec
- */
 public class GwtRpcDemo implements EntryPoint {
 
     static final Logger logger = Logger.getLogger(GwtRpcDemo.class.getName());

@@ -25,6 +25,7 @@
     </properties>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
         <plugins>
             <plugin>

@@ -18,10 +18,6 @@ package org.atmosphere.samples.client;
 import org.atmosphere.gwt20.client.GwtRpcClientSerializer;
 import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
-/**
- *
- * @author jotec
- */
 @GwtRpcSerialTypes(RPCEvent.class)
 abstract public class RPCSerializer extends GwtRpcClientSerializer {
 }

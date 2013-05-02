@@ -27,6 +27,7 @@
         <module>modules/atmosphere-gwt20-common</module>
         <module>modules/atmosphere-gwt20-server</module>
         <module>modules/atmosphere-gwt20-jackson</module>
+        <module>samples/gwt20-managed-rpc/</module>
         <module>samples/gwt20-rpc/</module>
         <module>samples/gwt20-jersey-rpc</module>
         <module>samples/gwt20-json</module>

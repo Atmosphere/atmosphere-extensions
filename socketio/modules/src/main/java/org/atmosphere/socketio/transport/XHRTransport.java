@@ -15,10 +15,7 @@
  */
 package org.atmosphere.socketio.transport;
 
-import static org.atmosphere.cpr.ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID;
-
-import org.atmosphere.cache.UUIDBroadcasterCache;
-import org.atmosphere.cache.UUIDBroadcasterCache.CacheMessage;
+import org.atmosphere.cache.BroadcastMessage;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereHandler;
@@ -27,7 +24,6 @@ import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 import org.atmosphere.cpr.AtmosphereResponse;
-import org.atmosphere.cpr.BroadcasterCache;
 import org.atmosphere.cpr.DefaultBroadcaster;
 import org.atmosphere.socketio.SocketIOClosedException;
 import org.atmosphere.socketio.SocketIOException;
@@ -35,7 +31,6 @@ import org.atmosphere.socketio.SocketIOPacket;
 import org.atmosphere.socketio.SocketIOSession;
 import org.atmosphere.socketio.SocketIOSessionFactory;
 import org.atmosphere.socketio.SocketIOSessionOutbound;
-import org.atmosphere.socketio.cache.SocketIOBroadcasterCache;
 import org.atmosphere.socketio.cpr.SocketIOAtmosphereHandler;
 import org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
 import org.slf4j.Logger;
@@ -115,7 +110,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                 if (resource != null && DefaultBroadcaster.class.isAssignableFrom(resource.getBroadcaster().getClass())) {
                                     resource.getBroadcaster().getBroadcasterConfig().getBroadcasterCache().
                                             addToCache(resource.getBroadcaster().getID(), resource,
-                                            new BroadcasterCache.Message(msg));
+                                            new BroadcastMessage(msg));
                                 }
                             }
                             break;

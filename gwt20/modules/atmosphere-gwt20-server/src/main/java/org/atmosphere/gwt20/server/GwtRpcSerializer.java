@@ -15,7 +15,6 @@
  */
 package org.atmosphere.gwt20.server;
 
-import org.atmosphere.gwt20.server.GwtRpcUtil;
 import com.google.gwt.user.client.rpc.SerializationException;
 import java.io.IOException;
 import java.io.OutputStream;

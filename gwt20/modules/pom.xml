@@ -11,10 +11,10 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <groupId>org.atmosphere</groupId>
+    <groupId>org.atmosphere.extensions</groupId>
     <artifactId>atmosphere-gwt20</artifactId>
     <packaging>pom</packaging>
-    <name>atmosphere-gw20t</name>
+    <name>atmosphere-gwt20</name>
 
     <description>A fork of gwt-comet project to integrate with Atmosphere</description>
 

@@ -39,6 +39,8 @@ import org.atmosphere.gwt20.client.AtmosphereRequest;
 import org.atmosphere.gwt20.client.AtmosphereRequestConfig;
 import org.atmosphere.gwt20.client.AtmosphereResponse;
 
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Flags;
+
 /**
  *
  * @author jotec

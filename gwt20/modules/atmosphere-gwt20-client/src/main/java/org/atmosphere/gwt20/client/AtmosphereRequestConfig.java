@@ -97,7 +97,6 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         w = new MessageHandlerWrapper(inbound);
         r.setLocalMessageHandlerImpl(w);
         r.setContentType(Constants.GWT_RPC_MEDIA_TYPE + "; charset=UTF-8");
-        r.clearFlags(Flags.enableProtocol);
         r.clearFlags(Flags.dropAtmosphereHeaders);
         r.setOutboundSerializer(outbound);
         return r;

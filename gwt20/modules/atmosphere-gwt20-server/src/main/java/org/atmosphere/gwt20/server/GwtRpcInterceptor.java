@@ -45,6 +45,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
 
         boolean jersey = isHandledByJersey(r);
         // All WebSocket messages needs to use the Constants.GWT_RPC_MEDIA_TYPE for content type.
+        // Here we just force it
         if (!jersey && r.getRequest().getAttribute(X_WEBSOCKET_GWT) != null) {
             r.getRequest().contentType(Constants.GWT_RPC_MEDIA_TYPE);
         }
@@ -67,6 +68,9 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
 
                 String contentType = r.getRequest().getContentType();
                 String charEncoding = r.getRequest().getCharacterEncoding();
+                if (charEncoding == null) {
+                    charEncoding = "UTF-8";
+                }
                 r.getResponse().setContentType(contentType);
                 r.getResponse().setCharacterEncoding(charEncoding);
                 r.setSerializer(new GwtRpcSerializer(r));

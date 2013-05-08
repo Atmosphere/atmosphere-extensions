@@ -15,6 +15,7 @@
  */
 package org.atmosphere.samples.server;
 
+import org.atmosphere.client.TrackMessageSizeInterceptor;
 import org.atmosphere.config.service.Get;
 import org.atmosphere.config.service.ManagedService;
 import org.atmosphere.config.service.Post;
@@ -39,6 +40,10 @@ import java.util.logging.Logger;
          * Handle lifecycle for us
          */
         AtmosphereResourceLifecycleInterceptor.class,
+        /**
+         * Send to the client the size of the message to prevent serialization error.
+         */
+        TrackMessageSizeInterceptor.class,
         /**
          * Serialize/Deserialize GWT message for us
          */

@@ -136,7 +136,7 @@ public class GrizzlyGuiceJerseyTest {
         stopServer();
     }
 
-    @Test(timeOut = 20000)
+    @Test(timeOut = 20000, enabled = false)
     public void testSuspendTimeout() {
         logger.info("running test: testSuspendTimeout");
         AsyncHttpClient c = new AsyncHttpClient();

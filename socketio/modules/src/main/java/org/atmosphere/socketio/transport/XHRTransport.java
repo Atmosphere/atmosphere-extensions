@@ -50,8 +50,8 @@ public abstract class XHRTransport extends AbstractTransport {
     private final int bufferSize;
 
     protected abstract class XHRSessionHelper implements SocketIOSessionOutbound {
-    	private final ReentrantLock lock = new ReentrantLock();
-    	
+        private final ReentrantLock lock = new ReentrantLock();
+
         protected final SocketIOSession session;
         private volatile boolean is_open = false;
         private final boolean isStreamingConnection;
@@ -110,7 +110,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                 if (resource != null && DefaultBroadcaster.class.isAssignableFrom(resource.getBroadcaster().getClass())) {
                                     resource.getBroadcaster().getBroadcasterConfig().getBroadcasterCache().
                                             addToCache(resource.getBroadcaster().getID(), resource,
-                                            new BroadcastMessage(msg));
+                                                    new BroadcastMessage(msg));
                                 }
                             }
                             break;
@@ -187,11 +187,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                     @Override
                                     public void onResume(AtmosphereResourceEvent event) {
                                         if (event.isResumedOnTimeout()) {
-                                            try {
-                                                event.getResource().write(response.getOutputStream(), new SocketIOPacketImpl(PacketType.NOOP).toString());
-                                            } catch (IOException e) {
-                                                logger.trace("", e);
-                                            }
+                                            event.getResource().write(new SocketIOPacketImpl(PacketType.NOOP).toString());
                                         }
                                     }
                                 });
@@ -218,7 +214,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                         } else if (cachedMessages.size() == 1) {
                                             data.append(cachedMessages.get(0));
                                         }
-                                        
+
                                         // something to send ?
                                         if (!data.toString().isEmpty()) {
                                             startSend(response);
@@ -227,17 +223,17 @@ public abstract class XHRTransport extends AbstractTransport {
 
                                             // force a resume, because we sent data
                                             resource.resume();
-                                            
+
                                             resume = true;
                                         }
                                     }
-                                    
+
                                 }
-                                
-                                if(!resume){
-	                                resource.disableSuspend(false);
-	                                resource.suspend(session.getRequestSuspendTime());
-	                                resource.disableSuspend(true);
+
+                                if (!resume) {
+                                    resource.disableSuspend(false);
+                                    resource.suspend(session.getRequestSuspendTime());
+                                    resource.disableSuspend(true);
                                 }
                             }
                         } else {
@@ -270,12 +266,12 @@ public abstract class XHRTransport extends AbstractTransport {
 
                                         // send message on the suspended request
                                         session.onMessage(session.getAtmosphereResourceImpl(), session.getTransportHandler(), msg.getData());
-                                        
+
                                         // send completion flag on the post request
                                         writeData(response, SocketIOPacketImpl.POST_RESPONSE);
 
                                     } else {
-                                    	// send completion flag on the post request
+                                        // send completion flag on the post request
                                         writeData(response, SocketIOPacketImpl.POST_RESPONSE);
                                     }
                                 }
@@ -361,7 +357,7 @@ public abstract class XHRTransport extends AbstractTransport {
 
         AtmosphereRequest request = resource.getRequest();
         AtmosphereResponse response = resource.getResponse();
-        
+
         Object obj = request.getAttribute(SESSION_KEY);
         SocketIOSession session = null;
         String sessionId = null;

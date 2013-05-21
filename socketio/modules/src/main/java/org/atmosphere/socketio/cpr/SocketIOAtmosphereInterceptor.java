@@ -26,7 +26,6 @@ import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 import org.atmosphere.cpr.AtmosphereResponse;
-import org.atmosphere.cpr.FrameworkConfig;
 import org.atmosphere.socketio.SocketIOSession;
 import org.atmosphere.socketio.SocketIOSessionManager;
 import org.atmosphere.socketio.SocketIOSessionOutbound;
@@ -89,7 +88,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
         final AtmosphereRequest request = r.getRequest();
         final AtmosphereResponse response = r.getResponse();
 
-        final AtmosphereHandler atmosphereHandler = (AtmosphereHandler) request.getAttribute(FrameworkConfig.ATMOSPHERE_HANDLER);
+        final AtmosphereHandler atmosphereHandler = r.getAtmosphereHandler();
         try {
             // find the transport
             String path = request.getPathInfo();

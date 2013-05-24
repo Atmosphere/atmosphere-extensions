@@ -3,14 +3,14 @@
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-extension-project</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.1.0.RC2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.atmosphere.extensions</groupId>
     <name>atmosphere-hazelcast-project</name>
     <artifactId>org.atmosphere.extensions.hazelcast</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0.RC2</version>
 
     <packaging>pom</packaging>
     <url>https://github.com/Atmosphere/atmosphere-extensions/hazelcast</url>

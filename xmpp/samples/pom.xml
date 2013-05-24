@@ -19,7 +19,7 @@
                     <overlays>
                         <overlay>
                             <groupId>org.atmosphere.samples</groupId>
-                            <artifactId>atmosphere-jquery-pubsub</artifactId>
+                            <artifactId>atmosphere-jersey-pubsub</artifactId>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>org.atmosphere.samples</groupId>
-            <artifactId>atmosphere-jquery-pubsub</artifactId>
+            <artifactId>atmosphere-jersey-pubsub</artifactId>
             <version>${atmosphere-version}</version>
             <type>war</type>
         </dependency>

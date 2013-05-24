@@ -16,9 +16,11 @@
 package org.atmosphere.samples.server;
 
 import org.atmosphere.client.TrackMessageSizeInterceptor;
+import org.atmosphere.config.service.Disconnect;
 import org.atmosphere.config.service.Get;
 import org.atmosphere.config.service.ManagedService;
 import org.atmosphere.config.service.Post;
+import org.atmosphere.config.service.Ready;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceEvent;
 import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter;
@@ -35,62 +37,55 @@ import java.util.logging.Logger;
  *
  * @author Jeanfrancois Arcand
  */
-@ManagedService(path = "/GwtRpcDemo/atmosphere/rpc", interceptors = {
-        /**
-         * Handle lifecycle for us
-         */
-        AtmosphereResourceLifecycleInterceptor.class,
-        /**
-         * Send to the client the size of the message to prevent serialization error.
-         */
-        TrackMessageSizeInterceptor.class,
-        /**
-         * Serialize/Deserialize GWT message for us
-         */
-        GwtRpcInterceptor.class,
-        /**
-         * Make sure our {@link AtmosphereResourceEventListener#onSuspend} is only called once for transport
-         * that reconnect on every requests.
-         */
-        SuspendTrackerInterceptor.class,
-        /**
-         * Deserialize the GWT message
-         */
-        RPCEventDeserializerInterceptor.class,
-        /**
-         * Echo the messages we are receiving from the client either as w WebSocket message or an HTTP Post.
-         */
-        BroadcastOnPostAtmosphereInterceptor.class
+@ManagedService(path = "/GwtRpcDemo/atmosphere/rpc",
+        interceptors = {
+            /**
+             * Handle lifecycle for us
+             */
+            AtmosphereResourceLifecycleInterceptor.class,
+            /**
+             * Send to the client the size of the message to prevent serialization error.
+             */
+            TrackMessageSizeInterceptor.class,
+            /**
+             * Serialize/Deserialize GWT message for us
+             */
+            GwtRpcInterceptor.class,
+            /**
+             * Make sure our {@link AtmosphereResourceEventListener#onSuspend} is only called once for transport
+             * that reconnect on every requests.
+             */
+            SuspendTrackerInterceptor.class,
+            /**
+             * Deserialize the GWT message
+             */
+            RPCEventDeserializerInterceptor.class,
+            /**
+             * Echo the messages we are receiving from the client either as w WebSocket message or an HTTP Post.
+             */
+            BroadcastOnPostAtmosphereInterceptor.class
 })
 public class ManagedGWTResource {
 
     static final Logger logger = Logger.getLogger("AtmosphereHandler");
 
-    @Get
-    public void get(final AtmosphereResource ar) {
-        /**
-         * For demonstration purpose, we add callback for when the client connect and disconnect.
-         */
-        ar.addEventListener(new AtmosphereResourceEventListenerAdapter() {
-            @Override
-            public void onSuspend(AtmosphereResourceEvent event) {
-                logger.info("Received RPC GET");
-                // Look up a new Broadcaster used for pushing who is connected.
-                BroadcasterFactory.getDefault().lookup("Connected users", true).addAtmosphereResource(ar)
-                        .broadcast("Browser UUID: " + ar.uuid() + " connected.");
-            }
+    @Ready
+    public void onReady(final AtmosphereResource r) {
+        logger.info("Received RPC GET");
+        // Look up a new Broadcaster used for pushing who is connected.
+        BroadcasterFactory.getDefault().lookup("Connected users", true).addAtmosphereResource(r)
+                .broadcast("Browser UUID: " + r.uuid() + " connected.");
+    }
 
-            @Override
-            public void onDisconnect(AtmosphereResourceEvent event) {
-                // isCancelled == true. means the client didn't send the close event, so an unexpected network glitch or browser
-                // crash occurred.
-                if (event.isCancelled()) {
-                    logger.info("User:" + event.getResource().uuid() + " unexpectedly disconnected");
-                } else if (event.isClosedByClient()) {
-                    logger.info("User:" + event.getResource().uuid() + " closed the connection");
-                }
-            }
-        });
+    @Disconnect
+    public void disconnected(AtmosphereResourceEvent event){
+        // isCancelled == true. means the client didn't send the close event, so an unexpected network glitch or browser
+        // crash occurred.
+        if (event.isCancelled()) {
+            logger.info("User:" + event.getResource().uuid() + " unexpectedly disconnected");
+        } else if (event.isClosedByClient()) {
+            logger.info("User:" + event.getResource().uuid() + " closed the connection");
+        }
     }
 
     @Post

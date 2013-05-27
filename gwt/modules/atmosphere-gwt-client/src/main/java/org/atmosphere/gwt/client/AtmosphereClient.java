@@ -97,6 +97,7 @@ public class AtmosphereClient implements UserInterface {
     private int connectionTimeout = 10000;
     private int reconnectionTimeout = 1000;
     private int reconnectionCount = -1;
+    private boolean reconnectOnError = false;
 
     private boolean webSocketsEnabled = false;
 
@@ -205,6 +206,19 @@ public class AtmosphereClient implements UserInterface {
     public void setReconnectionCount(int reconnectionCount) {
         this.reconnectionCount = reconnectionCount;
     }
+
+    public boolean isReconnectOnError() {
+       return reconnectOnError;
+    }
+
+    /* If enabled the client will try to use the reconnect algorithm
+     * when an error occurs.
+     * @see #setReconnectionTimeout(int)
+     */
+    public void setReconnectOnError(boolean reconnectOnError) {
+       this.reconnectOnError = reconnectOnError;
+    }
+
 
     /**
      * This is true between {@link #start() } and {@link #stop() }
@@ -505,6 +519,13 @@ public class AtmosphereClient implements UserInterface {
         }
 
         listener.onError(exception, connected);
+        
+        
+        if (running && reconnectOnError) {
+            scheduleConnect(transport);
+        } else {
+           stop();
+        }
     }
 
     private void doOnMessage(List<?> messages, CometClientTransportWrapper transport) {

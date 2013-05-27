@@ -197,6 +197,8 @@ public class GWTDemo implements EntryPoint {
         // set a small length parameter to force refreshes
         // normally you should remove the length parameter
         client = new AtmosphereClient(GWT.getModuleBaseURL() + "gwtComet", serializer, cometListener);
+        // set this to true if you want the client to try and reconnect when an error occurs
+//        client.setReconnectOnError(true); 
         client.start();
     }
 

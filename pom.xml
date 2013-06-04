@@ -265,6 +265,7 @@
         <module>cometd/</module>
         <module>gwt/</module>
 		<module>gwt20/</module>
+        <module>rmi</module>
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

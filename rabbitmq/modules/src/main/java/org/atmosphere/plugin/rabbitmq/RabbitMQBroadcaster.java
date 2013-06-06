@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 /**
  * Simple {@link org.atmosphere.cpr.Broadcaster} implementation based on RabbitMQ
@@ -43,6 +44,8 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
     public static final String PARAM_USER = RabbitMQBroadcaster.class.getName() + ".user";
     public static final String PARAM_PASS = RabbitMQBroadcaster.class.getName() + ".password";
     public static final String PARAM_EXCHANGE_TYPE = RabbitMQBroadcaster.class.getName() + ".exchange";
+    public static final String PARAM_VHOST = RabbitMQBroadcaster.class.getName() + ".vhost";
+    public static final String PARAM_PORT = RabbitMQBroadcaster.class.getName() + ".port";
 
     private final String exchangeName;
     private final ConnectionFactory connectionFactory;
@@ -63,10 +66,40 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
             exchange = "fanout";
         }
 
+        String host = config.getInitParameter(PARAM_HOST);
+        if (host == null) {
+            host = "127.0.0.1";
+        }
+
+        String vhost = config.getInitParameter(PARAM_VHOST);
+        if (vhost == null) {
+            vhost = "/";
+        }
+
+        String user = config.getInitParameter(PARAM_USER);
+        if (user == null) {
+            user = "guest";
+        }
+
+        String port = config.getInitParameter(PARAM_PORT);
+        if (port == null) {
+            port = "5672";
+        }
+
+        String password = config.getInitParameter(PARAM_PASS);
+        if (password == null) {
+            password = "guest";
+        }
+
         exchangeName = "atmosphere." + exchange + "." + id;
         try {
             logger.debug("Create Connection Factory");
             connectionFactory = new ConnectionFactory();
+            connectionFactory.setUsername(user);
+            connectionFactory.setPassword(password);
+            connectionFactory.setVirtualHost(vhost);
+            connectionFactory.setHost(host);
+            connectionFactory.setPort(Integer.valueOf(port));
 
             logger.debug("Try to acquire a connection ...");
             connection = connectionFactory.newConnection(getBroadcasterConfig().getExecutorService());
@@ -98,7 +131,6 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
 
     @Override
     public void incomingBroadcast() {
-        logger.debug("Incoming broadcast");
     }
 
     @Override
@@ -167,21 +199,28 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
     }
 
     /**
-     * Close all related JMS factory, connection, etc.
+     * TODO: Crazy RabbitMQ client lock out on close.
      */
     @Override
     public synchronized void releaseExternalResources() {
-        try {
-            if (channel != null && channel.isOpen()) {
-                if (consumerTag != null) {
-                    channel.basicCancel(consumerTag);
+        Executors.newSingleThreadExecutor().submit(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    if (channel != null && channel.isOpen()) {
+                        if (consumerTag != null) {
+                            channel.basicCancel(consumerTag);
+                        }
+                        channel.close();
+                    }
+                    connection.close();
+                } catch (Throwable ex) {
+                    logger.warn("releaseExternalResources", ex);
                 }
-                channel.close();
             }
-            connection.close();
-        } catch (Throwable ex) {
-            logger.warn("releaseExternalResources", ex);
-        }
+        });
+
     }
 
 }

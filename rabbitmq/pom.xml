@@ -16,6 +16,6 @@
     <url>https://github.com/Atmosphere/atmosphere-extensions/rabbitmq</url>
     <modules>
         <module>modules</module>
-        <!--<module>samples</module>-->
+        <module>samples/jersey-pubsub</module>
     </modules>
 </project>

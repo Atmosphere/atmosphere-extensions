@@ -23,12 +23,16 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.MessageProperties;
 import org.atmosphere.cpr.AtmosphereConfig;
-import org.atmosphere.util.AbstractBroadcasterProxy;
+import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.BroadcasterFuture;
+import org.atmosphere.cpr.Entry;
+import org.atmosphere.util.SimpleBroadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.Executors;
+import java.util.Set;
+import java.util.concurrent.Future;
 
 /**
  * Simple {@link org.atmosphere.cpr.Broadcaster} implementation based on RabbitMQ
@@ -36,7 +40,7 @@ import java.util.concurrent.Executors;
  * @author Thibault Normand
  * @author Jean-Francois Arcand
  */
-public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
+public class RabbitMQBroadcaster extends SimpleBroadcaster {
 
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQBroadcaster.class);
 
@@ -57,7 +61,7 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
     private String consumerTag;
 
     public RabbitMQBroadcaster(String id, AtmosphereConfig config) {
-        super(id, null, config);
+        super(id, config);
 
         String s = config.getInitParameter(PARAM_EXCHANGE_TYPE);
         if (s != null) {
@@ -102,7 +106,7 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
             connectionFactory.setPort(Integer.valueOf(port));
 
             logger.debug("Try to acquire a connection ...");
-            connection = connectionFactory.newConnection(getBroadcasterConfig().getExecutorService());
+            connection = connectionFactory.newConnection();
             channel = connection.createChannel();
 
             logger.debug("Topic creation '{}'...", exchangeName);
@@ -129,11 +133,72 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void incomingBroadcast() {
+    public Future<Object> broadcast(Object msg) {
+
+        if (destroyed.get()) {
+            logger.warn("This Broadcaster has been destroyed and cannot be used");
+            return futureDone(msg);
+        }
+
+        start();
+
+        Object newMsg = filter(msg);
+        if (newMsg == null) return null;
+        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, this);
+        entryDone(f);
+
+        outgoingBroadcast(msg);
+        return f;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
+    public Future<Object> broadcast(Object msg, AtmosphereResource r) {
+
+        if (destroyed.get()) {
+            logger.warn("This Broadcaster has been destroyed and cannot be used");
+            return futureDone(msg);
+        }
+
+        start();
+
+        Object newMsg = filter(msg);
+        if (newMsg == null) return null;
+        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, this);
+        entryDone(f);
+
+        outgoingBroadcast(msg);
+        return f;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Future<Object> broadcast(Object msg, Set<AtmosphereResource> subset) {
+
+        if (destroyed.get()) {
+            logger.warn("This Broadcaster has been destroyed and cannot be used");
+            return futureDone(msg);
+        }
+
+        start();
+
+        Object newMsg = filter(msg);
+        if (newMsg == null) return null;
+
+        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, this);
+        entryDone(f);
+        outgoingBroadcast(msg);
+        return f;
+    }
+
     public void outgoingBroadcast(Object message) {
         try {
             String id = getID();
@@ -180,10 +245,15 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
                                            AMQP.BasicProperties properties,
                                            byte[] body)
                         throws IOException {
+                    String message = new String(body);
                     try {
-                        broadcastReceivedMessage(new String(body));
-                    } catch (Exception ex) {
-                        logger.warn("Failed to broadcast message", ex);
+                        Object newMsg = filter(message);
+                        // if newSgw == null, that means the message has been filtered.
+                        if (newMsg != null) {
+                            push(new Entry(newMsg, new BroadcasterFuture<Object>(newMsg, RabbitMQBroadcaster.this), message));
+                        }
+                    } catch (Throwable t) {
+                        logger.error("failed to push message: " + message, t);
                     }
                 }
             };
@@ -203,23 +273,18 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
      */
     @Override
     public synchronized void releaseExternalResources() {
-        Executors.newSingleThreadExecutor().submit(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    if (channel != null && channel.isOpen()) {
-                        if (consumerTag != null) {
-                            channel.basicCancel(consumerTag);
-                        }
-                        channel.close();
-                    }
-                    connection.close();
-                } catch (Throwable ex) {
-                    logger.warn("releaseExternalResources", ex);
+        try {
+            if (channel != null && channel.isOpen()) {
+                if (consumerTag != null) {
+                    channel.basicCancel(consumerTag);
                 }
+                channel.close();
             }
-        });
+            connection.close();
+        } catch (Exception ex) {
+            logger.trace("", ex);
+        }
+
 
     }
 

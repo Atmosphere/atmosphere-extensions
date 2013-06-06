@@ -95,7 +95,7 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
             password = "guest";
         }
 
-        exchangeName = "atmosphere." + exchange + "." + id;
+        exchangeName = "atmosphere." + exchange;
         try {
             logger.debug("Create Connection Factory");
             connectionFactory = new ConnectionFactory();

@@ -33,6 +33,7 @@ import java.io.IOException;
  * Simple {@link org.atmosphere.cpr.Broadcaster} implementation based on RabbitMQ
  *
  * @author Thibault Normand
+ * @author Jean-Francois Arcand
  */
 public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
 
@@ -62,17 +63,17 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
             exchange = "fanout";
         }
 
-        exchangeName = "atmosphere." + exchange;
+        exchangeName = "atmosphere." + exchange + "." + id;
         try {
-            logger.info("Create Connection Factory");
+            logger.debug("Create Connection Factory");
             connectionFactory = new ConnectionFactory();
 
-            logger.info("Try to acquire a connection ...");
-            connection = connectionFactory.newConnection();
+            logger.debug("Try to acquire a connection ...");
+            connection = connectionFactory.newConnection(getBroadcasterConfig().getExecutorService());
             channel = connection.createChannel();
 
-            logger.info("Topic creation '{}'...", exchangeName);
-            channel.exchangeDeclare(exchangeName, "topic");
+            logger.debug("Topic creation '{}'...", exchangeName);
+            channel.exchangeDeclare(exchangeName, exchange);
         } catch (Exception e) {
             String msg = "Unable to configure RabbitMQBroadcaster";
             logger.error(msg, e);

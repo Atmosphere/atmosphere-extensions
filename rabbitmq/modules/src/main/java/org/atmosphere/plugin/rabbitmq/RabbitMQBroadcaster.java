@@ -15,7 +15,13 @@
  */
 package org.atmosphere.plugin.rabbitmq;
 
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.MessageProperties;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.slf4j.Logger;
@@ -35,21 +41,28 @@ public class RabbitMQBroadcaster extends AbstractBroadcasterProxy {
     public static final String PARAM_HOST = RabbitMQBroadcaster.class.getName() + ".host";
     public static final String PARAM_USER = RabbitMQBroadcaster.class.getName() + ".user";
     public static final String PARAM_PASS = RabbitMQBroadcaster.class.getName() + ".password";
+    public static final String PARAM_EXCHANGE_TYPE = RabbitMQBroadcaster.class.getName() + ".exchange";
 
-    private String exchangeName = "atmosphere.topic";
-    private ConnectionFactory connectionFactory;
-    private Connection connection;
-    private Channel channel;
+    private final String exchangeName;
+    private final ConnectionFactory connectionFactory;
+    private final Connection connection;
+    private final Channel channel;
+    private final String exchange;
 
     private String queueName;
     private String consumerTag;
 
     public RabbitMQBroadcaster(String id, AtmosphereConfig config) {
         super(id, null, config);
-        setUp(id);
-    }
 
-    private void setUp(String id) {
+        String s = config.getInitParameter(PARAM_EXCHANGE_TYPE);
+        if (s != null) {
+            exchange = s;
+        } else {
+            exchange = "fanout";
+        }
+
+        exchangeName = "atmosphere." + exchange;
         try {
             logger.info("Create Connection Factory");
             connectionFactory = new ConnectionFactory();

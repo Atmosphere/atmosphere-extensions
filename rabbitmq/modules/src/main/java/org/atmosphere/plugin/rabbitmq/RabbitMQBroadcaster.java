@@ -17,13 +17,10 @@ package org.atmosphere.plugin.rabbitmq;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.MessageProperties;
 import org.atmosphere.cpr.AtmosphereConfig;
-import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.BroadcasterFuture;
 import org.atmosphere.cpr.Entry;
 import org.atmosphere.util.SimpleBroadcaster;
@@ -31,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.Future;
 
 /**
  * Simple {@link org.atmosphere.cpr.Broadcaster} implementation based on RabbitMQ
@@ -44,78 +39,17 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
 
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQBroadcaster.class);
 
-    public static final String PARAM_HOST = RabbitMQBroadcaster.class.getName() + ".host";
-    public static final String PARAM_USER = RabbitMQBroadcaster.class.getName() + ".user";
-    public static final String PARAM_PASS = RabbitMQBroadcaster.class.getName() + ".password";
-    public static final String PARAM_EXCHANGE_TYPE = RabbitMQBroadcaster.class.getName() + ".exchange";
-    public static final String PARAM_VHOST = RabbitMQBroadcaster.class.getName() + ".vhost";
-    public static final String PARAM_PORT = RabbitMQBroadcaster.class.getName() + ".port";
-
-    private final String exchangeName;
-    private final ConnectionFactory connectionFactory;
-    private final Connection connection;
-    private final Channel channel;
-    private final String exchange;
-
     private String queueName;
     private String consumerTag;
+    private final RabbitMQConnectionFactory factory;
+    private final Channel channel;
+    private final String exchangeName;
 
     public RabbitMQBroadcaster(String id, AtmosphereConfig config) {
         super(id, config);
-
-        String s = config.getInitParameter(PARAM_EXCHANGE_TYPE);
-        if (s != null) {
-            exchange = s;
-        } else {
-            exchange = "fanout";
-        }
-
-        String host = config.getInitParameter(PARAM_HOST);
-        if (host == null) {
-            host = "127.0.0.1";
-        }
-
-        String vhost = config.getInitParameter(PARAM_VHOST);
-        if (vhost == null) {
-            vhost = "/";
-        }
-
-        String user = config.getInitParameter(PARAM_USER);
-        if (user == null) {
-            user = "guest";
-        }
-
-        String port = config.getInitParameter(PARAM_PORT);
-        if (port == null) {
-            port = "5672";
-        }
-
-        String password = config.getInitParameter(PARAM_PASS);
-        if (password == null) {
-            password = "guest";
-        }
-
-        exchangeName = "atmosphere." + exchange;
-        try {
-            logger.debug("Create Connection Factory");
-            connectionFactory = new ConnectionFactory();
-            connectionFactory.setUsername(user);
-            connectionFactory.setPassword(password);
-            connectionFactory.setVirtualHost(vhost);
-            connectionFactory.setHost(host);
-            connectionFactory.setPort(Integer.valueOf(port));
-
-            logger.debug("Try to acquire a connection ...");
-            connection = connectionFactory.newConnection();
-            channel = connection.createChannel();
-
-            logger.debug("Topic creation '{}'...", exchangeName);
-            channel.exchangeDeclare(exchangeName, exchange);
-        } catch (Exception e) {
-            String msg = "Unable to configure RabbitMQBroadcaster";
-            logger.error(msg, e);
-            throw new RuntimeException(msg, e);
-        }
+        factory = RabbitMQConnectionFactory.getFactory(config);
+        channel = factory.channel();
+        exchangeName = factory.exchangeName();
     }
 
     @Override
@@ -133,77 +67,20 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
         return id;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Future<Object> broadcast(Object msg) {
-
+    protected void push(Entry entry) {
         if (destroyed.get()) {
-            logger.warn("This Broadcaster has been destroyed and cannot be used");
-            return futureDone(msg);
+            return;
         }
 
-        start();
-
-        Object newMsg = filter(msg);
-        if (newMsg == null) return null;
-        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, this);
-        entryDone(f);
-
-        outgoingBroadcast(msg);
-        return f;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Object> broadcast(Object msg, AtmosphereResource r) {
-
-        if (destroyed.get()) {
-            logger.warn("This Broadcaster has been destroyed and cannot be used");
-            return futureDone(msg);
-        }
-
-        start();
-
-        Object newMsg = filter(msg);
-        if (newMsg == null) return null;
-        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, this);
-        entryDone(f);
-
-        outgoingBroadcast(msg);
-        return f;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Future<Object> broadcast(Object msg, Set<AtmosphereResource> subset) {
-
-        if (destroyed.get()) {
-            logger.warn("This Broadcaster has been destroyed and cannot be used");
-            return futureDone(msg);
-        }
-
-        start();
-
-        Object newMsg = filter(msg);
-        if (newMsg == null) return null;
-
-        BroadcasterFuture<Object> f = new BroadcasterFuture<Object>(newMsg, this);
-        entryDone(f);
-        outgoingBroadcast(msg);
-        return f;
+        outgoingBroadcast(entry.message);
     }
 
     public void outgoingBroadcast(Object message) {
         try {
             String id = getID();
             if (message instanceof String) {
-                logger.debug("Outgoing broadcast : {}", message);
+                logger.trace("Outgoing broadcast : {}", message);
 
                 channel.basicPublish(exchangeName, id,
                         MessageProperties.PERSISTENT_TEXT_PLAIN, message.toString().getBytes());
@@ -218,7 +95,7 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
 
     void restartConsumer() {
         try {
-            String id = getID();
+            final String id = getID();
 
             if (consumerTag != null) {
                 logger.debug("Delete consumer {}", consumerTag);
@@ -245,12 +122,16 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
                                            AMQP.BasicProperties properties,
                                            byte[] body)
                         throws IOException {
+
+                    // Not for us.
+                    if (!envelope.getRoutingKey().equalsIgnoreCase(id)) return;
+
                     String message = new String(body);
                     try {
                         Object newMsg = filter(message);
                         // if newSgw == null, that means the message has been filtered.
                         if (newMsg != null) {
-                            push(new Entry(newMsg, new BroadcasterFuture<Object>(newMsg, RabbitMQBroadcaster.this), message));
+                            deliverPush(new Entry(newMsg, new BroadcasterFuture<Object>(newMsg, RabbitMQBroadcaster.this), message), true);
                         }
                     } catch (Throwable t) {
                         logger.error("failed to push message: " + message, t);
@@ -268,9 +149,6 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
         }
     }
 
-    /**
-     * TODO: Crazy RabbitMQ client lock out on close.
-     */
     @Override
     public synchronized void releaseExternalResources() {
         try {
@@ -278,14 +156,10 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
                 if (consumerTag != null) {
                     channel.basicCancel(consumerTag);
                 }
-                channel.close();
             }
-            connection.close();
         } catch (Exception ex) {
             logger.trace("", ex);
         }
-
-
     }
 
 }

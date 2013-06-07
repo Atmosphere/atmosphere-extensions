@@ -54,7 +54,7 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
         if (s != null) {
             exchange = s;
         } else {
-            exchange = "fanout";
+            exchange = "topic";
         }
 
         String host = config.getInitParameter(PARAM_HOST);

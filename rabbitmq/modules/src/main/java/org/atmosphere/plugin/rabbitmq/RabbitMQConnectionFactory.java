@@ -30,7 +30,7 @@ import java.io.IOException;
  * @author Thibault Normand
  * @author Jean-Francois Arcand
  */
-public class RabbitMQConnectionFactory {
+public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQBroadcaster.class);
 
     private static RabbitMQConnectionFactory factory;
@@ -103,6 +103,7 @@ public class RabbitMQConnectionFactory {
             logger.error(msg, e);
             throw new RuntimeException(msg, e);
         }
+        config.shutdownHook(this);
     }
 
     public final static RabbitMQConnectionFactory getFactory(AtmosphereConfig config) {
@@ -121,7 +122,8 @@ public class RabbitMQConnectionFactory {
         return channel;
     }
 
-    public void close() {
+    @Override
+    public void shutdown() {
         try {
             channel.close();
             connection.close();

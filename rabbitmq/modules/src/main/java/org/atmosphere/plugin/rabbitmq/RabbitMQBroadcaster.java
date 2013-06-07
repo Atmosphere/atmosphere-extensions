@@ -161,5 +161,4 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
             logger.trace("", ex);
         }
     }
-
 }

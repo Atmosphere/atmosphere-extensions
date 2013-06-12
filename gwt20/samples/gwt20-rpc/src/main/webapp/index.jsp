@@ -11,15 +11,7 @@
         <!-- be added before this line.                -->
         <!--                                           -->
         
-        <!-- include the following scripts if using the atmosphere-javascript module
-        <script type="text/javascript" language="javascript" src="javascript/portal-1.0rc1.js"></script>
         <script type="text/javascript" language="javascript" src="javascript/atmosphere.js"></script>
-        end of includes for atmoshere-javascript -->
-        
-        <!-- include the following scripts if using the atmosphere-jquery module -->
-        <script type="text/javascript" language="javascript" src="jquery/jquery-1.9.0.js"></script>
-        <script type="text/javascript" language="javascript" src="jquery/jquery.atmosphere.js"></script>
-        <!-- end of includes for atmoshere-jquery -->
         
         <script type="text/javascript" language="javascript" src="GwtRpcDemo/GwtRpcDemo.nocache.js"></script>
         

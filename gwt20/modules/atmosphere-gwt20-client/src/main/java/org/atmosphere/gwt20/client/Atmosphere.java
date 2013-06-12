@@ -24,7 +24,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 public final class Atmosphere extends JavaScriptObject {
  
     public static native Atmosphere create() /*-{
-        return $wnd.jQuery.atmosphere;
+        return $wnd.atmosphere;
     }-*/;
     
     public AtmosphereRequest subscribe(AtmosphereRequestConfig requestConfig) {

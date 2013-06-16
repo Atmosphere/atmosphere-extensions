@@ -152,9 +152,9 @@
             <version>${atmosphere-version}</version>
         </dependency>
         <dependency>
-            <groupId>org.atmosphere</groupId>
-            <artifactId>atmosphere-jquery</artifactId>
-            <version>${atmosphere-version}</version>
+            <groupId>org.atmosphere.client</groupId>
+            <artifactId>jquery</artifactId>
+            <version>${javascript-version}</version>
             <type>war</type>
         </dependency>
     </dependencies>

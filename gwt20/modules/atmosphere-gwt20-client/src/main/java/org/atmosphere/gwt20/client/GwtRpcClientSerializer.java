@@ -74,32 +74,37 @@ public abstract class GwtRpcClientSerializer implements ClientSerializer {
 
     // buffer in order to capture split messages
     private StringBuffer buffer = new StringBuffer(16100);
-
+    // TODO: Revisit with Pierre. The bracket logic is wrong.
+    private boolean enableBuffering = false;
 
     @Override
     public Object deserialize(String raw) throws SerializationException {
 
-        buffer.append(raw);
-
-        // split up in different parts - based on the []
-        // this is necessary because multiple objects can be chunked in one single string
-        int brackets = 0;
-        int start = 0;
         List<String> messages = new ArrayList<String>();
-        for (int i = 0; i < buffer.length(); i++) {
+        if (enableBuffering) {
+            buffer.append(raw);
 
-            // detect brackets
-            if (buffer.charAt(i) == '[') {
-                ++brackets;
-            } else if (buffer.charAt(i) == ']') --brackets;
+            // split up in different parts - based on the []
+            // this is necessary because multiple objects can be chunked in one single string
+            int brackets = 0;
+            int start = 0;
+            for (int i = 0; i < buffer.length(); i++) {
 
-            // new message
-            if (brackets == 0) {
-                messages.add(buffer.substring(start, i + 1));
-                start = i + 1;
+                // detect brackets
+                if (buffer.charAt(i) == '[') {
+                    ++brackets;
+                } else if (buffer.charAt(i) == ']') --brackets;
+
+                // new message
+                if (brackets == 0) {
+                    messages.add(buffer.substring(start, i + 1));
+                    start = i + 1;
+                }
             }
+            buffer.delete(0, start);
+        } else {
+            messages.add(raw);
         }
-        buffer.delete(0, start);
 
         // create the objects
         List<Object> objects = new ArrayList<Object>(messages.size());
@@ -112,10 +117,6 @@ public abstract class GwtRpcClientSerializer implements ClientSerializer {
             } catch (RuntimeException e) {
                 throw new SerializationException(e);
             }
-        }
-
-        if (objects.isEmpty()) {
-            logger.fine("No object decoded for " + raw);
         }
 
         return objects;
@@ -136,5 +137,18 @@ public abstract class GwtRpcClientSerializer implements ClientSerializer {
     }
 
     protected abstract Serializer getRPCSerializer();
+
+
+    public boolean isEnableBuffering() {
+        return enableBuffering;
+    }
+
+    /**
+     * Set to true to enable multiple objects chunked in one single string parsing.
+     * @param enableBuffering true to enable multiple objects chunked in one single string parsing.
+     */
+    public void setEnableBuffering(boolean enableBuffering) {
+        this.enableBuffering = enableBuffering;
+    }
 
 }

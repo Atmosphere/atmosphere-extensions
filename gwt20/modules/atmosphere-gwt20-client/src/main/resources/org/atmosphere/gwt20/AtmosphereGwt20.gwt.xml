@@ -15,7 +15,6 @@
     <inherits name="com.google.gwt.user.User"/>
     <inherits name="com.google.gwt.rpc.RPC"/>
     <inherits name="com.google.web.bindery.autobean.AutoBean"/>
-    <inherits name="com.google.gwt.logging.Logging"/>
     
     <generate-with class="org.atmosphere.gwt20.rebind.SerializerGenerator">
         <when-type-assignable class="org.atmosphere.gwt20.client.GwtRpcClientSerializer"/>

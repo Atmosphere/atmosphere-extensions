@@ -16,6 +16,21 @@
     <dependencies>
         <dependency>
             <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-compat-jbossweb</artifactId>
+            <version>${compat-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-compat-tomcat</artifactId>
+            <version>${compat-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.atmosphere</groupId>
+            <artifactId>atmosphere-compat-tomcat7</artifactId>
+            <version>${compat-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jersey</artifactId>
             <version>${atmosphere-version}</version>
         </dependency>

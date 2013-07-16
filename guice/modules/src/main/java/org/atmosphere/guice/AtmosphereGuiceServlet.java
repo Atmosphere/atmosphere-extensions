@@ -21,11 +21,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
-import org.atmosphere.cpr.AtmosphereServlet;
-import org.atmosphere.cpr.DefaultBroadcasterFactory;
-import org.atmosphere.cpr.FrameworkConfig;
+import org.atmosphere.cpr.AtmosphereNativeCometServlet;
 import org.atmosphere.handler.ReflectorServletProcessor;
-import org.atmosphere.jersey.JerseyBroadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +30,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.util.Map;
 
+import static org.atmosphere.cpr.FrameworkConfig.JERSEY_BROADCASTER;
 import static org.atmosphere.cpr.FrameworkConfig.JERSEY_CONTAINER;
 
 /**
@@ -79,7 +77,7 @@ import static org.atmosphere.cpr.FrameworkConfig.JERSEY_CONTAINER;
  * }
  * </code></blockquote>
  */
-public class AtmosphereGuiceServlet extends AtmosphereServlet {
+public class AtmosphereGuiceServlet extends AtmosphereNativeCometServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(AtmosphereGuiceServlet.class);
     public static final String JERSEY_PROPERTIES = AtmosphereGuiceServlet.class.getName() + ".properties";
@@ -119,6 +117,7 @@ public class AtmosphereGuiceServlet extends AtmosphereServlet {
              * @return true if Jersey classes are detected
              */
             protected boolean detectSupportedFramework(ServletConfig sc) {
+                configureBroadcasterFactory();
                 Injector injector = (Injector) framework().getAtmosphereConfig().getServletContext().getAttribute(Injector.class.getName());
                 GuiceContainer guiceServlet = injector.getInstance(GuiceContainer.class);
 
@@ -128,7 +127,7 @@ public class AtmosphereGuiceServlet extends AtmosphereServlet {
                 boolean isJersey = false;
                 try {
                     Thread.currentThread().getContextClassLoader().loadClass(JERSEY_CONTAINER);
-                    setDefaultBroadcasterClassName(broadcasterClassName)
+                    setDefaultBroadcasterClassName(lookupDefaultBroadcasterType(JERSEY_BROADCASTER))
                             .setUseStreamForFlushingComments(true)
                             .getAtmosphereConfig().setSupportSession(false);
                     isJersey = true;

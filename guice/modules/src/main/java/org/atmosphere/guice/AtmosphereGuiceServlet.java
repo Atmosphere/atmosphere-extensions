@@ -21,7 +21,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
-import org.atmosphere.cpr.AtmosphereNativeCometServlet;
+import org.atmosphere.cpr.AtmosphereServlet;
 import org.atmosphere.handler.ReflectorServletProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ import static org.atmosphere.cpr.FrameworkConfig.JERSEY_CONTAINER;
  * }
  * </code></blockquote>
  */
-public class AtmosphereGuiceServlet extends AtmosphereNativeCometServlet {
+public class AtmosphereGuiceServlet extends AtmosphereServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(AtmosphereGuiceServlet.class);
     public static final String JERSEY_PROPERTIES = AtmosphereGuiceServlet.class.getName() + ".properties";

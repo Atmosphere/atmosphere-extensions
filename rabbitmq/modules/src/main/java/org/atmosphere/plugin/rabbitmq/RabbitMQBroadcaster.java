@@ -131,7 +131,7 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
                         Object newMsg = filter(message);
                         // if newSgw == null, that means the message has been filtered.
                         if (newMsg != null) {
-                            deliverPush(new Entry(newMsg, new BroadcasterFuture<Object>(newMsg, RabbitMQBroadcaster.this), message), true);
+                            deliverPush(new Entry(newMsg, new BroadcasterFuture<Object>(newMsg), message), true);
                         }
                     } catch (Throwable t) {
                         logger.error("failed to push message: " + message, t);

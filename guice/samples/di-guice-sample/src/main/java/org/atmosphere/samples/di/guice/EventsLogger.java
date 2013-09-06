@@ -80,4 +80,9 @@ public class EventsLogger implements AtmosphereResourceEventListener {
                 event.getResource().getRequest().getRemotePort(), event.throwable());
     }
 
+    @Override
+    public void onClose(AtmosphereResourceEvent event) {
+
+    }
+
 }

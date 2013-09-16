@@ -267,7 +267,7 @@
         <!-- Deprecated - Use 1.1.0.RC5
         <module>gwt/</module>
         -->
-		<module>gwt20/modules</module>
+		<module>gwt20</module>
         <module>rmi/modules</module>
     </modules>
     <reporting>

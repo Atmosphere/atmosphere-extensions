@@ -20,6 +20,7 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jersey</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.extensions</groupId>

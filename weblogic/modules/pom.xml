@@ -56,6 +56,7 @@
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-runtime</artifactId>
             <version>${atmosphere-version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

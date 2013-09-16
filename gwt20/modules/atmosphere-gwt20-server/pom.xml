@@ -24,6 +24,7 @@
         <dependency>
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-runtime</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.atmosphere.extensions</groupId>

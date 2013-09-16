@@ -18,6 +18,7 @@
             <groupId>org.atmosphere</groupId>
             <artifactId>atmosphere-jersey</artifactId>
             <version>${atmosphere-version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>

@@ -35,7 +35,7 @@
     <mailingLists>
         <mailingList>
             <name>atmosphere Dev List</name>
-            <archive>dev@github.com/Atmosphere/atmosphere</archive>
+            <archive>dev@github.com/Atmosphere/atmosphere-extensions/issues</archive>
         </mailingList>
         <mailingList>
             <name>atmosphere Support List</name>
@@ -253,22 +253,22 @@
     </profiles>
 
     <modules>
-        <module>rabbitmq</module>
-        <module>guice/</module>
-        <module>spring/</module>
-        <module>jgroups/</module>
-        <module>jms/</module>
-        <module>redis/</module>
-        <module>xmpp/</module>
-        <module>hazelcast/</module>
-        <module>weblogic/</module>
-        <module>socketio/</module>
-        <module>cometd/</module>
+        <module>rabbitmq/modules</module>
+        <module>guice/modules</module>
+        <module>spring/modules</module>
+        <module>jgroups/modules</module>
+        <module>jms/modules</module>
+        <module>redis/modules</module>
+        <module>xmpp/modules</module>
+        <module>hazelcast/modules</module>
+        <module>weblogic/modules</module>
+        <module>socketio/modules</module>
+        <module>cometd/modules</module>
         <!-- Deprecated - Use 1.1.0.RC5
         <module>gwt/</module>
         -->
-		<module>gwt20/</module>
-        <module>rmi</module>
+		<module>gwt20/modules</module>
+        <module>rmi/modules</module>
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

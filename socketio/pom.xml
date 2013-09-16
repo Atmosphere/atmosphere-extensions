@@ -3,20 +3,18 @@
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-extension-project</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.atmosphere.extensions</groupId>
     <name>atmosphere-socketio-project</name>
     <artifactId>org.atmosphere.extensions.socketio</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
     <url>https://github.com/Atmosphere/atmosphere-extensions/socketio</url>
     <modules>
         <module>modules</module>
-        <module>samples/native-socketio-chat</module>
-        <module>samples/socketio-chat</module>
     </modules>
 </project>

@@ -8,9 +8,9 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.atmosphere</groupId>
-    <artifactId>atmosphere-extension-project</artifactId>
+    <artifactId>atmosphere-extensions-project</artifactId>
     <packaging>pom</packaging>
-    <name>atmosphere-extension-project</name>
+    <name>atmosphere-extensions-project</name>
     <version>2.0.0-SNAPSHOT</version>
     <url>http://github.com/Atmosphere/atmosphere-extensions</url>
     <scm>
@@ -251,7 +251,6 @@
             </build>
         </profile>
     </profiles>
-
     <modules>
         <module>rabbitmq/modules</module>
         <module>guice/modules</module>

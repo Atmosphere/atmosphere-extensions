@@ -121,10 +121,14 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         this.headers[name] = value;
     }-*/;
 
+    public native void setMaxReconnectOnClose(int maxReconnectOnClose) /*-{
+        this.maxReconnectOnClose = maxReconnectOnClose;
+    }-*/;
+
     public native void setContentType(String contentType) /*-{
         this.contentType = contentType;
     }-*/;
-    
+
     public native void setUrl(String url) /*-{
         this.url = url;
     }-*/;

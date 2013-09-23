@@ -65,6 +65,10 @@ public final class AtmosphereResponse extends JavaScriptObject {
        return this.status;
     }-*/;
     
+    public native String getReasonPhrase() /*-{
+        return this.reasonPhrase;
+    }-*/;
+
     public <T> List<T> getMessages() {
        Object containedMessage = getMessageObject();
        if (containedMessage == null) {
@@ -75,7 +79,7 @@ public final class AtmosphereResponse extends JavaScriptObject {
           return (List<T>) Collections.singletonList(containedMessage);
        }
     }
-    
+        
     public native String getResponseBody() /*-{
         return this.responseBody;
     }-*/;
@@ -110,5 +114,5 @@ public final class AtmosphereResponse extends JavaScriptObject {
     private native String getTransportImpl() /*-{
         return this.transport;
     }-*/;
-
+    
 }

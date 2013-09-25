@@ -496,7 +496,7 @@
         <spring-version>3.0.6.RELEASE</spring-version>
         <wicket.version>1.4.12</wicket.version>
         <ahc.version>1.7.6</ahc.version>
-        <jedis.version>2.1.0-SNAPSHOT</jedis.version>
+        <jedis.version>2.0.0</jedis.version>
         <slf4j-impl-version>1.6.1</slf4j-impl-version>
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>

@@ -49,16 +49,14 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.atmosphere.tests.guice;
+package org.atmosphere.tests.guice.jersey;
 
+import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
-import com.sun.grizzly.comet.CometAsyncFilter;
-import com.sun.grizzly.http.embed.GrizzlyWebServer;
-import com.sun.grizzly.http.servlet.ServletAdapter;
-import org.atmosphere.container.GrizzlyCometSupport;
-import org.atmosphere.cpr.AtmosphereServlet;
-import org.atmosphere.guice.AtmosphereGuiceServlet;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.mortbay.jetty.servlet.DefaultServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -74,36 +72,15 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-public class GrizzlyGuiceJerseyTest {
+public class JettyGuiceJerseyTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(GrizzlyGuiceJerseyTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(JettyGuiceJerseyTest.class);
 
     protected static final String ROOT = "/*";
-
-    protected GrizzlyWebServer ws;
-    protected ServletAdapter sa;
-
-    protected AtmosphereServlet atmoServlet;
+    protected GuiceFilter guiceFilter;
     public String urlTarget;
     public int port;
-
-    public static class TestHelper {
-
-        public static int getEnvVariable(final String varName, int defaultValue) {
-            if (null == varName) {
-                return defaultValue;
-            }
-            String varValue = System.getenv(varName);
-            if (null != varValue) {
-                try {
-                    return Integer.parseInt(varValue);
-                } catch (NumberFormatException e) {
-                    // will return default value bellow
-                }
-            }
-            return defaultValue;
-        }
-    }
+    public Server server;
 
     protected int findFreePort() throws IOException {
         ServerSocket socket = null;
@@ -121,10 +98,9 @@ public class GrizzlyGuiceJerseyTest {
 
     @BeforeMethod(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = TestHelper.getEnvVariable("ATMOSPHERE_HTTP_PORT", findFreePort());
+        port = findFreePort();
         urlTarget = "http://127.0.0.1:" + port + "/invoke";
-        atmoServlet = new AtmosphereGuiceServlet();
-        atmoServlet.framework().addInitParameter("com.sun.jersey.config.property.packages", this.getClass().getPackage().getName());
+        guiceFilter = new GuiceFilter();
 
         configureCometSupport();
         startServer();
@@ -132,11 +108,11 @@ public class GrizzlyGuiceJerseyTest {
 
     @AfterMethod(alwaysRun = true)
     public void unsetAtmosphereHandler() throws Exception {
-        if (atmoServlet != null) atmoServlet.destroy();
+        if (guiceFilter != null) guiceFilter.destroy();
         stopServer();
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testSuspendTimeout() {
         logger.info("running test: testSuspendTimeout");
         AsyncHttpClient c = new AsyncHttpClient();
@@ -158,21 +134,20 @@ public class GrizzlyGuiceJerseyTest {
     }
 
     public void configureCometSupport() {
-        atmoServlet.framework().setAsyncSupport(new GrizzlyCometSupport(atmoServlet.framework().getAtmosphereConfig()));
     }
 
     public void startServer() throws Exception {
-        ws = new GrizzlyWebServer(port);
-        sa = new ServletAdapter();
-        ws.addAsyncFilter(new CometAsyncFilter());
-        sa.setServletInstance(atmoServlet);
-        ws.addGrizzlyAdapter(sa, new String[]{ROOT});
-        sa.addServletListener(GuiceConfig.class.getName());
-        ws.start();
+        server = new Server(port);
+
+        ServletContextHandler sch = new ServletContextHandler(server, "/");
+        sch.addEventListener(new GuiceContextListener());
+        sch.addFilter(GuiceFilter.class, "/*", null);
+        sch.addServlet(DefaultServlet.class, "/");
+        server.start();
     }
 
     public void stopServer() throws Exception {
-        ws.stop();
+        server.stop();
     }
 
 }

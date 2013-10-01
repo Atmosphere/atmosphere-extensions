@@ -22,6 +22,7 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,12 +41,12 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
 
     private final static HazelcastInstance HAZELCAST_INSTANCE = Hazelcast.newHazelcastInstance();
 
-    public HazelcastBroadcaster(String id, AtmosphereConfig config) {
-        this(id, URI.create("http://localhost:6379"), config);
+    public Broadcaster initialize(String id, AtmosphereConfig config) {
+        return super.initialize(id, URI.create("http://localhost:6379"), config);
     }
 
-    public HazelcastBroadcaster(String id, URI uri, AtmosphereConfig config) {
-        super(id, uri, config);
+    public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
+        return super.initialize(id, uri, config);
     }
 
     public void setUp() {

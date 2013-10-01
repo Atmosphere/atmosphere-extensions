@@ -21,6 +21,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.MessageProperties;
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFuture;
 import org.atmosphere.cpr.Entry;
 import org.atmosphere.util.SimpleBroadcaster;
@@ -41,15 +42,18 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
 
     private String queueName;
     private String consumerTag;
-    private final RabbitMQConnectionFactory factory;
-    private final Channel channel;
-    private final String exchangeName;
+    private RabbitMQConnectionFactory factory;
+    private Channel channel;
+    private String exchangeName;
 
-    public RabbitMQBroadcaster(String id, AtmosphereConfig config) {
-        super(id, config);
+    public RabbitMQBroadcaster() {}
+
+    public Broadcaster initialize(String id, AtmosphereConfig config) {
+        super.initialize(id, config);
         factory = RabbitMQConnectionFactory.getFactory(config);
         channel = factory.channel();
         exchangeName = factory.exchangeName();
+        return this;
     }
 
     @Override

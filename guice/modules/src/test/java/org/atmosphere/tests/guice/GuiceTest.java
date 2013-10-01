@@ -49,7 +49,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.atmosphere.tests.guice.managed;
+package org.atmosphere.tests.guice;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
@@ -69,16 +69,13 @@ import java.util.concurrent.TimeUnit;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
-public class JettyGuiceJerseyTest {
+public class GuiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(JettyGuiceJerseyTest.class);
-
-    protected static final String ROOT = "/*";
-    protected GuiceFilter guiceFilter;
+    private static final Logger logger = LoggerFactory.getLogger(GuiceTest.class);
     public String urlTarget;
+    protected GuiceFilter guiceFilter;
     public int port;
     public Server server;
 
@@ -117,14 +114,11 @@ public class JettyGuiceJerseyTest {
         logger.info("running test: testSuspendTimeout");
         AsyncHttpClient c = new AsyncHttpClient();
         try {
-            long t1 = System.currentTimeMillis();
             Response r = c.prepareGet(urlTarget).execute().get(10, TimeUnit.SECONDS);
             assertNotNull(r);
             assertEquals(r.getStatusCode(), 200);
             String resume = r.getResponseBody();
             assertEquals(resume, "resume");
-            long current = System.currentTimeMillis() - t1;
-            assertTrue(current > 5000 && current < 10000);
         } catch (Exception e) {
             logger.error("test failed", e);
             fail(e.getMessage());
@@ -140,7 +134,7 @@ public class JettyGuiceJerseyTest {
         server = new Server(port);
 
         ServletContextHandler sch = new ServletContextHandler(server, "/");
-        sch.addEventListener(new GuiceContextListener());
+        sch.addEventListener(new GuiceConfig());
         sch.addFilter(GuiceFilter.class, "/*", null);
         sch.addServlet(DefaultServlet.class, "/");
         server.start();

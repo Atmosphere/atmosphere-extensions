@@ -15,29 +15,21 @@
  */
 package org.atmosphere.spring;
 
+import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
-import org.atmosphere.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * An injector for Spring Beans. Any bean that you want to inject must use annotations (autowiring).
- * 
- * @author Jason Burgess
- * @since 0.8.2
+ * An {@link AtmosphereObjectFactory} for Spring.
+ *
+ * @author Jean-Francois Arcand
  */
 public class SpringObjectFactory implements AtmosphereObjectFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringObjectFactory.class);
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.atmosphere.di.Injector#inject(java.lang.Object)
-     */
     @Override
-    public void inject(final Object o) {
-        LOGGER.trace("inject({})", o);
-        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(o);
+    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> tClass) throws InstantiationException, IllegalAccessException {
+        return WebApplicationContextUtils.getWebApplicationContext(framework.getServletContext()).getBean(tClass);
     }
 }

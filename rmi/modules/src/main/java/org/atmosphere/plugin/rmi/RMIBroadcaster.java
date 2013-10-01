@@ -16,6 +16,7 @@
 package org.atmosphere.plugin.rmi;
 
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,8 @@ public class RMIBroadcaster extends AbstractBroadcasterProxy {
      */
     private final Logger logger = LoggerFactory.getLogger(RMIBroadcaster.class);
 
+    public RMIBroadcaster() {}
+
     /**
      * <p>
      * Builds a new instance identified by the given ID.
@@ -52,8 +55,8 @@ public class RMIBroadcaster extends AbstractBroadcasterProxy {
      * @param id the ID
      * @param config the configuration
      */
-    public RMIBroadcaster(final String id, final AtmosphereConfig config) {
-        super(id, null, config);
+    public Broadcaster initialize(final String id, final AtmosphereConfig config) {
+        return initialize(id, null, config);
     }
 
     /**

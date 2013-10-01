@@ -17,6 +17,7 @@ package org.atmosphere.plugin.redis;
 
 
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 
 import java.net.URI;
@@ -28,14 +29,16 @@ import java.net.URI;
  */
 public class RedisBroadcaster extends AbstractBroadcasterProxy {
 
-    private final RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
-    public RedisBroadcaster(String id, AtmosphereConfig config) {
-        this(URI.create("http://localhost:6379"), id, config);
+    public RedisBroadcaster() {}
+
+    public Broadcaster initialize(String id, AtmosphereConfig config) {
+        return super.initialize(id, URI.create("http://localhost:6379"), config);
     }
 
-    public RedisBroadcaster(URI uri, String id, AtmosphereConfig config) {
-        super(id, URI.create("http://localhost:6379"), config);
+    public Broadcaster initialize(URI uri, String id, AtmosphereConfig config) {
+        super.initialize(id, URI.create("http://localhost:6379"), config);
         this.redisUtil = new RedisUtil(uri, config, new RedisUtil.Callback() {
             @Override
             public String getID() {
@@ -47,6 +50,7 @@ public class RedisBroadcaster extends AbstractBroadcasterProxy {
                 RedisBroadcaster.this.broadcastReceivedMessage(message);
             }
         });
+        return this;
     }
 
     public String getAuth() {

@@ -17,6 +17,7 @@ package org.atmosphere.plugin.xmpp;
 
 
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -47,12 +48,14 @@ public class XMPPBroadcaster extends AbstractBroadcasterProxy {
     private XMPPConnection xmppConnection;
     private Chat channel;
 
-    public XMPPBroadcaster(String id, AtmosphereConfig config) {
-        this(id, URI.create("http://gmail.com"), config);
+    public  XMPPBroadcaster() {}
+
+    public Broadcaster initialize(String id, AtmosphereConfig config) {
+        return initialize(id, URI.create("http://gmail.com"), config);
     }
 
-    public XMPPBroadcaster(String id, URI uri, AtmosphereConfig config) {
-        super(id, uri, config);
+    public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
+        return initialize(id, uri, config);
     }
 
     private synchronized void setUp() {

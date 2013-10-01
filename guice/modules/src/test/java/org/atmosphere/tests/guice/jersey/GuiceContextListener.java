@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atmosphere.tests.guice.managed;
+package org.atmosphere.tests.guice.jersey;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -21,13 +21,10 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import org.atmosphere.container.GrizzlyCometSupport;
 import org.atmosphere.container.Jetty7CometSupport;
 import org.atmosphere.cpr.ApplicationConfig;
 import org.atmosphere.guice.AtmosphereGuiceServlet;
-import org.atmosphere.guice.GuiceContainer;
-import org.atmosphere.guice.GuiceManagedAtmosphereServlet;
-import org.atmosphere.tests.guice.PubSubTest;
+import org.atmosphere.guice.GuiceObjectFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,12 +38,14 @@ public final class GuiceContextListener extends GuiceServletContextListener {
             protected void configureServlets() {
                 bind(PubSubTest.class);
                 bind(new TypeLiteral<Map<String, String>>() {
-                }).annotatedWith(Names.named(AtmosphereGuiceServlet.JERSEY_PROPERTIES)).toInstance(
-                        Collections.<String, String>emptyMap());
-                serve("/*").with(GuiceManagedAtmosphereServlet.class, new HashMap<String, String>() {
+                }).annotatedWith(Names.named(AtmosphereGuiceServlet.PROPERTIES)).toInstance(
+                                        Collections.<String, String>emptyMap());
+                serve("/*").with(AtmosphereGuiceServlet.class, new HashMap<String, String>() {
                     {
                         put(ApplicationConfig.PROPERTY_COMET_SUPPORT, Jetty7CometSupport.class.getName());
+                        put(ApplicationConfig.OBJECT_FACTORY, GuiceObjectFactory.class.getName());
                         put("org.atmosphere.useNative", "true");
+                        put("com.sun.jersey.config.property.packages", PubSubTest.class.getPackage().getName());
                     }
                 });
             }

@@ -49,7 +49,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.atmosphere.tests.guice;
+package org.atmosphere.tests.guice.jersey;
 
 import org.atmosphere.annotation.Broadcast;
 import org.atmosphere.annotation.Resume;

@@ -15,20 +15,21 @@
  */
 package org.atmosphere.guice;
 
-import org.atmosphere.di.Injector;
-import org.atmosphere.di.ServletContextHolder;
+import org.atmosphere.cpr.AtmosphereFramework;
+import org.atmosphere.cpr.AtmosphereObjectFactory;
 
 /**
- * @author Mathieu Carbou
- * @since 0.7
+ * An {@link AtmosphereObjectFactory} for Guice
+ *
+ * @author Jean-Francois Arcand
  */
-public final class GuiceInjector implements Injector {
+public class GuiceObjectFactory implements AtmosphereObjectFactory {
     @Override
-    public void inject(Object o) {
+    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> tClass) throws InstantiationException, IllegalAccessException {
         com.google.inject.Injector injector = (com.google.inject.Injector)
-                ServletContextHolder.getServletContext().getAttribute(com.google.inject.Injector.class.getName());
+                framework.getServletContext().getAttribute(com.google.inject.Injector.class.getName());
         if (injector == null)
             throw new IllegalStateException("No Guice Injector found in current ServletContext !");
-        injector.injectMembers(o);
+        return injector.getInstance(tClass);
     }
 }

@@ -15,6 +15,7 @@
  */
 package org.atmosphere.spring;
 
+import org.atmosphere.cpr.AtmosphereObjectFactory;
 import org.atmosphere.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @author Jason Burgess
  * @since 0.8.2
  */
-public class SpringInjector implements Injector {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringInjector.class);
+public class SpringObjectFactory implements AtmosphereObjectFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringObjectFactory.class);
 
     /*
      * (non-Javadoc)

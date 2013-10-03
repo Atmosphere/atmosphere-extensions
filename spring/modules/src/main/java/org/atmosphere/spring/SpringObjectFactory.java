@@ -19,7 +19,8 @@ import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * An {@link AtmosphereObjectFactory} for Spring.
@@ -27,9 +28,21 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author Jean-Francois Arcand
  */
 public class SpringObjectFactory implements AtmosphereObjectFactory {
+    private static final Logger logger = LoggerFactory.getLogger(SpringObjectFactory.class);
 
     @Override
-    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> tClass) throws InstantiationException, IllegalAccessException {
-        return WebApplicationContextUtils.getWebApplicationContext(framework.getServletContext()).getBean(tClass);
+    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> classToInstantiate) throws InstantiationException, IllegalAccessException {
+        ApplicationContext context =
+            new AnnotationConfigApplicationContext(classToInstantiate);
+        T t = context.getBean(classToInstantiate);
+        if (t == null) {
+            logger.info("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
+            return classToInstantiate.newInstance();
+        }
+        return t;
+    }
+
+    public String toString() {
+        return "Spring";
     }
 }

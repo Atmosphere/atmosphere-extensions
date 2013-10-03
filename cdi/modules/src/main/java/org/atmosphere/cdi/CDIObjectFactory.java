@@ -60,4 +60,7 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
         }
     }
 
+    public String toString() {
+        return "CDI ObjectFactory";
+    }
 }

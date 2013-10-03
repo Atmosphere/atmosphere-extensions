@@ -58,4 +58,9 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
         }
         return injector.getInstance(classToInstantiate);
     }
+
+
+    public String toString() {
+        return "Guice ObjectFactory";
+    }
 }

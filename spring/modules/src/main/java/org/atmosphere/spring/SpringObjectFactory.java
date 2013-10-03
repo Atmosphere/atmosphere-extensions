@@ -43,6 +43,6 @@ public class SpringObjectFactory implements AtmosphereObjectFactory {
     }
 
     public String toString() {
-        return "Spring";
+        return "Spring ObjectFactory";
     }
 }

@@ -15,8 +15,13 @@
  */
 package org.atmosphere.guice;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link AtmosphereObjectFactory} for Guice
@@ -24,12 +29,33 @@ import org.atmosphere.cpr.AtmosphereObjectFactory;
  * @author Jean-Francois Arcand
  */
 public class GuiceObjectFactory implements AtmosphereObjectFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(GuiceObjectFactory.class);
+
+    private static Injector injector;
+
+    static {
+        injector = Guice.createInjector(new AbstractModule() {
+            @Override
+            protected void configure() {
+            }
+        });
+    }
+
     @Override
-    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> tClass) throws InstantiationException, IllegalAccessException {
-        com.google.inject.Injector injector = (com.google.inject.Injector)
+    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> classToInstantiate) throws InstantiationException, IllegalAccessException {
+        com.google.inject.Injector servletInjector = (com.google.inject.Injector)
                 framework.getServletContext().getAttribute(com.google.inject.Injector.class.getName());
-        if (injector == null)
-            throw new IllegalStateException("No Guice Injector found in current ServletContext !");
-        return injector.getInstance(tClass);
+
+        if (servletInjector != null) {
+            injector = servletInjector;
+        }
+
+        if (injector == null) {
+            logger.warn("No Guice Injector found in current ServletContext. Are you using {}", AtmosphereGuiceServlet.class.getName());
+            logger.trace("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
+            return classToInstantiate.newInstance();
+        }
+        return injector.getInstance(classToInstantiate);
     }
 }

@@ -19,8 +19,10 @@ import com.google.inject.Singleton;
 import org.atmosphere.cpr.AtmosphereServlet;
 
 /**
- * Google Guice Integration. The difference between this class and the {@link AtmosphereGuiceServlet} is you don't need
- * to define it in web.xml and instead use a pure Guice web.xml file.
+ * Google Guice Integration. Only difference with the {@link AtmosphereServlet} is this class is annotated with @Singleton
+ * annotation.
+ *
+ * @author Jeanfrancois Arcand
  */
 @Singleton
 public class AtmosphereGuiceServlet extends AtmosphereServlet {

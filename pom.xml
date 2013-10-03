@@ -253,6 +253,7 @@
     </profiles>
     <modules>
         <module>rabbitmq/modules</module>
+        <module>cdi/modules</module>
         <module>guice/modules</module>
         <module>spring/modules</module>
         <module>jgroups/modules</module>

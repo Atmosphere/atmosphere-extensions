@@ -193,6 +193,17 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
             this.onClose = null;
         }
     }-*/;
+
+    public native void setClientTimeoutHandler(AtmosphereClientTimeoutHandler handler) /*-{
+        var self = this;
+        if (handler != null) {
+            this.onClientTimeout = $entry(function(request) {
+                handler.@org.atmosphere.gwt20.client.AtmosphereClientTimeoutHandler::onClientTimeout(Lorg/atmosphere/gwt20/client/AtmosphereRequest;)(request);
+            });
+        } else {
+            this.onClientTimeout = null;
+        }
+    }-*/;
     
     public void setMessageHandler(AtmosphereMessageHandler handler) {
         getMessageHandlerWrapper().messageHandler = handler;

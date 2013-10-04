@@ -34,33 +34,37 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
 
     private static Injector injector;
 
-    static {
-        injector = Guice.createInjector(new AbstractModule() {
-            @Override
-            protected void configure() {
-            }
-        });
-    }
-
     @Override
     public <T> T newClassInstance(AtmosphereFramework framework, Class<T> classToInstantiate) throws InstantiationException, IllegalAccessException {
-        com.google.inject.Injector servletInjector = (com.google.inject.Injector)
-                framework.getServletContext().getAttribute(com.google.inject.Injector.class.getName());
-
-        if (servletInjector != null) {
-            injector = servletInjector;
-        }
-
+        initInjector(framework);
         if (injector == null) {
-            logger.warn("No Guice Injector found in current ServletContext. Are you using {}", AtmosphereGuiceServlet.class.getName());
+            logger.warn("No Guice Injector found in current ServletContext. Are you using {}?", AtmosphereGuiceServlet.class.getName());
             logger.trace("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
             return classToInstantiate.newInstance();
+        } else {
+            return injector.getInstance(classToInstantiate);
         }
-        return injector.getInstance(classToInstantiate);
     }
-
 
     public String toString() {
         return "Guice ObjectFactory";
+    }
+
+    private void initInjector(AtmosphereFramework framework) {
+        if (injector == null) {
+            com.google.inject.Injector servletInjector = (com.google.inject.Injector)
+                    framework.getServletContext().getAttribute(com.google.inject.Injector.class.getName());
+
+            if (servletInjector != null) {
+                injector = servletInjector;
+            } else {
+                logger.trace("Creating the Guice injector manually with an empty AbstractModule");
+                injector = Guice.createInjector(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+                    }
+                });
+            }
+        }
     }
 }

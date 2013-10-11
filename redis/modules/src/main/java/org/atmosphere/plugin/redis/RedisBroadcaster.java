@@ -37,7 +37,7 @@ public class RedisBroadcaster extends AbstractBroadcasterProxy {
         return super.initialize(id, URI.create("http://localhost:6379"), config);
     }
 
-    public Broadcaster initialize(URI uri, String id, AtmosphereConfig config) {
+    public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
         super.initialize(id, URI.create("http://localhost:6379"), config);
         this.redisUtil = new RedisUtil(uri, config, new RedisUtil.Callback() {
             @Override

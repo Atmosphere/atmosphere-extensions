@@ -22,11 +22,13 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.AtmosphereConfig.ShutdownHook;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Simple {@link org.atmosphere.cpr.Broadcaster} implementation based on Hazelcast
@@ -39,7 +41,7 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     private ITopic topic;
 
     private final static HazelcastInstance HAZELCAST_INSTANCE = Hazelcast.newHazelcastInstance();
-
+    private final AtomicBoolean isClosed = new AtomicBoolean();
     public HazelcastBroadcaster(String id, AtmosphereConfig config) {
         this(id, URI.create("http://localhost:6379"), config);
     }
@@ -56,6 +58,14 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
                 broadcastReceivedMessage(message.getMessageObject());
             }
         });
+
+        config.shutdownHook(new ShutdownHook() {
+            @Override
+            public void shutdown() {
+                HAZELCAST_INSTANCE.shutdown();
+                isClosed.set(true);
+            }
+        });
     }
 
     @Override
@@ -69,8 +79,10 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
      */
     @Override
     public void destroy() {
-        topic.destroy();
-        topic = null;
+        if (!isClosed.get()) {
+            topic.destroy();
+            topic = null;
+        }
         super.destroy();
     }
 

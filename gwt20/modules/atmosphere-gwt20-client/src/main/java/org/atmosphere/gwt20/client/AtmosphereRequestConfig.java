@@ -145,6 +145,10 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         this.timeout = timeout;
     }-*/;
 
+	public native void setLogLevel(String logLevel) /*-{
+	    this.logLevel = logLevel;
+	}-*/;
+
     public void setMethod(Method method) {
         setMethodImpl(method.toString());
     }

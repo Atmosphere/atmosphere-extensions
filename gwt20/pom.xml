@@ -15,6 +15,11 @@
     <packaging>pom</packaging>
 
     <url>https://github.com/Atmosphere/atmosphere-extensions/gwt20</url>
+    <scm>
+        <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
+        <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</developerConnection>
+        <url>http://github.com/Atmosphere/atmosphere-extensions</url>
+    </scm>
 
     <properties>
         <gwt-version>2.5.0</gwt-version>

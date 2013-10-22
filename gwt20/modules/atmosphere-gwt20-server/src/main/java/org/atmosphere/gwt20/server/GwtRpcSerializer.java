@@ -25,11 +25,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- *
  * @author p.havelaar
  */
 public class GwtRpcSerializer implements Serializer {
-    
+
     private final static Logger logger = LoggerFactory.getLogger(GwtRpcSerializer.class.getName());
 
     private final AtmosphereResource resource;
@@ -45,10 +44,6 @@ public class GwtRpcSerializer implements Serializer {
     public void write(OutputStream out, Object o) throws IOException {
         String payload;
         try {
-            //        if (!(o instanceof String)) {
-//        } else {
-//            payload = (String) o;
-//        }
             payload = GwtRpcUtil.serialize(o);
         } catch (SerializationException ex) {
             throw new IOException("Failed to deserialize message");

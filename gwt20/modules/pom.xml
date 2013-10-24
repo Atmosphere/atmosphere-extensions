@@ -19,12 +19,12 @@
     <description>A fork of gwt-comet project to integrate with Atmosphere</description>
 
     <modules>
-        <!-- not needed any as of 2.3.0 <module>gwt-exporter</module> -->
         <module>atmosphere-gwt20-client</module>
         <module>atmosphere-gwt20-jersey</module>
         <module>atmosphere-gwt20-common</module>
         <module>atmosphere-gwt20-server</module>
         <module>atmosphere-gwt20-jackson</module>
+        <module>atmosphere-gwt20-managed</module>
   </modules>
 
 </project>

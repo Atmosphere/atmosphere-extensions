@@ -41,7 +41,7 @@ public class RPCEventDeserializerInterceptor extends AtmosphereInterceptorAdapte
     @Override
     public Action inspect(AtmosphereResource r) {
         Object msg = r.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
-        if (msg != null) {
+        if (msg != null && RPCEvent.class.isAssignableFrom(msg.getClass())) {
             r.getRequest().body(RPCEvent.class.cast(msg).getData());
         }
         return Action.CONTINUE;

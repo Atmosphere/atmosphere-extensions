@@ -22,9 +22,9 @@ import java.io.Serializable;
  *
  * @author Jeanfrancois Arcand
  */
-public interface AtmosphereMessage extends Serializable {
+public interface AtmosphereMessage<T> extends Serializable {
 
-    public String getMessage();
+    public T getMessage();
 
-    public void setMessage(String message);
+    public void setMessage(T message);
 }

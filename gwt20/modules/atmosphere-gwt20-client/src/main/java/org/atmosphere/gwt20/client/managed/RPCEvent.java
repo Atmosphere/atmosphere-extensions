@@ -26,7 +26,7 @@ import org.atmosphere.gwt20.client.AtmosphereMessage;
  *
  * @author Jeanfrancois Arcand
  */
-public class RPCEvent implements AtmosphereMessage {
+public class RPCEvent implements AtmosphereMessage<String> {
 
     private String message;
 

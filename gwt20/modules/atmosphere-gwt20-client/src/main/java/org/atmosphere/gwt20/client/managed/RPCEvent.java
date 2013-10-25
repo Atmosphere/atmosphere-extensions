@@ -62,7 +62,7 @@ public class RPCEvent implements AtmosphereMessage<String> {
 
     @Override
     public byte[] asByte() {
-        return null;
+        return message.getBytes();
     }
 
 }

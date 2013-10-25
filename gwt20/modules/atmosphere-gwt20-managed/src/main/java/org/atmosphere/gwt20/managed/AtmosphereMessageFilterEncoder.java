@@ -16,14 +16,21 @@
 package org.atmosphere.gwt20.managed;
 
 import org.atmosphere.cpr.BroadcastFilter;
+import org.atmosphere.gwt20.client.AtmosphereMessage;
 import org.atmosphere.gwt20.client.managed.RPCEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Wrap a message into an {@link RPCEvent}
+ * Wrap a message into an {@link org.atmosphere.gwt20.client.AtmosphereMessage}
  *
  * @author Jeanfrancois Arcand
  */
-public class RPCEventFilter implements BroadcastFilter {
+public class AtmosphereMessageFilterEncoder implements BroadcastFilter {
+
+    private final Logger logger = LoggerFactory.getLogger(AtmosphereMessageFilterEncoder.class);
+    private Class<? extends AtmosphereMessage<?>> messageClazz = RPCEvent.class;
+
     /**
      * Wrap message inside our {@link RPCEvent}
      *
@@ -33,10 +40,22 @@ public class RPCEventFilter implements BroadcastFilter {
      */
     @Override
     public BroadcastAction filter(Object originalMessage, Object message) {
-        if (!RPCEvent.class.isAssignableFrom(message.getClass())) {
-            return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, new RPCEvent(message.toString()));
+        if (!AtmosphereMessage.class.isAssignableFrom(message.getClass())) {
+            try {
+                AtmosphereMessage<Object> m = (AtmosphereMessage<Object>) messageClazz.newInstance();
+                m.setMessage(message);
+                return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, m);
+            } catch (Exception e) {
+                logger.error("{}", e);
+                return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, message);
+            }
         } else {
             return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, message);
         }
+    }
+
+    public AtmosphereMessageFilterEncoder classToEncode(Class<? extends AtmosphereMessage<?>> messageClazz) {
+        this.messageClazz = messageClazz;
+        return this;
     }
 }

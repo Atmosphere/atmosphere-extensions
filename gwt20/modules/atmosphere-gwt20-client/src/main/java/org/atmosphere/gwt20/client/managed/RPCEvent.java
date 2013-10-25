@@ -57,7 +57,7 @@ public class RPCEvent implements AtmosphereMessage<String> {
 
     @Override
     public String asString() {
-        return toString();
+        return message;
     }
 
     @Override

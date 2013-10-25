@@ -33,9 +33,11 @@ import org.atmosphere.gwt20.shared.Constants;
  */
 public class AtmosphereMessageInterceptor extends AtmosphereInterceptorAdapter {
 
+    private final AtmosphereMessageFilterEncoder encoder = new AtmosphereMessageFilterEncoder();
+
     @Override
     public void configure(AtmosphereConfig config) {
-        config.framework().broadcasterFilters(new RPCEventFilter());
+        config.framework().broadcasterFilters(encoder);
     }
 
     @Override
@@ -43,6 +45,7 @@ public class AtmosphereMessageInterceptor extends AtmosphereInterceptorAdapter {
         Object msg = r.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
         if (msg != null && AtmosphereMessage.class.isAssignableFrom(msg.getClass())) {
             AtmosphereMessage<?> m = AtmosphereMessage.class.cast(msg);
+            encoder.classToEncode((Class<? extends AtmosphereMessage<?>>) m.getClass());
             if (m.type().equals(AtmosphereMessage.TYPE.STRING)) {
                 r.getRequest().body(m.asString());
             } else {

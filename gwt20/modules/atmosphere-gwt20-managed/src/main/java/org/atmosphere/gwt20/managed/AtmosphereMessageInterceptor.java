@@ -31,7 +31,7 @@ import org.atmosphere.gwt20.shared.Constants;
  *
  * @author Jeanfrancois Arcand
  */
-public class RPCEventDeserializerInterceptor extends AtmosphereInterceptorAdapter {
+public class AtmosphereMessageInterceptor extends AtmosphereInterceptorAdapter {
 
     @Override
     public void configure(AtmosphereConfig config) {

@@ -42,7 +42,12 @@ public class AtmosphereMessageInterceptor extends AtmosphereInterceptorAdapter {
     public Action inspect(AtmosphereResource r) {
         Object msg = r.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
         if (msg != null && AtmosphereMessage.class.isAssignableFrom(msg.getClass())) {
-            r.getRequest().body(AtmosphereMessage.class.cast(msg).getMessage().toString());
+            AtmosphereMessage<?> m = AtmosphereMessage.class.cast(msg);
+            if (m.type().equals(AtmosphereMessage.TYPE.STRING)) {
+                r.getRequest().body(m.asString());
+            } else {
+                r.getRequest().body(m.asByte());
+            }
         }
         return Action.CONTINUE;
     }

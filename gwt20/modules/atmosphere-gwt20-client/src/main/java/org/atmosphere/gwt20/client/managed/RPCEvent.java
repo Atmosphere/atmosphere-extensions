@@ -17,10 +17,15 @@ package org.atmosphere.gwt20.client.managed;
 
 import org.atmosphere.gwt20.client.AtmosphereMessage;
 
+import java.io.InputStream;
+
 /**
  * This class is used during serialization by the {@link RPCSerializer}. This class is normally used with
- * the {@link org.atmosphere.gwt20.server.managed.RPCEventDeserializerInterceptor} to allow GWT and non GWT
+ * the {@link org.atmosphere.gwt20.server.managed.AtmosphereResourceInterceptor} to allow GWT and non GWT
  * application to interact using a {@link org.atmosphere.cpr.Broadcaster}.
+ *
+ * The {@link #asString()}  or {@link #asByte()}  are used to serialize the object so Atmosphere's component
+ * can react on the deserialize GWT object as a normal request's body, without the GWT protocol.
  *
  * This class can also be used with {@link org.atmosphere.cpr.AtmosphereHandler}
  *
@@ -37,12 +42,27 @@ public class RPCEvent implements AtmosphereMessage<String> {
         this.message = message;
     }
 
+    @Override
+    public TYPE type() {
+        return TYPE.STRING;
+    }
+
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String asString() {
+        return toString();
+    }
+
+    @Override
+    public byte[] asByte() {
+        return null;
     }
 
 }

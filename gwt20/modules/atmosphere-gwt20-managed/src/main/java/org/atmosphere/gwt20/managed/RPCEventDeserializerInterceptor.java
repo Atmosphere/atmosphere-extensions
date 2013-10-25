@@ -19,7 +19,7 @@ import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereInterceptorAdapter;
 import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.gwt20.client.managed.RPCEvent;
+import org.atmosphere.gwt20.client.AtmosphereMessage;
 import org.atmosphere.gwt20.shared.Constants;
 
 /**
@@ -41,8 +41,8 @@ public class RPCEventDeserializerInterceptor extends AtmosphereInterceptorAdapte
     @Override
     public Action inspect(AtmosphereResource r) {
         Object msg = r.getRequest().getAttribute(Constants.MESSAGE_OBJECT);
-        if (msg != null && RPCEvent.class.isAssignableFrom(msg.getClass())) {
-            r.getRequest().body(RPCEvent.class.cast(msg).getData());
+        if (msg != null && AtmosphereMessage.class.isAssignableFrom(msg.getClass())) {
+            r.getRequest().body(AtmosphereMessage.class.cast(msg).getMessage());
         }
         return Action.CONTINUE;
     }

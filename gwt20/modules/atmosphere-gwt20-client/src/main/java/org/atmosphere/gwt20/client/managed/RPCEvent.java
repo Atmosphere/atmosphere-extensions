@@ -15,7 +15,7 @@
  */
 package org.atmosphere.gwt20.client.managed;
 
-import java.io.Serializable;
+import org.atmosphere.gwt20.client.AtmosphereMessage;
 
 /**
  * This class is used during serialization by the {@link RPCSerializer}. This class is normally used with
@@ -26,23 +26,23 @@ import java.io.Serializable;
  *
  * @author Jeanfrancois Arcand
  */
-public class RPCEvent implements Serializable {
+public class RPCEvent implements AtmosphereMessage {
 
-    private String data;
+    private String message;
 
     public RPCEvent() {
     }
 
-    public RPCEvent(String data) {
-        this.data = data;
+    public RPCEvent(String message) {
+        this.message = message;
     }
 
-    public String getData() {
-        return data;
+    public String getMessage() {
+        return message;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

@@ -239,6 +239,17 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
         }
     }-*/;
     
+    public native void setFailureToReconnectHandler(AtmosphereFailureToReconnectHandler handler) /*-{
+    	var self = this;
+    	if (handler != null) {
+        	this.onFailureToReconnect = $entry(function(request, response) {
+            	handler.@org.atmosphere.gwt20.client.AtmosphereFailureToReconnectHandler::onFailureToReconnect(Lorg/atmosphere/gwt20/client/AtmosphereRequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(request, response);
+        	});
+    	} else {
+        	this.onFailureToReconnect = null;
+    	}
+	}-*/;
+    
     public native void setMessagePublishedHandler(AtmosphereMessagePublishedHandler handler) /*-{
         var self = this;
         if (handler != null) {

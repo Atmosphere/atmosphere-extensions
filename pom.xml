@@ -472,7 +472,7 @@
         <jersey-version>1.17</jersey-version>
         <atmosphere-version>2.1.0-SNAPSHOT</atmosphere-version>
         <compat-version>2.1.0</compat-version>
-        <javascript-version>2.0.3</javascript-version>
+        <javascript-version>2.1.0-SNAPSHOT</javascript-version>
         <jaxb-version>2.1</jaxb-version>
         <jackson-version>1.3.1</jackson-version>
         <junit-version>3.8.1</junit-version>

@@ -148,7 +148,15 @@ public final class AtmosphereRequestConfig extends JavaScriptObject {
 	public native void setLogLevel(String logLevel) /*-{
 	    this.logLevel = logLevel;
 	}-*/;
+	
+	public native void setMaxRequest(int maxRequest) /*-{
+	    this.maxRequest = maxRequest;
+	}-*/;
 
+	public native void setMaxStreamingLength(int maxStreamingLength) /*-{
+	    this.maxStreamingLength = maxStreamingLength;
+	}-*/;
+	
     public void setMethod(Method method) {
         setMethodImpl(method.toString());
     }

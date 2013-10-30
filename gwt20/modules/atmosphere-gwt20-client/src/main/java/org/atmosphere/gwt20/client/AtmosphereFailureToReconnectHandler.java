@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Jeanfrancois Arcand
+ * Copyright 2013 Steven Jardine
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -16,9 +16,8 @@
 package org.atmosphere.gwt20.client;
 
 /**
- *
- * @author Jeanfrancois Arcand
+ * @author sjardine
  */
-public interface AtmosphereClientTimeoutHandler {
-    public void onClientTimeout(AtmosphereRequest request);
+public interface AtmosphereFailureToReconnectHandler {
+    public void onFailureToReconnect(AtmosphereRequestConfig request, AtmosphereResponse response);
 }

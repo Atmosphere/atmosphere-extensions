@@ -214,14 +214,6 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
                             return this;
                         }
 
-                        @Override
-                        public void close(AtmosphereResponse r) throws IOException {
-                            try {
-                                r.getResponse().getOutputStream().close();
-                            } catch (IllegalStateException ex) {
-                                r.getResponse().getWriter().close();
-                            }
-                        }
                     });
                 }
                 transport.handle((AtmosphereResourceImpl) r, atmosphereHandler, getSessionManager(version));

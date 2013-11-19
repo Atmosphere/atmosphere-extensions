@@ -51,7 +51,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
         }
 
         if (r.getRequest().getContentType() == null
-                || !r.getRequest().getContentType().startsWith(Constants.GWT_RPC_MEDIA_TYPE)
+                || !r.getRequest().getContentType().contains("x-gwt-rpc")
                 || jersey) {
             return Action.CONTINUE;
         }

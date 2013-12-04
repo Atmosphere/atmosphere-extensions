@@ -11,7 +11,12 @@
 	<packaging>bundle</packaging>
     <version>2.0.1</version>
 	<name>atmosphere-socketio</name>
-	<url>https://github.com/Atmosphere/atmosphere</url>
+	<url>https://github.com/Atmosphere/atmosphere-extensions/socketio</url>
+    <scm>
+        <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
+        <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</developerConnection>
+        <url>http://github.com/Atmosphere/atmosphere-extensions</url>
+    </scm>
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<plugins>

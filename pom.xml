@@ -269,6 +269,7 @@
         -->
 		<module>gwt20</module>
         <module>rmi/modules</module>
+        <module>sockjs/modules</module>
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

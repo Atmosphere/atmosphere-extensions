@@ -65,7 +65,7 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
     private final ConcurrentHashMap<String, SockjsSession> sessions = new ConcurrentHashMap<String, SockjsSession>();
     private final HeartbeatInterceptor heartbeat = new HeartbeatInterceptor().paddingText("h");
 
-    public final static AtmosphereHandler REFLECTOR_ATMOSPHEREHANDLER = new AbstractReflectorAtmosphereHandler() {
+    public final static AtmosphereHandler ECHO_ATMOSPHEREHANDLER = new AbstractReflectorAtmosphereHandler() {
         @Override
         public void onRequest(AtmosphereResource resource) throws IOException {
             String body = IOUtils.readEntirely(resource).toString();
@@ -82,9 +82,9 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         config.startupHook(new AtmosphereConfig.StartupHook() {
             @Override
             public void started(AtmosphereFramework framework) {
-                //     if (config.handlers().size() == 0) {
-                framework.addAtmosphereHandler("/*", REFLECTOR_ATMOSPHEREHANDLER);
-                //     }
+                if (config.handlers().size() == 0) {
+                    framework.addAtmosphereHandler("/*", ECHO_ATMOSPHEREHANDLER);
+                }
             }
         });
         heartbeat.configure(config);

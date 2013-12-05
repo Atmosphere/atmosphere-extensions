@@ -24,6 +24,6 @@ public class WebSocketTransport extends TransportBasedListener {
         AtmosphereResponse response = event.getResource().getResponse();
         response.setContentType("text/plain");
 
-        response.write("o".getBytes());
+        response.write("o\n".getBytes());
     }
 }

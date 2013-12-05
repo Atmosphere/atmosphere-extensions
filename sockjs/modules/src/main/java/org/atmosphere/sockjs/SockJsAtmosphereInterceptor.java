@@ -237,8 +237,6 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
                         try {
                             if (transport.equals(JSONP)) {
                                 return ("a" + s).getBytes(charEncoding);
-                            } else if (transport.equals(WEBSOCKET)) {
-                                return ("a" + s).getBytes(charEncoding);
                             } else if (transport.equals(HTMLFILE)) {
                                 StringBuilder sb = new StringBuilder();
                                 sb.append("<script>\np(")
@@ -284,7 +282,6 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
                     if (m == null) continue;
                     request.setAttribute("sockjs.skipInterceptor", Boolean.TRUE);
                     framework.doCometSupport(request.body(m), response);
-
                 }
             }
             request.setAttribute("sockjs.skipInterceptor", null);

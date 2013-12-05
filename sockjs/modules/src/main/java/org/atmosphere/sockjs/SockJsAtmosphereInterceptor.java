@@ -24,6 +24,7 @@ import org.atmosphere.cpr.AsyncIOWriter;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereHandler;
+import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereInterceptorAdapter;
 import org.atmosphere.cpr.AtmosphereInterceptorWriter;
 import org.atmosphere.cpr.AtmosphereRequest;
@@ -63,7 +64,6 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
     private final AtomicReference<String> baseURL = new AtomicReference<String>("");
     private AtmosphereFramework framework;
     private final ConcurrentHashMap<String, SockjsSession> sessions = new ConcurrentHashMap<String, SockjsSession>();
-    private final HeartbeatInterceptor heartbeat = new HeartbeatInterceptor().paddingText("h");
 
     public final static AtmosphereHandler ECHO_ATMOSPHEREHANDLER = new AbstractReflectorAtmosphereHandler() {
         @Override
@@ -82,12 +82,16 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         config.startupHook(new AtmosphereConfig.StartupHook() {
             @Override
             public void started(AtmosphereFramework framework) {
+                for (AtmosphereInterceptor i : framework.interceptors()) {
+                    if (HeartbeatInterceptor.class.isAssignableFrom(i.getClass())) {
+                        HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(25);
+                    }
+                }
                 if (config.handlers().size() == 0) {
                     framework.addAtmosphereHandler("/*", ECHO_ATMOSPHEREHANDLER);
                 }
             }
         });
-        heartbeat.configure(config);
     }
 
     @Override
@@ -130,8 +134,6 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
             } else if (longPolling) {
                 installWriter(r);
                 suspend(r);
-                // For Heatbeat.
-                heartbeat.clock(r, request, r.getResponse());
                 return Action.SUSPEND;
             }
 
@@ -142,7 +144,6 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
 
     private void suspend(AtmosphereResource r) {
         r.suspend();
-        heartbeat.inspect(r);
     }
 
     private Action iframe(AtmosphereResource r) {

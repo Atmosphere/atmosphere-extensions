@@ -63,7 +63,7 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
     private final AtomicReference<String> baseURL = new AtomicReference<String>("");
     private AtmosphereFramework framework;
     private final ConcurrentHashMap<String, SockjsSession> sessions = new ConcurrentHashMap<String, SockjsSession>();
-    private final HeartbeatInterceptor heartbeat = new HeartbeatInterceptor().force(true).paddingText("h");
+    private final HeartbeatInterceptor heartbeat = new HeartbeatInterceptor().paddingText("h");
 
     public final static AtmosphereHandler REFLECTOR_ATMOSPHEREHANDLER = new AbstractReflectorAtmosphereHandler() {
         @Override

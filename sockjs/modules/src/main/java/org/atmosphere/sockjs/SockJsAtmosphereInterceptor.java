@@ -92,7 +92,7 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
             public void started(AtmosphereFramework framework) {
                 for (AtmosphereInterceptor i : framework.interceptors()) {
                     if (HeartbeatInterceptor.class.isAssignableFrom(i.getClass())) {
-                        HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(60000);
+                        HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(25);
                     }
                 }
 

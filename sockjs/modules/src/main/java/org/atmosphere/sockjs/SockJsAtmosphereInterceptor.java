@@ -29,20 +29,26 @@ import org.atmosphere.cpr.AtmosphereInterceptorAdapter;
 import org.atmosphere.cpr.AtmosphereInterceptorWriter;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.AtmosphereResourceEvent;
+import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 import org.atmosphere.cpr.AtmosphereResponse;
 import org.atmosphere.cpr.HeaderConfig;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
+import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.interceptor.HeartbeatInterceptor;
 import org.atmosphere.util.IOUtils;
 import org.atmosphere.util.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.HTMLFILE;
@@ -63,13 +69,15 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
     private boolean supportWebSocket = true;
     private final AtomicReference<String> baseURL = new AtomicReference<String>("");
     private AtmosphereFramework framework;
-    private final ConcurrentHashMap<String, SockjsSession> sessions = new ConcurrentHashMap<String, SockjsSession>();
+    private final Map<String, SockjsSession> sessions = Collections.synchronizedMap(new WeakHashMap<String, SockjsSession>());
 
     public final static AtmosphereHandler ECHO_ATMOSPHEREHANDLER = new AbstractReflectorAtmosphereHandler() {
         @Override
         public void onRequest(AtmosphereResource resource) throws IOException {
             String body = IOUtils.readEntirely(resource).toString();
-            resource.getBroadcaster().broadcast(body);
+            if (!body.isEmpty()) {
+                resource.getBroadcaster().broadcast(body);
+            }
         }
     };
 
@@ -84,9 +92,21 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
             public void started(AtmosphereFramework framework) {
                 for (AtmosphereInterceptor i : framework.interceptors()) {
                     if (HeartbeatInterceptor.class.isAssignableFrom(i.getClass())) {
-                        HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(25);
+                        HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(60000);
                     }
                 }
+
+                boolean addInterceptor = true;
+                for (AtmosphereInterceptor i : framework.interceptors()) {
+                    if (AtmosphereResourceLifecycleInterceptor.class.isAssignableFrom(i.getClass())) {
+                        addInterceptor = true;
+                    }
+                }
+
+                if (addInterceptor) {
+                    framework.interceptor(new AtmosphereResourceLifecycleInterceptor(true));
+                }
+
                 if (config.handlers().size() == 0) {
                     framework.addAtmosphereHandler("/*", ECHO_ATMOSPHEREHANDLER);
                 }
@@ -115,35 +135,27 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         if (!baseURL.get().isEmpty() && request.getRequestURI().startsWith(baseURL.get())) {
             super.inspect(r);
 
-            String sessionId = param(request.getRequestURI(), 2);
+            final String sessionId = param(request.getRequestURI(), 2);
             String transport = param(request.getRequestURI(), 4);
 
             SockjsSession s = sessions.get(sessionId);
             configureTransport(AtmosphereResourceImpl.class.cast(r), transport, s != null);
-            boolean longPolling = r.transport().equals(LONG_POLLING) || r.transport().equals(JSONP);
+            boolean longPolling = org.atmosphere.util.Utils.resumableTransport(r.transport());
 
             if (s == null) {
                 sessions.put(sessionId, new SockjsSession());
-                suspend(r);
                 if (!longPolling) {
-                    installWriter(r);
-                    return Action.SUSPEND;
-                } else {
-                    return Action.CANCELLED;
+                    installWriter(r, sessionId);
                 }
+                return Action.CONTINUE;
             } else if (longPolling) {
-                installWriter(r);
-                suspend(r);
-                return Action.SUSPEND;
+                installWriter(r, sessionId);
+                return Action.CONTINUE;
             }
 
             return injectMessage(r);
         }
         return Action.CONTINUE;
-    }
-
-    private void suspend(AtmosphereResource r) {
-        r.suspend();
     }
 
     private Action iframe(AtmosphereResource r) {
@@ -218,7 +230,7 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         }
     }
 
-    private void installWriter(final AtmosphereResource r) {
+    private void installWriter(final AtmosphereResource r, final String sessionId) {
         final AtmosphereResource.TRANSPORT transport = r.transport();
         final AtmosphereResponse response = r.getResponse();
 
@@ -230,7 +242,8 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
                     String charEncoding = response.getCharacterEncoding() == null ? "UTF-8" : response.getCharacterEncoding();
                     String s = new String(responseDraft, charEncoding);
 
-                    if (s.equalsIgnoreCase("h") || s.equals("c")) {
+                    // Ugly.
+                    if (s.equalsIgnoreCase("h") || s.equals("c") || (s.equals("o\n") && r.transport().equals(AtmosphereResource.TRANSPORT.WEBSOCKET))) {
                         return s.getBytes();
                     }
 
@@ -261,6 +274,13 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         } else {
             logger.warn("Unable to apply {}. Your AsyncIOWriter must implement {}", getClass().getName(), AtmosphereInterceptorWriter.class.getName());
         }
+
+        r.addEventListener(new AtmosphereResourceEventListenerAdapter() {
+            @Override
+            public void onDisconnect(AtmosphereResourceEvent event) {
+                sessions.remove(sessionId);
+            }
+        });
     }
 
     private Action injectMessage(AtmosphereResource r) {
@@ -272,25 +292,27 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
             if (!body.isEmpty() && body.startsWith("d=")) {
                 body = URLDecoder.decode(body, "UTF-8");
                 body = body.substring(2);
-                request.setAttribute("sockjs.skipInterceptor", Boolean.TRUE);
                 response.setStatus(200);
                 response.write("ok", true).flushBuffer();
-                framework.doCometSupport(request.body(body), response);
-                request.setAttribute("sockjs.skipInterceptor", null);
+                reInject(request, response, body);
             } else {
                 String[] messages = parseMessageString(body);
                 for (String m : messages) {
                     if (m == null) continue;
-                    request.setAttribute("sockjs.skipInterceptor", Boolean.TRUE);
-                    framework.doCometSupport(request.body(m), response);
+                    reInject(request, response, m);
                 }
+                response.setStatus(204);
             }
-            request.setAttribute("sockjs.skipInterceptor", null);
-            response.setStatus(204);
         } catch (Exception e) {
             logger.error("", e);
         }
         return Action.CANCELLED;
+    }
+
+    private void reInject(AtmosphereRequest request, AtmosphereResponse response, String body) throws IOException, ServletException{
+        request.setAttribute("sockjs.skipInterceptor", Boolean.TRUE);
+        framework.doCometSupport(request.body(body), response);
+        request.setAttribute("sockjs.skipInterceptor", null);
     }
 
     private String[] parseMessageString(String msgs) {

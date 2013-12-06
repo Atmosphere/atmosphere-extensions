@@ -26,11 +26,12 @@ public class LongPollingTransport extends TransportBasedListener {
     private static final Logger logger = LoggerFactory.getLogger(LongPollingTransport.class);
 
     @Override
-    public void onPreSuspend(AtmosphereResourceEvent event) {
+    public void onSuspend(AtmosphereResourceEvent event) {
         AtmosphereResponse response = event.getResource().getResponse();
         response.setContentType("application/javascript");
         try {
-            response.write("o\n".getBytes(), true).flushBuffer();
+            response.write("o\r\n\r\n".getBytes(), true).flushBuffer();
+            response.closeStreamOrWriter();
         } catch (IOException e) {
             logger.trace("", e);
         }

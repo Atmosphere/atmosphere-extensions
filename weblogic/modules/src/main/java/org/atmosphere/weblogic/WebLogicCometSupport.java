@@ -107,9 +107,7 @@ public class WebLogicCometSupport extends AsynchronousProcessor {
     @Override
     public void action(AtmosphereResourceImpl actionEvent) {
         super.action(actionEvent);
-        if (actionEvent.isInScope() && actionEvent.action().type() == Action.TYPE.RESUME &&
-                (config.getInitParameter(ApplicationConfig.RESUME_AND_KEEPALIVE) == null
-                        || config.getInitParameter(ApplicationConfig.RESUME_AND_KEEPALIVE).equalsIgnoreCase("false"))) {
+        if (actionEvent.isInScope() && actionEvent.action().type() == Action.TYPE.RESUME) {
             try {
                 RequestResponseKey rrk = (RequestResponseKey) actionEvent.getRequest().getSession().getAttribute(RRK);
                 AbstractAsyncServlet.notify(rrk, null);

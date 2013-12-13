@@ -104,4 +104,13 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
         topic.publish(message.toString());
     }
 
+    /**
+     * Get the Hazelcast topic
+     * @return topic
+     */
+    protected ITopic getTopic() {
+        return topic;
+    }
+
+
 }

@@ -471,7 +471,7 @@
     <properties>
         <jetty-version>6.1.22</jetty-version>
         <jersey-version>1.17</jersey-version>
-        <atmosphere-version>2.1.0-SNAPSHOT</atmosphere-version>
+        <atmosphere-version>2.1.0-RC2</atmosphere-version>
         <compat-version>2.1.0</compat-version>
         <javascript-version>2.1.2</javascript-version>
         <jaxb-version>2.1</jaxb-version>

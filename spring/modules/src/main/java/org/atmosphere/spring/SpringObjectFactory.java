@@ -31,10 +31,10 @@ public class SpringObjectFactory implements AtmosphereObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(SpringObjectFactory.class);
 
     @Override
-    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> classToInstantiate) throws InstantiationException, IllegalAccessException {
+    public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         ApplicationContext context =
             new AnnotationConfigApplicationContext(classToInstantiate);
-        T t = context.getBean(classToInstantiate);
+        U t = context.getBean(classToInstantiate);
         if (t == null) {
             logger.info("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
             return classToInstantiate.newInstance();

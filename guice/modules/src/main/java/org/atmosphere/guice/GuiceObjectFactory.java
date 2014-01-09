@@ -35,7 +35,7 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
     private static Injector injector;
 
     @Override
-    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> classToInstantiate) throws InstantiationException, IllegalAccessException {
+    public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         initInjector(framework);
         if (injector == null) {
             logger.warn("No Guice Injector found in current ServletContext. Are you using {}?", AtmosphereGuiceServlet.class.getName());

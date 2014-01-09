@@ -37,7 +37,7 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> T newClassInstance(AtmosphereFramework framework, Class<T> classToInstantiate) throws InstantiationException, IllegalAccessException {
+    public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         CreationalContext cc = null;
 
         final BeanManager bm;
@@ -48,9 +48,9 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
                 logger.trace("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
                 return classToInstantiate.newInstance();
             }
-            Bean<T> bean = (Bean<T>) i.next();
-            CreationalContext<T> ctx = bm.createCreationalContext(bean);
-            T dao = (T) bm.getReference(bean, classToInstantiate, ctx);
+            Bean<U> bean = (Bean<U>) i.next();
+            CreationalContext<U> ctx = bm.createCreationalContext(bean);
+            U dao = (U) bm.getReference(bean, classToInstantiate, ctx);
             return dao;
         } catch (Exception e) {
             logger.trace("Unable to construct {}. Creating the object directly.", classToInstantiate.getName());

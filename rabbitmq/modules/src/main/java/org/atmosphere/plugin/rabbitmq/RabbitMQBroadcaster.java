@@ -83,14 +83,11 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
     public void outgoingBroadcast(Object message) {
         try {
             String id = getID();
-            if (message instanceof String) {
-                logger.trace("Outgoing broadcast : {}", message);
+            logger.trace("Outgoing broadcast : {}", message);
 
-                channel.basicPublish(exchangeName, id,
-                        MessageProperties.PERSISTENT_TEXT_PLAIN, message.toString().getBytes());
-            } else {
-                throw new IOException("Message is not a string, so could not be handled !");
-            }
+            channel.basicPublish(exchangeName, id,
+                    MessageProperties.PERSISTENT_TEXT_PLAIN, message.toString().getBytes());
+
 
         } catch (IOException e) {
             logger.warn("Failed to send message over RabbitMQ", e);

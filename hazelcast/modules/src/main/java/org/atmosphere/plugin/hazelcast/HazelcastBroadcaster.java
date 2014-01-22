@@ -101,7 +101,7 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
      */
     @Override
     public void outgoingBroadcast(Object message) {
-        topic.publish(message.toString());
+        topic.publish(message);
     }
 
     /**

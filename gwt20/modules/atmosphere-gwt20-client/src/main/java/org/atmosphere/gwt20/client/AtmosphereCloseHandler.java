@@ -20,5 +20,5 @@ package org.atmosphere.gwt20.client;
  * @author jotec
  */
 public interface AtmosphereCloseHandler {
-    public void onClose(AtmosphereResponse response);
+    public void onClose(AtmosphereServerResponse response);
 }

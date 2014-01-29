@@ -19,5 +19,5 @@ package org.atmosphere.gwt20.client;
  * @author sjardine
  */
 public interface AtmosphereFailureToReconnectHandler {
-    public void onFailureToReconnect(AtmosphereRequestConfig request, AtmosphereResponse response);
+    public void onFailureToReconnect(RequestConfig request, AtmosphereServerResponse response);
 }

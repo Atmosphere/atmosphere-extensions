@@ -20,5 +20,5 @@ package org.atmosphere.gwt20.client;
  * @author jotec
  */
 public interface AtmosphereMessagePublishedHandler {
-    public void onMessagePublished(AtmosphereRequestConfig request, AtmosphereResponse response);
+    public void onMessagePublished(RequestConfig request, AtmosphereServerResponse response);
 }

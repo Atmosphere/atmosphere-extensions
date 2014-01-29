@@ -32,7 +32,7 @@ package org.atmosphere.gwt20.client;
 
 import com.google.gwt.http.client.RequestBuilder.Method;
 
-public interface RequestConfig<T extends RequestConfig> {
+public interface RequestConfig {
 
     // Don't get crazy: For the 2.1 release we keep backward compatibility. FIX ME for 2.1
     void setFlags(AtmosphereRequestConfig.Flags... flags);

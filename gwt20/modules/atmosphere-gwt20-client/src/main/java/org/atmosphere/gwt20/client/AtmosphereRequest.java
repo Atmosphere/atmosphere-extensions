@@ -23,23 +23,39 @@ import java.util.logging.Logger;
  *
  * @author rinchen tenpel
  */
-public final class AtmosphereRequest extends JavaScriptObject {
+public final class AtmosphereRequest extends JavaScriptObject implements AtmosphereServerRequest {
   
   static final Logger logger = Logger.getLogger("AtmosphereRequest");
   
-  public void push(Object message) throws SerializationException {
+  /* (non-Javadoc)
+ * @see org.atmosphere.gwt20.client.AtmosphereMessageManager#push(java.lang.Object)
+ */
+@Override
+public void push(Object message) throws SerializationException {
     this.pushImpl(getOutboundSerializer().serialize(message));
   }
   
-  public native void pushImpl(String message) /*-{
+  /* (non-Javadoc)
+ * @see org.atmosphere.gwt20.client.AtmosphereMessageManager#pushImpl(java.lang.String)
+ */
+@Override
+public native void pushImpl(String message) /*-{
     this.push(message);
   }-*/;
   
-  public void pushLocal(Object message) throws SerializationException {
+  /* (non-Javadoc)
+ * @see org.atmosphere.gwt20.client.AtmosphereMessageManager#pushLocal(java.lang.Object)
+ */
+@Override
+public void pushLocal(Object message) throws SerializationException {
     this.pushLocalImpl(getOutboundSerializer().serialize(message));
   }
   
-  public native void pushLocalImpl(String message) /*-{
+  /* (non-Javadoc)
+ * @see org.atmosphere.gwt20.client.AtmosphereMessageManager#pushLocalImpl(java.lang.String)
+ */
+@Override
+public native void pushLocalImpl(String message) /*-{
     this.pushLocal(message);
   }-*/;
   
@@ -55,7 +71,11 @@ public final class AtmosphereRequest extends JavaScriptObject {
     return this.serializer;
   }-*/;
 
-  public native String getUUID() /*-{
+  /* (non-Javadoc)
+ * @see org.atmosphere.gwt20.client.AtmosphereMessageManager#getUUID()
+ */
+@Override
+public native String getUUID() /*-{
     return String(this.getUUID());
   }-*/;
 }

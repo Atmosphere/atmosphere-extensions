@@ -15,7 +15,6 @@
  */
 package org.atmosphere.gwt20.client;
 
-import java.io.InputStream;
 import java.io.Serializable;
 
 /**

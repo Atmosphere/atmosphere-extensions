@@ -20,5 +20,5 @@ package org.atmosphere.gwt20.client;
  * @author jotec
  */
 public interface AtmosphereTransportFailureHandler {
-    public void onTransportFailure(String errorMsg, AtmosphereRequest request);
+    public void onTransportFailure(String errorMsg, AtmosphereServerRequest request);
 }

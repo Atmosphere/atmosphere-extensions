@@ -20,5 +20,5 @@ package org.atmosphere.gwt20.client;
  * @author jotec
  */
 public interface AtmosphereReopenHandler {
-    public void onReopen(AtmosphereResponse response);
+    public void onReopen(AtmosphereServerResponse response);
 }

@@ -19,13 +19,13 @@ import com.google.gwt.core.client.JavaScriptObject;
 import java.util.Collections;
 import java.util.List;
 
-import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Transport;
+import org.atmosphere.gwt20.client.RequestConfig.Transport;
 
 /**
  *
  * @author jotec
  */
-public final class AtmosphereResponse extends JavaScriptObject {
+public final class AtmosphereResponse extends JavaScriptObject implements AtmosphereServerResponse {
 
     public enum State {
         MESSAGE_RECEIVED,
@@ -34,7 +34,7 @@ public final class AtmosphereResponse extends JavaScriptObject {
         RE_OPENING,
         CLOSED,
         ERROR;
-        
+
         @Override
         public String toString() {
             switch(this) {
@@ -56,19 +56,26 @@ public final class AtmosphereResponse extends JavaScriptObject {
             return State.ERROR;
         }
     }
-    /**
-     * See com.google.gwt.http.client.Response for status codes
-     * 
-     * @return 
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getStatus()
      */
+    @Override
     public native int getStatus() /*-{
        return this.status;
     }-*/;
-    
+
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getReasonPhrase()
+     */
+    @Override
     public native String getReasonPhrase() /*-{
         return this.reasonPhrase;
     }-*/;
 
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getMessages()
+     */
+    @Override
     public <T> List<T> getMessages() {
        Object containedMessage = getMessageObject();
        if (containedMessage == null) {
@@ -79,34 +86,51 @@ public final class AtmosphereResponse extends JavaScriptObject {
           return (List<T>) Collections.singletonList(containedMessage);
        }
     }
-        
+
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getResponseBody()
+     */
+    @Override
     public native String getResponseBody() /*-{
         return this.responseBody;
     }-*/;
-    
+
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getHeader(java.lang.String)
+     */
+    @Override
     public native String getHeader(String name) /*-{
         return this.headers[name];
     }-*/;
-    
+
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getState()
+     */
+    @Override
     public State getState() {
         return State.fromString(getStateImpl());
     }
-    
+
+    /* (non-Javadoc)
+     * @see org.atmosphere.gwt20.client.ResponseManager#getTransport()
+     */
+    @Override
     public Transport getTransport() {
         return Transport.fromString(getTransportImpl());
     }
-        
-    protected AtmosphereResponse() {
-    }
-    
-    native void setMessageObject(Object message) /*-{
+
+    @Override
+    public native void setMessageObject(Object message) /*-{
         this.messageObject = message;
     }-*/;
-    
+
+    protected AtmosphereResponse() {
+    }
+
     native Object getMessageObject() /*-{
         return this.messageObject;
     }-*/;
-    
+
     private native String getStateImpl() /*-{
         return this.state;
     }-*/;
@@ -114,5 +138,5 @@ public final class AtmosphereResponse extends JavaScriptObject {
     private native String getTransportImpl() /*-{
         return this.transport;
     }-*/;
-    
+
 }

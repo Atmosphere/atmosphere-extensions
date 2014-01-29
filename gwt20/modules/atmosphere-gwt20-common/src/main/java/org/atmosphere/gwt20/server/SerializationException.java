@@ -1,7 +1,6 @@
 package org.atmosphere.gwt20.server;
 
 /**
- *
  * @author p.havelaar
  */
 public class SerializationException extends Exception {
@@ -20,5 +19,5 @@ public class SerializationException extends Exception {
 
     public SerializationException() {
     }
-    
+
 }

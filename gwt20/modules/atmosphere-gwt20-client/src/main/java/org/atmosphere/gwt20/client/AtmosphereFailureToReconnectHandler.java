@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Steven Jardine
+ * Copyright 2013 Jean-Francois Arcand
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,5 +19,5 @@ package org.atmosphere.gwt20.client;
  * @author sjardine
  */
 public interface AtmosphereFailureToReconnectHandler {
-    public void onFailureToReconnect(RequestConfig request, AtmosphereServerResponse response);
+    public void onFailureToReconnect(RequestConfig request, AtmosphereResponse response);
 }

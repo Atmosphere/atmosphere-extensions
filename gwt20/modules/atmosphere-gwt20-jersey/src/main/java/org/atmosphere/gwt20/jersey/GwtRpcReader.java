@@ -5,6 +5,7 @@
 package org.atmosphere.gwt20.jersey;
 
 import com.google.gwt.user.client.rpc.SerializationException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -16,19 +17,19 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
+
 import org.atmosphere.gwt20.shared.Constants;
 import org.atmosphere.gwt20.server.GwtRpcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author p.havelaar
  */
 @Consumes(Constants.GWT_RPC_MEDIA_TYPE)
-@Provider 
+@Provider
 public class GwtRpcReader implements MessageBodyReader<Object> {
-    
+
     private final static Logger logger = LoggerFactory.getLogger(GwtRpcReader.class);
 
     @Override

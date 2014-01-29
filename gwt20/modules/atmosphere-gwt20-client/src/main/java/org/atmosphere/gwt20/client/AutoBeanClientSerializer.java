@@ -37,6 +37,7 @@ import com.google.web.bindery.autobean.shared.AutoBean;
 import com.google.web.bindery.autobean.shared.AutoBeanCodex;
 import com.google.web.bindery.autobean.shared.AutoBeanFactory;
 import com.google.web.bindery.autobean.shared.AutoBeanUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,44 +47,44 @@ import java.util.logging.Logger;
 /**
  * The base class for serializers. To instantiate this class follow this example:
  * <pre><code>
- *
+ * <p/>
  * {@literal @SerialTypes({ MyType1.class, MyType2.class })}
  * public abstract class MyCometSerializer extends AtmosphereGWTSerializer {}
- * 
+ * <p/>
  * AtmosphereGWTSerializer serializer = GWT.create(MyCometSerializer.class);
  * AtmosphereClient client = new AtmosphereClient(url, serializer, listener);
  * </code></pre>
- *
+ * <p/>
  * Where MyType1 and MyType2 are the types that your expecting to receive from the server.
  * If you have a class hierarchy of messages that you want to send you only need to supply the base class here.
- * 
+ * <p/>
  * For instance:
  * <pre><code>
  * public class Message {}
- * 
+ * <p/>
  * public class MessageA extends Message {}
- * 
+ * <p/>
  * public class MessageB extends Message {}
- * 
+ * <p/>
  * {@literal @SerialTypes( Message.class )}
  * public abstract class MyCometSerializer extends AtmosphereGWTSerializer {}
- * 
+ * <p/>
  * </code></pre>
  */
 public class AutoBeanClientSerializer implements ClientSerializer {
-   
-   private static final Logger logger = Logger.getLogger(AutoBeanClientSerializer.class.getName());
-    
+
+    private static final Logger logger = Logger.getLogger(AutoBeanClientSerializer.class.getName());
+
     private Map<Class, AutoBeanFactory> beanFactories;
     private AutoBeanFactory activeBeanFactory;
     private Class<Object> activeBeanClass;
     // buffer in order to capture split messages
     private StringBuffer buffer = new StringBuffer(16100);
-   
+
     public void registerBeanFactory(Class<AutoBeanFactory> factoryClass, Class forBean) {
-        registerBeanFactory((AutoBeanFactory)GWT.create(factoryClass), forBean);
+        registerBeanFactory((AutoBeanFactory) GWT.create(factoryClass), forBean);
     }
-    
+
     public void registerBeanFactory(AutoBeanFactory factory, Class forBean) {
         if (beanFactories == null) {
             beanFactories = new HashMap<Class, AutoBeanFactory>();
@@ -93,7 +94,7 @@ public class AutoBeanClientSerializer implements ClientSerializer {
             setActiveBeanFactory(forBean);
         }
     }
-    
+
     public void setActiveBeanFactory(Class forBean) {
         if (beanFactories == null) {
             throw new IllegalStateException("No bean factory available");
@@ -105,52 +106,51 @@ public class AutoBeanClientSerializer implements ClientSerializer {
         activeBeanFactory = factory;
         activeBeanClass = forBean;
     }
-    
+
     @Override
     public Object deserialize(String raw) throws SerializationException {
-       
-       buffer.append(raw); // TODO buffer messages in case we receive a chunked message
-       
-      // split up in different parts - based on the {}
-      // this is necessary because multiple objects can be chunked in one single string
-      int brackets = 0;
-      int start = 0;
-      List<String> messages = new ArrayList<String>();
-      for (int i = 0; i < buffer.length(); i++) {
 
-          // detect brackets
-          if (buffer.charAt(i) == '{') {
-             ++brackets;
-          }
-          else if (buffer.charAt(i) == '}') --brackets;
+        buffer.append(raw); // TODO buffer messages in case we receive a chunked message
 
-          // new message
-          if (brackets == 0) {
-              messages.add(buffer.substring(start, i + 1));
-              start = i + 1;
-          }
-      }
-      buffer.delete(0, start);
+        // split up in different parts - based on the {}
+        // this is necessary because multiple objects can be chunked in one single string
+        int brackets = 0;
+        int start = 0;
+        List<String> messages = new ArrayList<String>();
+        for (int i = 0; i < buffer.length(); i++) {
 
-      // create the objects
-      List<Object> objects = new ArrayList<Object>(messages.size());
-      for (String message : messages) {
-        try {
+            // detect brackets
+            if (buffer.charAt(i) == '{') {
+                ++brackets;
+            } else if (buffer.charAt(i) == '}') --brackets;
 
-           logger.info("Deserialize " + message + " from " + raw);
-            Object event = AutoBeanCodex.decode(activeBeanFactory, activeBeanClass, message).as();
-
-            objects.add(event);
-
-        } catch (RuntimeException e) {
-
-            throw new SerializationException(e);
-
+            // new message
+            if (brackets == 0) {
+                messages.add(buffer.substring(start, i + 1));
+                start = i + 1;
+            }
         }
-      }
-      return objects;
+        buffer.delete(0, start);
+
+        // create the objects
+        List<Object> objects = new ArrayList<Object>(messages.size());
+        for (String message : messages) {
+            try {
+
+                logger.info("Deserialize " + message + " from " + raw);
+                Object event = AutoBeanCodex.decode(activeBeanFactory, activeBeanClass, message).as();
+
+                objects.add(event);
+
+            } catch (RuntimeException e) {
+
+                throw new SerializationException(e);
+
+            }
+        }
+        return objects;
     }
-    
+
     @Override
     public String serialize(Object message) throws SerializationException {
         try {

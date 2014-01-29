@@ -23,10 +23,10 @@ import java.io.InputStream;
  * This class is used during serialization by the {@link RPCSerializer}. This class is normally used with
  * the {@link org.atmosphere.gwt20.server.managed.AtmosphereResourceInterceptor} to allow GWT and non GWT
  * application to interact using a {@link org.atmosphere.cpr.Broadcaster}.
- *
+ * <p/>
  * The {@link #asString()}  or {@link #asByte()}  are used to serialize the object so Atmosphere's component
  * can react on the deserialize GWT object as a normal request's body, without the GWT protocol.
- *
+ * <p/>
  * This class can also be used with {@link org.atmosphere.cpr.AtmosphereHandler}
  *
  * @author Jeanfrancois Arcand

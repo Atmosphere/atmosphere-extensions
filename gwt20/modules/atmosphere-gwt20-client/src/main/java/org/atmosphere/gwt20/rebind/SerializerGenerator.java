@@ -55,17 +55,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
 public class SerializerGenerator extends IncrementalGenerator {
 
-  @Override
-  public long getVersionId() {
-    return 1L;
-  }
-  
-  @Override
-  public RebindResult generateIncrementally(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException {
+    @Override
+    public long getVersionId() {
+        return 1L;
+    }
+
+    @Override
+    public RebindResult generateIncrementally(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException {
 
         TypeOracle typeOracle = context.getTypeOracle();
 
@@ -147,7 +148,7 @@ public class SerializerGenerator extends IncrementalGenerator {
                 composerFactory.addImport(Serializer.class.getName());
                 composerFactory.addImport(SerializationException.class.getName());
                 composerFactory.addImport(Serializable.class.getName());
-                
+
                 composerFactory.setSuperclass(typeName);
                 SourceWriter sourceWriter = composerFactory.createSourceWriter(context, printWriter);
                 sourceWriter.print("private Serializer SERIALIZER = new " + realize + "();");

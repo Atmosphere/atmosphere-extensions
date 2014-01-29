@@ -1,56 +1,44 @@
+/*
+* Copyright 2013 Jeanfrancois Arcand
+*
+* Licensed under the Apache License, Version 2.0 (the "License"); you may not
+* use this file except in compliance with the License. You may obtain a copy of
+* the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations under
+* the License.
+*/
+/*
+ * Copyright 2009 Richard Zschech.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package org.atmosphere.gwt20.client;
 
 import com.google.gwt.http.client.RequestBuilder.Method;
 
-public interface RequestConfig
-{
-    public enum Transport {
-        SESSION,
-        LONG_POLLING,
-        STREAMING,
-        JSONP,
-        SSE,
-        WEBSOCKET;
+public interface RequestConfig<T extends RequestConfig> {
 
-        @Override
-        public String toString() {
-            switch(this) {
-                default:
-                case SESSION: return "session";
-                case LONG_POLLING: return "long-polling";
-                case STREAMING : return "streaming";
-                case JSONP: return "jsonp";
-                case SSE: return "sse";
-                case WEBSOCKET: return "websocket";
-            }
-        }
+    // Don't get crazy: For the 2.1 release we keep backward compatibility. FIX ME for 2.1
+    void setFlags(AtmosphereRequestConfig.Flags... flags);
 
-        public static Transport fromString(String s) {
-            for (Transport t : Transport.values()) {
-                if (t.toString().equals(s)) {
-                    return t;
-                }
-            }
-            return null;
-        }
-    }
-
-    public enum Flags {
-        enableXDR,
-        rewriteURL,
-        attachHeadersAsQueryString,
-        withCredentials,
-        trackMessageLength,
-        shared,
-        readResponsesHeaders,
-        dropAtmosphereHeaders,
-        executeCallbackBeforeReconnect,
-        enableProtocol
-    }
-
-    void setFlags(Flags ... flags);
-
-    void clearFlags(Flags ... flags);
+    // Don't get crazy: For the 2.1 release we keep backward compatibility. FIX ME for 2.1
+    void clearFlags(AtmosphereRequestConfig.Flags... flags);
 
     void setOutboundSerializer(ClientSerializer serializer);
 
@@ -78,9 +66,11 @@ public interface RequestConfig
 
     void setFallbackMethod(Method method);
 
-    void setTransport(Transport transport);
+    // Don't get crazy: For the 2.1 release we keep backward compatibility. FIX ME for 2.1
+    void setTransport(AtmosphereRequestConfig.Transport transport);
 
-    void setFallbackTransport(Transport transport);
+    // Don't get crazy: For the 2.1 release we keep backward compatibility. FIX ME for 2.1
+    void setFallbackTransport(AtmosphereRequestConfig.Transport transport);
 
     void setOpenHandler(AtmosphereOpenHandler handler);
 

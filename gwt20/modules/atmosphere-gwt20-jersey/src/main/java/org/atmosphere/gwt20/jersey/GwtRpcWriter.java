@@ -5,6 +5,7 @@
 package org.atmosphere.gwt20.jersey;
 
 import com.google.gwt.user.client.rpc.SerializationException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
@@ -17,13 +18,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
+
 import org.atmosphere.gwt20.shared.Constants;
 import org.atmosphere.gwt20.server.GwtRpcUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author p.havelaar
  */
 @Provider
@@ -47,11 +48,11 @@ public class GwtRpcWriter implements MessageBodyWriter<Object> {
         try {
             List ct = Collections.singletonList(Constants.GWT_RPC_MEDIA_TYPE + "; charset=UTF-8");
             if (!ct.equals(headers.get("Content-Type"))) {
-               headers.put("Content-Type", ct);
+                headers.put("Content-Type", ct);
             }
-            if (t instanceof String && ((String)t).isEmpty()) {
-               out.flush();
-               return;
+            if (t instanceof String && ((String) t).isEmpty()) {
+                out.flush();
+                return;
             }
             String data = GwtRpcUtil.serialize(t);
             out.write(data.getBytes("UTF-8"));
@@ -60,5 +61,5 @@ public class GwtRpcWriter implements MessageBodyWriter<Object> {
             logger.error("Failed to serialize message", ex);
         }
     }
-    
+
 }

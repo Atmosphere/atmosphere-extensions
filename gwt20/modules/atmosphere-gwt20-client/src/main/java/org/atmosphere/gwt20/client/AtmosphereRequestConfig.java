@@ -30,12 +30,61 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
 
     private static final Logger logger = Logger.getLogger(AtmosphereRequestConfig.class.getName());
 
+    public enum Transport {
+        SESSION,
+        LONG_POLLING,
+        STREAMING,
+        JSONP,
+        SSE,
+        WEBSOCKET;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                default:
+                case SESSION:
+                    return "session";
+                case LONG_POLLING:
+                    return "long-polling";
+                case STREAMING:
+                    return "streaming";
+                case JSONP:
+                    return "jsonp";
+                case SSE:
+                    return "sse";
+                case WEBSOCKET:
+                    return "websocket";
+            }
+        }
+
+        public static Transport fromString(String s) {
+            for (Transport t : Transport.values()) {
+                if (t.toString().equals(s)) {
+                    return t;
+                }
+            }
+            return null;
+        }
+    }
+
+    public enum Flags {
+        enableXDR,
+        rewriteURL,
+        attachHeadersAsQueryString,
+        withCredentials,
+        trackMessageLength,
+        shared,
+        readResponsesHeaders,
+        dropAtmosphereHeaders,
+        executeCallbackBeforeReconnect,
+        enableProtocol
+    }
     /**
      * use the same serializer for inbound and outbound
      * @param serializer
      * @return
      */
-    public static RequestConfig create(ClientSerializer serializer) {
+    public static AtmosphereRequestConfig create(ClientSerializer serializer) {
         return create(serializer, serializer);
     }
 
@@ -46,7 +95,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
      * @param outbound
      * @return
      */
-    public static RequestConfig create(ClientSerializer inbound, ClientSerializer outbound) {
+    public static AtmosphereRequestConfig create(ClientSerializer inbound, ClientSerializer outbound) {
         AtmosphereRequestConfig r = createImpl();
         MessageHandlerWrapper w = new MessageHandlerWrapper(inbound);
         r.setMessageHandlerImpl(w);
@@ -201,7 +250,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onOpen = $entry(function(response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereOpenHandler::onOpen(Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereOpenHandler::onOpen(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onOpen = null;
@@ -216,7 +265,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onReopen = $entry(function(response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereReopenHandler::onReopen(Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereReopenHandler::onReopen(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onReopen = null;
@@ -231,7 +280,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onClose = $entry(function(response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereCloseHandler::onClose(Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereCloseHandler::onClose(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onClose = null;
@@ -246,7 +295,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onClientTimeout = $entry(function(request) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereClientTimeoutHandler::onClientTimeout(Lorg/atmosphere/gwt20/client/AtmosphereServerRequest;)(request);
+                handler.@org.atmosphere.gwt20.client.AtmosphereClientTimeoutHandler::onClientTimeout(Lorg/atmosphere/gwt20/client/AtmosphereRequest;)(request);
             });
         } else {
             this.onClientTimeout = null;
@@ -277,7 +326,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onError = $entry(function(response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereErrorHandler::onError(Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereErrorHandler::onError(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onError = null;
@@ -292,7 +341,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onReconnect = $entry(function(request, response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereReconnectHandler::onReconnect(Lorg/atmosphere/gwt20/client/RequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(request, response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereReconnectHandler::onReconnect(Lorg/atmosphere/gwt20/client/RequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(request, response);
             });
         } else {
             this.onReconnect = null;
@@ -307,7 +356,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onFailureToReconnect = $entry(function(request, response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereFailureToReconnectHandler::onFailureToReconnect(Lorg/atmosphere/gwt20/client/RequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(request, response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereFailureToReconnectHandler::onFailureToReconnect(Lorg/atmosphere/gwt20/client/RequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(request, response);
             });
         } else {
             this.onFailureToReconnect = null;
@@ -322,7 +371,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onMessagePublished = $entry(function(request, response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereMessagePublishedHandler::onMessagePublished(Lorg/atmosphere/gwt20/client/RequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(request, response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereMessagePublishedHandler::onMessagePublished(Lorg/atmosphere/gwt20/client/RequestConfig;Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(request, response);
             });
         } else {
             this.onMessagePublished = null;
@@ -337,7 +386,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         var self = this;
         if (handler != null) {
             this.onTransportFailure = $entry(function(errorMsg, request) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereTransportFailureHandler::onTransportFailure(Ljava/lang/String;Lorg/atmosphere/gwt20/client/AtmosphereServerRequest;)(errorMsg, request);
+                handler.@org.atmosphere.gwt20.client.AtmosphereTransportFailureHandler::onTransportFailure(Ljava/lang/String;Lorg/atmosphere/gwt20/client/AtmosphereRequest;)(errorMsg, request);
             });
         } else {
             this.onTransportFailure = null;
@@ -376,7 +425,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         }
 
         @Override
-        public void onMessage(AtmosphereServerResponse response) {
+        public void onMessage(AtmosphereResponse response) {
             try {
                 if (response.getResponseBody().trim().length() == 0) {
                   return;
@@ -413,7 +462,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         this.messageHandler = handler;
         if (handler != null) {
             this.onMessage = $entry(function(response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onMessage = null;
@@ -425,7 +474,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         this.localMessageHandler = handler;
         if (handler != null) {
             this.onLocalMessage = $entry(function(response) {
-                handler.@org.atmosphere.gwt20.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/gwt20/client/AtmosphereServerResponse;)(response);
+                handler.@org.atmosphere.gwt20.client.AtmosphereMessageHandler::onMessage(Lorg/atmosphere/gwt20/client/AtmosphereResponse;)(response);
             });
         } else {
             this.onLocalMessage = null;

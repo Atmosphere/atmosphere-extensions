@@ -8,14 +8,13 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
- *
  * @author Havelaar
  */
 public class ServerSerializerFactory {
-   
-   private static ServiceLoader<ServerSerializer> loader = ServiceLoader.load(ServerSerializer.class);
-   
-   public static Iterator<ServerSerializer> getSerializers() {
-      return loader.iterator();
-   }
+
+    private static ServiceLoader<ServerSerializer> loader = ServiceLoader.load(ServerSerializer.class);
+
+    public static Iterator<ServerSerializer> getSerializers() {
+        return loader.iterator();
+    }
 }

@@ -16,9 +16,8 @@
 package org.atmosphere.gwt20.client;
 
 /**
- *
  * @author jotec
  */
 public interface AtmosphereErrorHandler {
-    public void onError(AtmosphereServerResponse response);
+    public void onError(AtmosphereResponse response);
 }

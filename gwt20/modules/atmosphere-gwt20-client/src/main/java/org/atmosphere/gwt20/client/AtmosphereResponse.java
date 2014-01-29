@@ -1,142 +1,30 @@
-/*
- * Copyright 2013 Jeanfrancois Arcand
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package org.atmosphere.gwt20.client;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import java.util.Collections;
+import org.atmosphere.gwt20.client.AtmosphereRequestConfig.Transport;
+import org.atmosphere.gwt20.client.AtmosphereResponseImpl.State;
+
 import java.util.List;
 
-import org.atmosphere.gwt20.client.RequestConfig.Transport;
-
-/**
- *
- * @author jotec
- */
-public final class AtmosphereResponse extends JavaScriptObject implements AtmosphereServerResponse {
-
-    public enum State {
-        MESSAGE_RECEIVED,
-        MESSAGE_PUBLISHED,
-        OPENING,
-        RE_OPENING,
-        CLOSED,
-        ERROR;
-
-        @Override
-        public String toString() {
-            switch(this) {
-                case MESSAGE_RECEIVED: return "messageReceived";
-                case MESSAGE_PUBLISHED: return "messagePublished";
-                case OPENING: return "opening";
-                case RE_OPENING: return "re-opening";
-                case CLOSED: return "closed";
-                default:
-                case ERROR: return "error";
-            }
-        }
-        public static State fromString(String s) {
-            for (State st : State.values()) {
-                if (st.toString().equals(s)) {
-                    return st;
-                }
-            }
-            return State.ERROR;
-        }
-    }
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getStatus()
+public interface AtmosphereResponse {
+    /**
+     * See com.google.gwt.http.client.Response for status codes
+     *
+     * @return
      */
-    @Override
-    public native int getStatus() /*-{
-       return this.status;
-    }-*/;
+    int getStatus();
 
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getReasonPhrase()
-     */
-    @Override
-    public native String getReasonPhrase() /*-{
-        return this.reasonPhrase;
-    }-*/;
+    String getReasonPhrase();
 
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getMessages()
-     */
-    @Override
-    public <T> List<T> getMessages() {
-       Object containedMessage = getMessageObject();
-       if (containedMessage == null) {
-          return Collections.emptyList();
-       } else if (containedMessage instanceof List) {
-          return (List)containedMessage;
-       } else {
-          return (List<T>) Collections.singletonList(containedMessage);
-       }
-    }
+    <T> List<T> getMessages();
 
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getResponseBody()
-     */
-    @Override
-    public native String getResponseBody() /*-{
-        return this.responseBody;
-    }-*/;
+    String getResponseBody();
 
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getHeader(java.lang.String)
-     */
-    @Override
-    public native String getHeader(String name) /*-{
-        return this.headers[name];
-    }-*/;
+    String getHeader(String name);
 
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getState()
-     */
-    @Override
-    public State getState() {
-        return State.fromString(getStateImpl());
-    }
+    State getState();
 
-    /* (non-Javadoc)
-     * @see org.atmosphere.gwt20.client.ResponseManager#getTransport()
-     */
-    @Override
-    public Transport getTransport() {
-        return Transport.fromString(getTransportImpl());
-    }
+    Transport getTransport();
 
-    @Override
-    public native void setMessageObject(Object message) /*-{
-        this.messageObject = message;
-    }-*/;
-
-    protected AtmosphereResponse() {
-    }
-
-    native Object getMessageObject() /*-{
-        return this.messageObject;
-    }-*/;
-
-    private native String getStateImpl() /*-{
-        return this.state;
-    }-*/;
-
-    private native String getTransportImpl() /*-{
-        return this.transport;
-    }-*/;
+    void setMessageObject(Object inMessage);
 
 }

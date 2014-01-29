@@ -16,9 +16,8 @@
 package org.atmosphere.gwt20.client;
 
 /**
- *
  * @author Jeanfrancois Arcand
  */
 public interface AtmosphereClientTimeoutHandler {
-    public void onClientTimeout(AtmosphereServerRequest request);
+    public void onClientTimeout(AtmosphereRequest request);
 }

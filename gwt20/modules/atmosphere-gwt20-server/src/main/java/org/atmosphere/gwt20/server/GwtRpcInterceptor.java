@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- *
  * @author p.havelaar
  */
 public class GwtRpcInterceptor implements AtmosphereInterceptor {
@@ -55,9 +54,9 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
                 || jersey) {
             return Action.CONTINUE;
         }
-              
+
         logger.debug("Found GWT-RPC Atmosphere request. method: " + r.getRequest().getMethod());
-        
+
         if (r.getRequest().getMethod().equals("GET")) {
             // For default content-type.
             if (r.transport().equals(AtmosphereResource.TRANSPORT.WEBSOCKET)) {
@@ -80,7 +79,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
             try {
                 String data = GwtRpcUtil.readerToString(r.getRequest().getReader());
                 if (logger.isDebugEnabled()) {
-                  logger.debug("Received message from client: " + data);
+                    logger.debug("Received message from client: " + data);
                 }
                 r.getRequest().setAttribute(Constants.MESSAGE_OBJECT, GwtRpcUtil.deserialize(data));
             } catch (IOException ex) {
@@ -91,7 +90,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
         }
         return Action.CONTINUE;
     }
-    
+
     protected boolean isHandledByJersey(AtmosphereResource r) {
         if (r.getAtmosphereHandler() instanceof ReflectorServletProcessor) {
             return ReflectorServletProcessor.class.cast(r.getAtmosphereHandler()).getServletClassName()
@@ -100,10 +99,10 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
             return false;
         }
     }
-    
+
     @Override
     public void postInspect(AtmosphereResource r) {
-        
+
     }
-    
+
 }

@@ -18,7 +18,6 @@ package org.atmosphere.gwt20.client;
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**
- *
  * @author jotec
  */
 public final class Atmosphere extends JavaScriptObject implements AtmosphereSubscriber {
@@ -35,8 +34,8 @@ public final class Atmosphere extends JavaScriptObject implements AtmosphereSubs
      * @see org.atmosphere.gwt20.client.AtmosphereSubscriber#subscribe(org.atmosphere.gwt20.client.AtmosphereRequestConfig)
      */
     @Override
-    public AtmosphereServerRequest subscribe(RequestConfig requestConfig) {
-        AtmosphereRequest r = subscribeImpl(requestConfig);
+    public AtmosphereRequest subscribe(RequestConfig requestConfig) {
+        AtmosphereRequestImpl r = subscribeImpl(requestConfig);
         r.setOutboundSerializer(requestConfig.getOutboundSerializer());
         return r;
     }
@@ -46,11 +45,11 @@ public final class Atmosphere extends JavaScriptObject implements AtmosphereSubs
      */
     @Override
     public native void unsubscribe() /*-{
-      this.unsubscribe();
+        this.unsubscribe();
     }-*/;
 
-    private native AtmosphereRequest subscribeImpl(RequestConfig requestConfig) /*-{
-      return this.subscribe(requestConfig);
+    private native AtmosphereRequestImpl subscribeImpl(RequestConfig requestConfig) /*-{
+        return this.subscribe(requestConfig);
     }-*/;
 
     protected Atmosphere() {

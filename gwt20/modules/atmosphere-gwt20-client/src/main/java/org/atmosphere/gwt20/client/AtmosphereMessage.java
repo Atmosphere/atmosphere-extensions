@@ -24,34 +24,39 @@ import java.io.Serializable;
  */
 public interface AtmosphereMessage<T> extends Serializable {
 
-    public enum TYPE { STRING, BYTES }
+    public enum TYPE {STRING, BYTES}
 
     /**
      * Return the {@link TYPE}
+     *
      * @return
      */
     public TYPE type();
 
     /**
      * Return the message of type T
+     *
      * @return
      */
     public T getMessage();
 
     /**
      * Set the message of type T
+     *
      * @param message
      */
     public void setMessage(T message);
 
     /**
      * Serialize this object in the form of an {@link String}.
+     *
      * @return
      */
     public String asString();
 
     /**
      * Serialize this object in the form of an byte[] array.
+     *
      * @return
      */
     public byte[] asByte();

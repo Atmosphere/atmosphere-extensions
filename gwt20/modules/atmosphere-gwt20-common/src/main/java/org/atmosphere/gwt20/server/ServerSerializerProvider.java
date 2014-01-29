@@ -5,10 +5,10 @@
 package org.atmosphere.gwt20.server;
 
 /**
- *
  * @author Havelaar
  */
 public interface ServerSerializerProvider {
-   ServerSerializer getServerSerializer();
-   String getName();
+    ServerSerializer getServerSerializer();
+
+    String getName();
 }

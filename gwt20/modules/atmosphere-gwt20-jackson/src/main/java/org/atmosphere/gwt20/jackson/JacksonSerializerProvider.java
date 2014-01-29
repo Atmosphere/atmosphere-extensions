@@ -8,25 +8,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author p.havelaar
  */
 public class JacksonSerializerProvider implements ServerSerializerProvider {
 
-   public final static String SERIALIZER_PROVIDER_NAME = "Jackson";
-   
-   private static final Logger logger = LoggerFactory.getLogger(JacksonSerializerProvider.class);
-   ObjectMapper mapper;
+    public final static String SERIALIZER_PROVIDER_NAME = "Jackson";
 
-   public JacksonSerializerProvider() {
-      mapper = new ObjectMapper();
-      mapper.getSerializationConfig().withSerializationInclusion(Inclusion.NON_NULL);
+    private static final Logger logger = LoggerFactory.getLogger(JacksonSerializerProvider.class);
+    ObjectMapper mapper;
+
+    public JacksonSerializerProvider() {
+        mapper = new ObjectMapper();
+        mapper.getSerializationConfig().withSerializationInclusion(Inclusion.NON_NULL);
 //        mapper.getSerializationConfig().withClassIntrospector(new BeanIntroSpector());
 
-      logger.info("Loaded Jackson JSONSerializerProvider");
-   }
+        logger.info("Loaded Jackson JSONSerializerProvider");
+    }
 
-//    static class BeanIntroSpector extends BasicClassIntrospector {
+    //    static class BeanIntroSpector extends BasicClassIntrospector {
 //        @Override
 //        protected MethodFilter getSerializationMethodFilter(SerializationConfig cfg) {
 //            return BeanSerializationMethodFilter.instance;
@@ -56,13 +55,13 @@ public class JacksonSerializerProvider implements ServerSerializerProvider {
 //            }
 //        }
 //    }
-   @Override
-   public String getName() {
-      return SERIALIZER_PROVIDER_NAME;
-   }
+    @Override
+    public String getName() {
+        return SERIALIZER_PROVIDER_NAME;
+    }
 
-   @Override
-   public ServerSerializer getServerSerializer() {
-      return new JacksonSerializer(this);
-   }
+    @Override
+    public ServerSerializer getServerSerializer() {
+        return new JacksonSerializer(this);
+    }
 }

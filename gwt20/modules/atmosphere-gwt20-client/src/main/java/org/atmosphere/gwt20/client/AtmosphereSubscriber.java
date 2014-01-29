@@ -1,7 +1,7 @@
 package org.atmosphere.gwt20.client;
 
-public interface AtmosphereSubscriber
-{
-    AtmosphereServerRequest subscribe(RequestConfig requestConfig);
+public interface AtmosphereSubscriber {
+    AtmosphereRequest subscribe(RequestConfig requestConfig);
+
     void unsubscribe();
 }

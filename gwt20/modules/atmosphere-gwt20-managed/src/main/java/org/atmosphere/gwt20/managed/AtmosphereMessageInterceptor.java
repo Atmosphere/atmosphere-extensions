@@ -25,7 +25,7 @@ import org.atmosphere.gwt20.shared.Constants;
 /**
  * De-serialize GWT object into a String so we can use {@link org.atmosphere.cpr.Broadcaster} and non GWT application as client.
  * All AtmosphereInterceptor will work out of the box without requiring any change.
- *
+ * <p/>
  * This interceptor is normally used with the {@link org.atmosphere.config.service.ManagedService} annotation
  * and must always be used with {@link org.atmosphere.gwt20.server.GwtRpcInterceptor}.
  *

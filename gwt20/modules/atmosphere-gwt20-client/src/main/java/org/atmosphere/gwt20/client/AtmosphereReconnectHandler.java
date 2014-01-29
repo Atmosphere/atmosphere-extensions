@@ -16,9 +16,8 @@
 package org.atmosphere.gwt20.client;
 
 /**
- *
  * @author jotec
  */
 public interface AtmosphereReconnectHandler {
-    public void onReconnect(RequestConfig request, AtmosphereServerResponse response);
+    public void onReconnect(RequestConfig request, AtmosphereResponse response);
 }

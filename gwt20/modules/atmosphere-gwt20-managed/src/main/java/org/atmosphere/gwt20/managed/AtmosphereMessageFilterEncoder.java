@@ -46,7 +46,7 @@ public class AtmosphereMessageFilterEncoder implements BroadcastFilter {
                 m.setMessage(message);
                 return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, m);
             } catch (Exception e) {
-                logger.error("{}", e);
+                logger.warn("Oups. Make sure your RPCEvent implements AtmosphereMessage<Your Class>. Or remove the AtmosphereMessageInterceptor {}", e);
                 return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, message);
             }
         } else {

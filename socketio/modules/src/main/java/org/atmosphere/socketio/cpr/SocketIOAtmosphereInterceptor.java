@@ -146,7 +146,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
                 response.setContentType("plain/text");
                 
                 SocketIOSession session = getSessionManager(version).createSession((AtmosphereResourceImpl) r, atmosphereHandler);
-                response.getWriter().print(session.getSessionId() + ":" + heartbeatInterval + ":" + timeout + ":" + availableTransports);
+                response.getWriter().print(session.getSessionId() + ":" + (heartbeatInterval/1000) + ":" + (timeout/1000) + ":" + availableTransports);
 
                 return Action.CANCELLED;
             } else if (protocol != null && version == null) {

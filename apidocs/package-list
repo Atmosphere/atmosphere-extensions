@@ -1,8 +1,11 @@
+org.atmosphere.cdi
 org.atmosphere.cometd
 org.atmosphere.guice
 org.atmosphere.gwt20.client
+org.atmosphere.gwt20.client.managed
 org.atmosphere.gwt20.jackson
 org.atmosphere.gwt20.jersey
+org.atmosphere.gwt20.managed
 org.atmosphere.gwt20.rebind
 org.atmosphere.gwt20.server
 org.atmosphere.gwt20.shared
@@ -17,6 +20,7 @@ org.atmosphere.socketio
 org.atmosphere.socketio.cache
 org.atmosphere.socketio.cpr
 org.atmosphere.socketio.transport
+org.atmosphere.sockjs
 org.atmosphere.spring
 org.atmosphere.weblogic
 weblogic.servlet.http

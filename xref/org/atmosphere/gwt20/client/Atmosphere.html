@@ -9,7 +9,7 @@
 <div id="overview"><a href="../../../../../apidocs/org/atmosphere/gwt20/client/Atmosphere.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2013 Jeanfrancois Arcand</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2014 Jeanfrancois Arcand</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License"); you may not</em>
 <a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * use this file except in compliance with the License. You may obtain a copy of</em>
@@ -28,33 +28,43 @@
 <a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> com.google.gwt.core.client.JavaScriptObject;
 <a class="jxr_linenumber" name="19" href="#19">19</a>  
 <a class="jxr_linenumber" name="20" href="#20">20</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> *</em>
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment"> * @author jotec</em>
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/atmosphere/gwt20/client/Atmosphere.html">Atmosphere</a> <strong class="jxr_keyword">extends</strong> JavaScriptObject {
-<a class="jxr_linenumber" name="25" href="#25">25</a>   
-<a class="jxr_linenumber" name="26" href="#26">26</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">native</strong> Atmosphere create() <em class="jxr_comment">/*<em class="jxr_comment">-{</em></em>
-<a class="jxr_linenumber" name="27" href="#27">27</a>  <em class="jxr_comment">        return $wnd.atmosphere;</em>
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <em class="jxr_comment">    }-*/</em>;
-<a class="jxr_linenumber" name="29" href="#29">29</a>      
-<a class="jxr_linenumber" name="30" href="#30">30</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/atmosphere/gwt20/client/AtmosphereRequest.html">AtmosphereRequest</a> subscribe(<a href="../../../../org/atmosphere/gwt20/client/AtmosphereRequestConfig.html">AtmosphereRequestConfig</a> requestConfig) {
-<a class="jxr_linenumber" name="31" href="#31">31</a>          <a href="../../../../org/atmosphere/gwt20/client/AtmosphereRequest.html">AtmosphereRequest</a> r = subscribeImpl(requestConfig);
-<a class="jxr_linenumber" name="32" href="#32">32</a>          r.setOutboundSerializer(requestConfig.getOutboundSerializer());
-<a class="jxr_linenumber" name="33" href="#33">33</a>          <strong class="jxr_keyword">return</strong> r;
-<a class="jxr_linenumber" name="34" href="#34">34</a>      }
-<a class="jxr_linenumber" name="35" href="#35">35</a>      
-<a class="jxr_linenumber" name="36" href="#36">36</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">native</strong> <strong class="jxr_keyword">void</strong> unsubscribe() <em class="jxr_comment">/*<em class="jxr_comment">-{</em></em>
-<a class="jxr_linenumber" name="37" href="#37">37</a>  <em class="jxr_comment">      this.unsubscribe();</em>
-<a class="jxr_linenumber" name="38" href="#38">38</a>  <em class="jxr_comment">    }-*/</em>;
-<a class="jxr_linenumber" name="39" href="#39">39</a>      
-<a class="jxr_linenumber" name="40" href="#40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">native</strong> AtmosphereRequest subscribeImpl(AtmosphereRequestConfig requestConfig) <em class="jxr_comment">/*<em class="jxr_comment">-{</em></em>
-<a class="jxr_linenumber" name="41" href="#41">41</a>  <em class="jxr_comment">      return this.subscribe(requestConfig);</em>
-<a class="jxr_linenumber" name="42" href="#42">42</a>  <em class="jxr_comment">    }-*/</em>;
-<a class="jxr_linenumber" name="43" href="#43">43</a>      
-<a class="jxr_linenumber" name="44" href="#44">44</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../org/atmosphere/gwt20/client/Atmosphere.html">Atmosphere</a>() {
-<a class="jxr_linenumber" name="45" href="#45">45</a>      }
-<a class="jxr_linenumber" name="46" href="#46">46</a>   
-<a class="jxr_linenumber" name="47" href="#47">47</a>  }
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <em class="jxr_javadoccomment"> * @author jotec</em>
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/atmosphere/gwt20/client/Atmosphere.html">Atmosphere</a> <strong class="jxr_keyword">extends</strong> JavaScriptObject <strong class="jxr_keyword">implements</strong> <a href="../../../../org/atmosphere/gwt20/client/AtmosphereSubscriber.html">AtmosphereSubscriber</a> {
+<a class="jxr_linenumber" name="24" href="#24">24</a>  
+<a class="jxr_linenumber" name="25" href="#25">25</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../org/atmosphere/gwt20/client/AtmosphereSubscriber.html">AtmosphereSubscriber</a> createAtmosphereSubscriber() {
+<a class="jxr_linenumber" name="26" href="#26">26</a>          <strong class="jxr_keyword">return</strong> create();
+<a class="jxr_linenumber" name="27" href="#27">27</a>      }
+<a class="jxr_linenumber" name="28" href="#28">28</a>  
+<a class="jxr_linenumber" name="29" href="#29">29</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">native</strong> Atmosphere create() <em class="jxr_comment">/*<em class="jxr_comment">-{</em></em>
+<a class="jxr_linenumber" name="30" href="#30">30</a>  <em class="jxr_comment">        return $wnd.atmosphere;</em>
+<a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_comment">    }-*/</em>;
+<a class="jxr_linenumber" name="32" href="#32">32</a>  
+<a class="jxr_linenumber" name="33" href="#33">33</a>      <em class="jxr_comment">/*<em class="jxr_comment"> (non-Javadoc)</em></em>
+<a class="jxr_linenumber" name="34" href="#34">34</a>  <em class="jxr_comment">     * @see org.atmosphere.gwt20.client.AtmosphereSubscriber#subscribe(org.atmosphere.gwt20.client.AtmosphereRequestConfig)</em>
+<a class="jxr_linenumber" name="35" href="#35">35</a>  <em class="jxr_comment">     */</em>
+<a class="jxr_linenumber" name="36" href="#36">36</a>      @Override
+<a class="jxr_linenumber" name="37" href="#37">37</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/atmosphere/gwt20/client/AtmosphereRequest.html">AtmosphereRequest</a> subscribe(<a href="../../../../org/atmosphere/gwt20/client/RequestConfig.html">RequestConfig</a> requestConfig) {
+<a class="jxr_linenumber" name="38" href="#38">38</a>          <a href="../../../../org/atmosphere/gwt20/client/AtmosphereRequestImpl.html">AtmosphereRequestImpl</a> r = subscribeImpl(requestConfig);
+<a class="jxr_linenumber" name="39" href="#39">39</a>          r.setOutboundSerializer(requestConfig.getOutboundSerializer());
+<a class="jxr_linenumber" name="40" href="#40">40</a>          <strong class="jxr_keyword">return</strong> r;
+<a class="jxr_linenumber" name="41" href="#41">41</a>      }
+<a class="jxr_linenumber" name="42" href="#42">42</a>  
+<a class="jxr_linenumber" name="43" href="#43">43</a>      <em class="jxr_comment">/*<em class="jxr_comment"> (non-Javadoc)</em></em>
+<a class="jxr_linenumber" name="44" href="#44">44</a>  <em class="jxr_comment">     * @see org.atmosphere.gwt20.client.AtmosphereSubscriber#unsubscribe()</em>
+<a class="jxr_linenumber" name="45" href="#45">45</a>  <em class="jxr_comment">     */</em>
+<a class="jxr_linenumber" name="46" href="#46">46</a>      @Override
+<a class="jxr_linenumber" name="47" href="#47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">native</strong> <strong class="jxr_keyword">void</strong> unsubscribe() <em class="jxr_comment">/*<em class="jxr_comment">-{</em></em>
+<a class="jxr_linenumber" name="48" href="#48">48</a>  <em class="jxr_comment">        this.unsubscribe();</em>
+<a class="jxr_linenumber" name="49" href="#49">49</a>  <em class="jxr_comment">    }-*/</em>;
+<a class="jxr_linenumber" name="50" href="#50">50</a>  
+<a class="jxr_linenumber" name="51" href="#51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">native</strong> AtmosphereRequestImpl subscribeImpl(RequestConfig requestConfig) <em class="jxr_comment">/*<em class="jxr_comment">-{</em></em>
+<a class="jxr_linenumber" name="52" href="#52">52</a>  <em class="jxr_comment">        return this.subscribe(requestConfig);</em>
+<a class="jxr_linenumber" name="53" href="#53">53</a>  <em class="jxr_comment">    }-*/</em>;
+<a class="jxr_linenumber" name="54" href="#54">54</a>  
+<a class="jxr_linenumber" name="55" href="#55">55</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../org/atmosphere/gwt20/client/Atmosphere.html">Atmosphere</a>() {
+<a class="jxr_linenumber" name="56" href="#56">56</a>      }
+<a class="jxr_linenumber" name="57" href="#57">57</a>  }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -9,7 +9,7 @@
 <div id="overview"><a href="../../../../../apidocs/org/atmosphere/socketio/cpr/SocketIOWebSocketEventListener.html">View Javadoc</a></div><pre>
 
 <a class="jxr_linenumber" name="1" href="#1">1</a>   <em class="jxr_comment">/*</em>
-<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2013 Sebastien Dionne</em>
+<a class="jxr_linenumber" name="2" href="#2">2</a>   <em class="jxr_comment"> * Copyright 2014 Sebastien Dionne</em>
 <a class="jxr_linenumber" name="3" href="#3">3</a>   <em class="jxr_comment"> *</em>
 <a class="jxr_linenumber" name="4" href="#4">4</a>   <em class="jxr_comment"> * Licensed under the Apache License, Version 2.0 (the "License"); you may not</em>
 <a class="jxr_linenumber" name="5" href="#5">5</a>   <em class="jxr_comment"> * use this file except in compliance with the License. You may obtain a copy of</em>
@@ -25,18 +25,18 @@
 <a class="jxr_linenumber" name="15" href="#15">15</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="16" href="#16">16</a>  <strong class="jxr_keyword">package</strong> org.atmosphere.socketio.cpr;
 <a class="jxr_linenumber" name="17" href="#17">17</a>  
-<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.cpr.AtmosphereResourceImpl;
-<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.SocketIOException;
-<a class="jxr_linenumber" name="20" href="#20">20</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.SocketIOSession;
-<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.SocketIOWebSocketSessionWrapper;
-<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.transport.SocketIOPacketImpl;
-<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
-<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.websocket.WebSocketEventListenerAdapter;
-<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
-<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
-<a class="jxr_linenumber" name="27" href="#27">27</a>  
-<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
-<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="18" href="#18">18</a>  <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="19" href="#19">19</a>  <strong class="jxr_keyword">import</strong> java.util.List;
+<a class="jxr_linenumber" name="20" href="#20">20</a>  
+<a class="jxr_linenumber" name="21" href="#21">21</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.cpr.AtmosphereResourceImpl;
+<a class="jxr_linenumber" name="22" href="#22">22</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.SocketIOException;
+<a class="jxr_linenumber" name="23" href="#23">23</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.SocketIOSession;
+<a class="jxr_linenumber" name="24" href="#24">24</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.SocketIOWebSocketSessionWrapper;
+<a class="jxr_linenumber" name="25" href="#25">25</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.transport.SocketIOPacketImpl;
+<a class="jxr_linenumber" name="26" href="#26">26</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
+<a class="jxr_linenumber" name="27" href="#27">27</a>  <strong class="jxr_keyword">import</strong> org.atmosphere.websocket.WebSocketEventListenerAdapter;
+<a class="jxr_linenumber" name="28" href="#28">28</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="29" href="#29">29</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
 <a class="jxr_linenumber" name="30" href="#30">30</a>  
 <a class="jxr_linenumber" name="31" href="#31">31</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="32" href="#32">32</a>  <em class="jxr_javadoccomment"> * @author Sebastien Dionne  : sebastien.dionne@gmail.com</em>
@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="93" href="#93">93</a>              sessionWrapper.getSession().onConnect(sessionWrapper.getSession().getAtmosphereResourceImpl(), sessionWrapper);
 <a class="jxr_linenumber" name="94" href="#94">94</a>              sessionWrapper.initiated(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="95" href="#95">95</a>          } <strong class="jxr_keyword">catch</strong> (Exception e) {
-<a class="jxr_linenumber" name="96" href="#96">96</a>              e.printStackTrace();
+<a class="jxr_linenumber" name="96" href="#96">96</a>              logger.error(e.getMessage(),e);
 <a class="jxr_linenumber" name="97" href="#97">97</a>              sessionWrapper.getSession().onShutdown();
 <a class="jxr_linenumber" name="98" href="#98">98</a>          }
 <a class="jxr_linenumber" name="99" href="#99">99</a>  
@@ -116,7 +116,11 @@
 <a class="jxr_linenumber" name="106" href="#106">106</a>         sessionWrapper.getSession().onClose(event.message().toString());
 <a class="jxr_linenumber" name="107" href="#107">107</a>     }
 <a class="jxr_linenumber" name="108" href="#108">108</a> 
-<a class="jxr_linenumber" name="109" href="#109">109</a> }
+<a class="jxr_linenumber" name="109" href="#109">109</a> 	<strong class="jxr_keyword">protected</strong> <a href="../../../../org/atmosphere/socketio/SocketIOWebSocketSessionWrapper.html">SocketIOWebSocketSessionWrapper</a> getSessionWrapper() {
+<a class="jxr_linenumber" name="110" href="#110">110</a> 		<strong class="jxr_keyword">return</strong> sessionWrapper;
+<a class="jxr_linenumber" name="111" href="#111">111</a> 	}
+<a class="jxr_linenumber" name="112" href="#112">112</a> 
+<a class="jxr_linenumber" name="113" href="#113">113</a> }
 </pre>
 <hr/><div id="footer">This page was automatically generated by <a href="http://maven.apache.org/">Maven</a></div></body>
 </html>

@@ -310,8 +310,12 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
                     try {
                         handler.sendMessage(data);
                     } catch (SocketIOException e) {
-                        logger.error("handler.sendMessage failed: ", e);
-                        handler.abort();
+                    	if(state != ConnectionState.CLOSED){
+                    		logger.error("handler.sendMessage failed: ", e);
+                    		state = ConnectionState.CLOSED;
+                    		onDisconnect(DisconnectReason.UNKNOWN);
+                    		handler.abort();
+                    	}
                     }
                 }
             } else {

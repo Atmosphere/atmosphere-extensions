@@ -107,7 +107,7 @@
             </dependency>
             <dependency>
                 <groupId>org.atmosphere.client</groupId>
-                <artifactId>jquery</artifactId>
+                <artifactId>javascript</artifactId>
                 <version>${javascript-version}</version>
                 <type>war</type>
                 <scope>provided</scope>

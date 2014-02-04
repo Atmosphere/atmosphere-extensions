@@ -24,6 +24,7 @@ import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.util.Iterator;
 
 /**
@@ -35,14 +36,25 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(CDIObjectFactory.class);
 
+    private BeanManager bm;
+    public CDIObjectFactory(){
+        try {
+            bm = (BeanManager) new InitialContext().lookup("java:comp/BeanManager");
+        } catch (NamingException ex) {
+            try {
+                bm = (BeanManager) new InitialContext().lookup("java:comp/env/BeanManager");
+            } catch (NamingException e) {
+                logger.error("{}", e);
+            }
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         CreationalContext cc = null;
 
-        final BeanManager bm;
         try {
-            bm = (BeanManager) new InitialContext().lookup("java:comp/BeanManager");
             final Iterator<Bean<?>> i = bm.getBeans(classToInstantiate).iterator();
             if (!i.hasNext()) {
                 logger.trace("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
@@ -53,7 +65,7 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
             U dao = (U) bm.getReference(bean, classToInstantiate, ctx);
             return dao;
         } catch (Exception e) {
-            logger.trace("Unable to construct {}. Creating the object directly.", classToInstantiate.getName());
+            logger.error("Unable to construct {}. Creating the object directly.", classToInstantiate.getName());
             return classToInstantiate.newInstance();
         } finally {
             if (cc != null) cc.release();

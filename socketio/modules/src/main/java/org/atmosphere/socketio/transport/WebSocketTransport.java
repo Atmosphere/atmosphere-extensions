@@ -201,7 +201,7 @@ public class WebSocketTransport extends AbstractTransport {
                     webSocket.write(message);
                     logger.trace("WRITE SUCCESS : calling from " + this.getClass().getName() + " : " + "sendMessage(string) = " + message);
                 } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
+                	throw new SocketIOException(e);
                 }
             } else {
                 logger.warn("WebSOCKET NULL");

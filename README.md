@@ -1,6 +1,6 @@
 ### [Atmosphere Framework](https://github.com/Atmosphere/atmosphere) Extensions and Plugin
 
-You need Atmosphere Runtime version 2.0.0 and higher to use those extension. To install, just do
+You need Atmosphere Runtime version 2.1.0 and higher to use those extension. To install, just do
 
 ```java
      <dependency>

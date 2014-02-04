@@ -15,6 +15,14 @@
  */
 package org.atmosphere.socketio.cpr;
 
+import static org.atmosphere.socketio.transport.SocketIOSessionManagerImpl.mapper;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.atmosphere.config.service.AtmosphereInterceptorService;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AsyncIOWriter;
@@ -38,13 +46,6 @@ import org.atmosphere.socketio.transport.XHRPollingTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.atmosphere.socketio.transport.SocketIOSessionManagerImpl.mapper;
-
 /**
  * SocketIO implementation.
  *
@@ -58,8 +59,26 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(SocketIOAtmosphereInterceptor.class);
     private static final int BUFFER_SIZE_DEFAULT = 8192;
     private final SocketIOSessionManager sessionManager = new SocketIOSessionManagerImpl();;
-    private static int heartbeatInterval = 15000;
-    private static int timeout = 25000;
+    /**
+     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the server when it should send a new heartbeat to the client. <br>
+     * In milliseconds.
+     */
+    private long heartbeatInterval = 25000;
+    /**
+     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the client – when it closes the connection it still has X amounts of seconds to re-open the connection. <b>This value is sent to the client after a successful handshake.</b><br>
+     * In milliseconds.
+     */
+    private long timeout = 60000;
+    
+    /**
+     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the client, we should receive a heartbeat from the server within this interval. This should be greater than the heartbeat interval. <b>This value is sent to the client after a successful handshake.</b><br>
+     * In milliseconds.
+     */
+    private long heartbeatTimeout = 60000;
+    
     private static int suspendTime = 20000;
     private final Map<String, Transport> transports = new HashMap<String, Transport>();
     private String availableTransports;
@@ -68,6 +87,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
     public static final String SOCKETIO_TRANSPORT = "socketio-transport";
     public static final String SOCKETIO_TIMEOUT = "socketio-timeout";
     public static final String SOCKETIO_HEARTBEAT = "socketio-heartbeat";
+    public static final String SOCKETIO_HEARTBEAT_TIMEOUT = "socketio-heartbeat-timeout";
     public static final String SOCKETIO_SUSPEND = "socketio-suspendTime";
 
 
@@ -146,7 +166,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
                 response.setContentType("plain/text");
                 
                 SocketIOSession session = getSessionManager(version).createSession((AtmosphereResourceImpl) r, atmosphereHandler);
-                response.getWriter().print(session.getSessionId() + ":" + (heartbeatInterval/1000) + ":" + (timeout/1000) + ":" + availableTransports);
+                response.getWriter().print(session.getSessionId() + ":" + (heartbeatTimeout/1000) + ":" + (timeout/1000) + ":" + availableTransports);
 
                 return Action.CANCELLED;
             } else if (protocol != null && version == null) {
@@ -246,6 +266,11 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
         String heartbeatWebXML = config.getInitParameter(SOCKETIO_HEARTBEAT);
         if (heartbeatWebXML != null) {
             heartbeatInterval = Integer.parseInt(heartbeatWebXML);
+        }
+        
+        String heartbeatTimeoutWebXML = config.getInitParameter(SOCKETIO_HEARTBEAT_TIMEOUT);
+        if (heartbeatTimeoutWebXML != null) {
+            heartbeatTimeout = Integer.parseInt(heartbeatTimeoutWebXML);
         }
 
         String suspendWebXML = config.getInitParameter(SOCKETIO_SUSPEND);

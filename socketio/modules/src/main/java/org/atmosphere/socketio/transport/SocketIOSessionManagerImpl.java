@@ -15,10 +15,20 @@
  */
 package org.atmosphere.socketio.transport;
 
+import java.security.SecureRandom;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResourceEventImpl;
-import org.atmosphere.cpr.AtmosphereResourceFactory;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 import org.atmosphere.socketio.HeartBeatSessionMonitor;
 import org.atmosphere.socketio.SocketIOException;
@@ -32,17 +42,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  * @author Sebastien Dionne  : sebastien.dionne@gmail.com
  */
@@ -55,8 +54,19 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     private final ConcurrentMap<String, SocketIOSession> socketIOSessions = new ConcurrentHashMap<String, SocketIOSession>();
     private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-    private long heartbeatInterval = 15;
-    private long timeout = 2500;
+    /**
+     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the server when it should send a new heartbeat to the client. <br>
+     * In milliseconds.
+     */
+    private long heartbeatInterval = 25000;
+    /**
+     * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
+     * The timeout for the client – when it closes the connection it still has X amounts of seconds to re-open the connection. This value is sent to the client after a successful handshake.<br>
+     * In milliseconds.
+     */
+    private long timeout = 60000;
+    
     private long requestSuspendTime = 20000; // 20 sec.
     public static final ObjectMapper mapper = new ObjectMapper();
 
@@ -76,14 +86,16 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
                  j++) {
                 byte b1 = (byte) ((bytes[j] & 0xf0) >> 4);
                 byte b2 = (byte) (bytes[j] & 0x0f);
-                if (b1 < 10)
-                    buffer.append((char) ('0' + b1));
-                else
-                    buffer.append((char) ('A' + (b1 - 10)));
-                if (b2 < 10)
-                    buffer.append((char) ('0' + b2));
-                else
-                    buffer.append((char) ('A' + (b2 - 10)));
+                if (b1 < 10) {
+					buffer.append((char) ('0' + b1));
+				} else {
+					buffer.append((char) ('A' + (b1 - 10)));
+				}
+                if (b2 < 10) {
+					buffer.append((char) ('0' + b2));
+				} else {
+					buffer.append((char) ('A' + (b2 - 10)));
+				}
                 resultLenBytes++;
             }
         }

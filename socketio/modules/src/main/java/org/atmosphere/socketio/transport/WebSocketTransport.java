@@ -17,6 +17,12 @@ package org.atmosphere.socketio.transport;
 
 import static org.atmosphere.cpr.ApplicationConfig.SUSPENDED_ATMOSPHERE_RESOURCE_UUID;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
@@ -32,12 +38,6 @@ import org.atmosphere.socketio.cpr.SocketIOWebSocketEventListener;
 import org.atmosphere.websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 /**
  * @author Sebastien Dionne  : sebastien.dionne@gmail.com
@@ -114,7 +114,8 @@ public class WebSocketTransport extends AbstractTransport {
         * (non-Javadoc)
         * @see org.eclipse.jetty.websocket.WebSocket#onDisconnect()
         */
-        public void onDisconnect() {
+        @Override
+		public void onDisconnect() {
             logger.trace("calling from " + this.getClass().getName() + " : " + "onDisconnect");
             session.onShutdown();
         }
@@ -123,7 +124,8 @@ public class WebSocketTransport extends AbstractTransport {
            * (non-Javadoc)
            * @see org.eclipse.jetty.websocket.WebSocket#onMessage(byte, java.lang.String)
            */
-        public void onMessage(byte frame, String message) {
+        @Override
+		public void onMessage(byte frame, String message) {
             logger.trace("calling from " + this.getClass().getName() + " : " + "onMessage");
             throw new RuntimeException();
         }
@@ -132,7 +134,8 @@ public class WebSocketTransport extends AbstractTransport {
            * (non-Javadoc)
            * @see org.eclipse.jetty.websocket.WebSocket#onMessage(byte, byte[], int, int)
            */
-        public void onMessage(byte frame, byte[] data, int offset, int length) {
+        @Override
+		public void onMessage(byte frame, byte[] data, int offset, int length) {
             logger.trace("calling from " + this.getClass().getName() + " : " + "onMessage frame, data, offest, length");
             try {
                 onMessage(frame, new String(data, offset, length, "UTF-8"));
@@ -198,7 +201,7 @@ public class WebSocketTransport extends AbstractTransport {
                     webSocket.write(message);
                     logger.trace("WRITE SUCCESS : calling from " + this.getClass().getName() + " : " + "sendMessage(string) = " + message);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             } else {
                 logger.warn("WebSOCKET NULL");

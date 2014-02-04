@@ -15,6 +15,9 @@
  */
 package org.atmosphere.socketio.cpr;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.atmosphere.cpr.AtmosphereResourceImpl;
 import org.atmosphere.socketio.SocketIOException;
 import org.atmosphere.socketio.SocketIOSession;
@@ -24,9 +27,6 @@ import org.atmosphere.socketio.transport.SocketIOPacketImpl.PacketType;
 import org.atmosphere.websocket.WebSocketEventListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Sebastien Dionne  : sebastien.dionne@gmail.com
@@ -93,7 +93,7 @@ public class SocketIOWebSocketEventListener extends WebSocketEventListenerAdapte
             sessionWrapper.getSession().onConnect(sessionWrapper.getSession().getAtmosphereResourceImpl(), sessionWrapper);
             sessionWrapper.initiated(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
             sessionWrapper.getSession().onShutdown();
         }
 
@@ -105,5 +105,9 @@ public class SocketIOWebSocketEventListener extends WebSocketEventListenerAdapte
 
         sessionWrapper.getSession().onClose(event.message().toString());
     }
+
+	protected SocketIOWebSocketSessionWrapper getSessionWrapper() {
+		return sessionWrapper;
+	}
 
 }

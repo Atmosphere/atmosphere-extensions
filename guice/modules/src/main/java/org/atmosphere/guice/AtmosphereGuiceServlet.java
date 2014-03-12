@@ -15,8 +15,16 @@
  */
 package org.atmosphere.guice;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
+import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereServlet;
+import org.atmosphere.handler.ReflectorServletProcessor;
+
+import java.util.Map;
 
 /**
  * Google Guice Integration. Only difference with the {@link AtmosphereServlet} is this class is annotated with @Singleton
@@ -29,10 +37,34 @@ public class AtmosphereGuiceServlet extends AtmosphereServlet {
     public static final String PROPERTIES = GuiceObjectFactory.class.getName() + ".properties";
 
     public AtmosphereGuiceServlet() {
-        this(false,true);
+        this(false, true);
     }
 
     public AtmosphereGuiceServlet(boolean isFilter, boolean autoDetectHandlers) {
-        super(isFilter, autoDetectHandlers);
+        framework = new AtmosphereFramework(isFilter, autoDetectHandlers) {
+            @Override
+            protected void configureDetectedFramework(ReflectorServletProcessor rsp, boolean isJersey) {
+                Injector injector = (Injector) framework().getAtmosphereConfig().getServletContext().getAttribute(Injector.class.getName());
+                GuiceContainer guiceServlet = injector.getInstance(GuiceContainer.class);
+                rsp.setServlet(guiceServlet);
+
+                if (isJersey) {
+                    try {
+                        Map<String, String> props = injector.getInstance(
+                                Key.get(new TypeLiteral<Map<String, String>>() {
+                                }, Names.named(PROPERTIES)));
+
+                        if (props != null) {
+                            for (String p : props.keySet()) {
+                                framework().addInitParameter(p, props.get(p));
+                            }
+                        }
+                    } catch (Exception ex) {
+                        // Do not fail
+                        logger.debug("failed to add Jersey init parameters to Atmosphere servlet", ex);
+                    }
+                }
+            }
+        };
     }
 }

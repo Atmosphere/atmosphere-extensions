@@ -471,7 +471,7 @@
     <properties>
         <jetty-version>6.1.22</jetty-version>
         <jersey-version>1.17</jersey-version>
-        <atmosphere-version>2.1.0</atmosphere-version>
+        <atmosphere-version>2.1.1-SNAPSHOT</atmosphere-version>
         <compat-version>2.1.0</compat-version>
         <javascript-version>2.1.4</javascript-version>
         <jaxb-version>2.1</jaxb-version>
@@ -497,7 +497,7 @@
         <guice-version>2.0</guice-version>
         <spring-version>3.0.6.RELEASE</spring-version>
         <wicket.version>1.4.12</wicket.version>
-        <ahc.version>1.7.6</ahc.version>
+        <ahc.version>1.8.3</ahc.version>
         <jedis.version>2.0.0</jedis.version>
         <slf4j-impl-version>1.6.1</slf4j-impl-version>
         <slf4j-version>1.6.1</slf4j-version>

@@ -471,7 +471,6 @@
     <properties>
         <jetty-version>6.1.22</jetty-version>
         <jersey-version>1.17</jersey-version>
-        <atmosphere-version>2.1.1-SNAPSHOT</atmosphere-version>
         <compat-version>2.1.0</compat-version>
         <javascript-version>2.1.4</javascript-version>
         <jaxb-version>2.1</jaxb-version>
@@ -502,5 +501,7 @@
         <slf4j-impl-version>1.6.1</slf4j-impl-version>
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>
+
+        <atmosphere-version>2.1.1</atmosphere-version>
     </properties>
 </project>

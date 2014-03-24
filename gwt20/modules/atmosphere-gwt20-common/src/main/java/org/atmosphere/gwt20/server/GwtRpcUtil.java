@@ -15,6 +15,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author p.havelaar
@@ -22,6 +28,72 @@ import java.io.UnsupportedEncodingException;
 public class GwtRpcUtil implements ServerSerializerProvider {
 
     public final static String SERIALIZER_PROVIDER_NAME = "GwtRpc";
+
+    /**
+     * A reference to the annotation class
+     * javax.jdo.annotations.PersistenceCapable used by the JDO API. May be null
+     * if JDO is not present in the runtime environment.
+     */
+    private static Class<? extends Annotation> JDO_PERSISTENCE_CAPABLE_ANNOTATION = null;
+
+    /**
+     * A reference to the method 'String
+     * javax.jdo.annotations.PersistenceCapable.detachable()'.
+     */
+    private static Method JDO_PERSISTENCE_CAPABLE_DETACHABLE_METHOD;
+
+    /**
+     * A reference to the annotation class javax.persistence.Entity used by the
+     * JPA API. May be null if JPA is not present in the runtime environment.
+     */
+    private static Class<? extends Annotation> JPA_ENTITY_ANNOTATION = null;
+
+	static {
+		try {
+			JDO_PERSISTENCE_CAPABLE_ANNOTATION = Class.forName("javax.jdo.annotations.PersistenceCapable").asSubclass(Annotation.class);
+			JDO_PERSISTENCE_CAPABLE_DETACHABLE_METHOD = JDO_PERSISTENCE_CAPABLE_ANNOTATION.getDeclaredMethod("detachable", (Class[]) null);
+		} catch (ClassNotFoundException e) {
+			// Ignore, JDO_PERSISTENCE_CAPABLE_ANNOTATION will be null
+		} catch (NoSuchMethodException e) {
+			JDO_PERSISTENCE_CAPABLE_ANNOTATION = null;
+		}
+
+		try {
+			JPA_ENTITY_ANNOTATION = Class.forName("javax.persistence.Entity").asSubclass(Annotation.class);
+		} catch (ClassNotFoundException e) {
+			// Ignore, JPA_ENTITY_CAPABLE_ANNOTATION will be null
+		}
+	}
+
+	static boolean hasJpaAnnotation(Class<?> clazz) {
+		if (JPA_ENTITY_ANNOTATION == null) {
+			return false;
+		}
+		return clazz.getAnnotation(JPA_ENTITY_ANNOTATION) != null;
+	}
+	
+	static boolean hasJdoAnnotation(Class<?> clazz) {
+		if (JDO_PERSISTENCE_CAPABLE_ANNOTATION == null) {
+			return false;
+		}
+		Annotation annotation = clazz.getAnnotation(JDO_PERSISTENCE_CAPABLE_ANNOTATION);
+		if (annotation == null) {
+			return false;
+		}
+		try {
+			Object value = JDO_PERSISTENCE_CAPABLE_DETACHABLE_METHOD.invoke(annotation, (Object[]) null);
+			if (value instanceof String) {
+				return "true".equalsIgnoreCase((String) value);
+			} else {
+				return false;
+			}
+		} catch (IllegalAccessException e) {
+			// will return false
+		} catch (InvocationTargetException e) {
+			// will return false
+		}
+		return false;
+	}
 
     @Override
     public String getName() {
@@ -53,6 +125,19 @@ public class GwtRpcUtil implements ServerSerializerProvider {
     }
 
     private final static SerializationPolicy serializationPolicy = new SerializationPolicy() {
+    	@Override
+    	public Set<String> getClientFieldNamesForEnhancedClass(Class<?> clazz) {
+    		if (hasJpaAnnotation(clazz) || hasJdoAnnotation(clazz)) {
+    			Set<String> fieldNames = new TreeSet<String>();
+    			for (Field f : clazz.getDeclaredFields()) {
+    				fieldNames.add(f.getName());
+    			}
+    			return fieldNames;
+    		} else {
+    			return null;
+    		}
+    	}
+    	
         @Override
         public boolean shouldDeserializeFields(final Class<?> clazz) {
             return Object.class != clazz;

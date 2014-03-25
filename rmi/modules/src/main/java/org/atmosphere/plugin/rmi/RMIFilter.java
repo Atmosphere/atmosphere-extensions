@@ -64,7 +64,7 @@ public class RMIFilter implements ClusterBroadcastFilter {
      * {@inheritDoc}
      */
     @Override
-    public BroadcastAction filter(final Object originalMessage, final Object message) {
+    public BroadcastAction filter(String broadcasterId, final Object originalMessage, final Object message) {
         logger.info("Filtering message '{}' with {}", new Object[] { message, getClass().getName() });
         RMIPeerManager.getInstance().sendAll(bc.getID(), message);
         return new BroadcastAction(message);

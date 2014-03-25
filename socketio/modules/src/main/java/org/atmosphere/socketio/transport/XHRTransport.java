@@ -109,7 +109,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                 // if BroadcastCache is available, add the message to the cache
                                 if (resource != null && DefaultBroadcaster.class.isAssignableFrom(resource.getBroadcaster().getClass())) {
                                     resource.getBroadcaster().getBroadcasterConfig().getBroadcasterCache().
-                                            addToCache(resource.getBroadcaster().getID(), resource,
+                                            addToCache(resource.getBroadcaster().getID(), resource.uuid(),
                                                     new BroadcastMessage(msg));
                                 }
                             }

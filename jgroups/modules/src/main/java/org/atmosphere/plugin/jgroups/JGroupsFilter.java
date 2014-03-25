@@ -105,7 +105,8 @@ public class JGroupsFilter implements ClusterBroadcastFilter {
      * @param message the message to broadcast.
      * @return The same message.
      */
-    public BroadcastAction filter(Object originalMessage, Object message) {
+    @Override
+    public BroadcastAction filter(String broadcasterId, Object originalMessage, Object message) {
         if (bc != null) {
             this.jchannel.send(this.bc.getID(), message);
         }

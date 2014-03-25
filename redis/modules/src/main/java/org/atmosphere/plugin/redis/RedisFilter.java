@@ -82,7 +82,7 @@ public class RedisFilter implements ClusterBroadcastFilter {
      * {@inheritDoc}
      */
     @Override
-    public BroadcastFilter.BroadcastAction filter(Object originalMessage, Object o) {
+    public BroadcastFilter.BroadcastAction filter(String broadcasterId, Object originalMessage, Object o) {
         String contents = originalMessage.toString();
         if (!localMessages.remove(contents)) {
             redisUtil.outgoingBroadcast(originalMessage.toString());

@@ -170,7 +170,7 @@ public class JMSFilter implements ClusterBroadcastFilter {
      * @return The same message.
      */
     @Override
-    public BroadcastAction filter(Object originalMessage, Object o) {
+    public BroadcastAction filter(String broadcasterId, Object originalMessage, Object o) {
         if (o instanceof String) {
             String message = (String) o;
             // Avoid re-broadcasting

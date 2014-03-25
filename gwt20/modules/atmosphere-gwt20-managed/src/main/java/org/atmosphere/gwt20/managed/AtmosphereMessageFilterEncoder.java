@@ -39,7 +39,7 @@ public class AtmosphereMessageFilterEncoder implements BroadcastFilter {
      * @return an RPCEvent instance.
      */
     @Override
-    public BroadcastAction filter(Object originalMessage, Object message) {
+    public BroadcastAction filter(String broadcasterId, Object originalMessage, Object message) {
         if (!AtmosphereMessage.class.isAssignableFrom(message.getClass())) {
             try {
                 AtmosphereMessage<Object> m = (AtmosphereMessage<Object>) messageClazz.newInstance();

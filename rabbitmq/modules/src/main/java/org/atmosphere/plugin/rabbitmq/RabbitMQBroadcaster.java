@@ -23,7 +23,7 @@ import com.rabbitmq.client.MessageProperties;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFuture;
-import org.atmosphere.cpr.Entry;
+import org.atmosphere.cpr.Deliver;
 import org.atmosphere.util.SimpleBroadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,12 +72,12 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
     }
 
     @Override
-    protected void push(Entry entry) {
+    protected void push(Deliver entry) {
         if (destroyed.get()) {
             return;
         }
 
-        outgoingBroadcast(entry.message);
+        outgoingBroadcast(entry.getMessage());
     }
 
     public void outgoingBroadcast(Object message) {
@@ -132,7 +132,7 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
                         Object newMsg = filter(message);
                         // if newSgw == null, that means the message has been filtered.
                         if (newMsg != null) {
-                            deliverPush(new Entry(newMsg, new BroadcasterFuture<Object>(newMsg), message), true);
+                            deliverPush(new Deliver(newMsg, new BroadcasterFuture<Object>(newMsg), message), true);
                         }
                     } catch (Throwable t) {
                         logger.error("failed to push message: " + message, t);

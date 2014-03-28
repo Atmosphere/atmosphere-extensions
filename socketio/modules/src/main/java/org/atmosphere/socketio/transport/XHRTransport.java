@@ -201,7 +201,7 @@ public abstract class XHRTransport extends AbstractTransport {
                                 if (DefaultBroadcaster.class.isAssignableFrom(resource.getBroadcaster().getClass())) {
 
                                     List<Object> cachedMessages = resource.getBroadcaster().getBroadcasterConfig().getBroadcasterCache()
-                                            .retrieveFromCache(resource.getBroadcaster().getID(), resource);
+                                            .retrieveFromCache(resource.getBroadcaster().getID(), resource.uuid());
 
                                     if (cachedMessages != null && !cachedMessages.isEmpty()) {
                                         if (cachedMessages.size() > 1) {

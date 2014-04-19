@@ -22,6 +22,7 @@ import com.hazelcast.core.ITopic;
 import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 import org.atmosphere.cpr.AtmosphereConfig;
+import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.AtmosphereConfig.ShutdownHook;
 import org.atmosphere.util.AbstractBroadcasterProxy;
@@ -41,6 +42,7 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     private static final Logger logger = LoggerFactory.getLogger(org.atmosphere.plugin.hazelcast.HazelcastBroadcaster.class);
     private ITopic topic;
     private final AtomicBoolean isClosed = new AtomicBoolean();
+    private String messageListenerRegistrationId;
 
     private final static HazelcastInstance HAZELCAST_INSTANCE = Hazelcast.newHazelcastInstance();
 
@@ -54,13 +56,6 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
 
     public void setUp() {
         topic = HAZELCAST_INSTANCE.<String>getTopic(getID());
-        topic.addMessageListener(new MessageListener<String>() {
-            @Override
-            public void onMessage(Message<String> message) {
-                broadcastReceivedMessage(message.getMessageObject());
-            }
-        });
-
         config.shutdownHook(new ShutdownHook() {
             @Override
             public void shutdown() {
@@ -68,6 +63,41 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
                 isClosed.set(true);
             }
         });
+    }
+    
+    private synchronized void addMessageListener() {
+      if (getAtmosphereResources().size() > 0 && messageListenerRegistrationId == null) {
+        messageListenerRegistrationId = topic.addMessageListener(new MessageListener<String>() {
+          @Override
+          public void onMessage(Message<String> message) {
+              broadcastReceivedMessage(message.getMessageObject());
+          }
+        });
+        
+        logger.info("Added message listener to topic");
+      }
+    }
+    
+    private synchronized void removeMessageListener() {
+      if (getAtmosphereResources().size() == 0 && messageListenerRegistrationId != null) {
+        getTopic().removeMessageListener(messageListenerRegistrationId);
+        messageListenerRegistrationId = null;
+        
+        logger.info("Removed message listener from topic");
+      }   
+    }
+    
+    @Override
+    public Broadcaster addAtmosphereResource(AtmosphereResource resource) {
+      addMessageListener();
+      return super.addAtmosphereResource(resource);
+    }
+
+    @Override
+    public Broadcaster removeAtmosphereResource(AtmosphereResource resource) {
+      Broadcaster result = super.removeAtmosphereResource(resource);
+      removeMessageListener();
+      return result;
     }
 
     @Override

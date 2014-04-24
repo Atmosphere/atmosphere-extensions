@@ -89,8 +89,9 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     
     @Override
     public Broadcaster addAtmosphereResource(AtmosphereResource resource) {
+      Broadcaster result = super.addAtmosphereResource(resource);
       addMessageListener();
-      return super.addAtmosphereResource(resource);
+      return result;
     }
 
     @Override

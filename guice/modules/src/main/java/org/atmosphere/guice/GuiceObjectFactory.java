@@ -32,7 +32,7 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(GuiceObjectFactory.class);
 
-    private static Injector injector;
+    private Injector injector;
 
     @Override
     public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {

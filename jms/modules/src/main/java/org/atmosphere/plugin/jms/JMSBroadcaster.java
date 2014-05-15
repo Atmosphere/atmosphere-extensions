@@ -33,6 +33,7 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.net.URI;
 
 /**
  * Simple {@link org.atmosphere.cpr.Broadcaster} implementation based on JMS
@@ -63,8 +64,8 @@ public class JMSBroadcaster extends AbstractBroadcasterProxy {
 
     public  JMSBroadcaster() {}
 
-    public Broadcaster initialize(String id, AtmosphereConfig config) {
-        super.initialize(id, null, config);
+    public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
+        super.initialize(id, uri, config);
         setUp();
         return this;
     }

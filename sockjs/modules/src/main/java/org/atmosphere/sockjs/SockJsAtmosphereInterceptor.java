@@ -85,33 +85,27 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
     public void configure(final AtmosphereConfig config) {
         framework = config.framework();
         supportWebSocket = config.framework().getAsyncSupport().supportWebSocket();
-        // TODO: Configurable.
         config.properties().put(HeaderConfig.JSONP_CALLBACK_NAME, "c");
-        config.startupHook(new AtmosphereConfig.StartupHook() {
-            @Override
-            public void started(AtmosphereFramework framework) {
-                for (AtmosphereInterceptor i : framework.interceptors()) {
-                    if (HeartbeatInterceptor.class.isAssignableFrom(i.getClass())) {
-                        HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(25);
-                    }
-                }
-
-                boolean addInterceptor = true;
-                for (AtmosphereInterceptor i : framework.interceptors()) {
-                    if (AtmosphereResourceLifecycleInterceptor.class.isAssignableFrom(i.getClass())) {
-                        addInterceptor = true;
-                    }
-                }
-
-                if (addInterceptor) {
-                    framework.interceptor(new AtmosphereResourceLifecycleInterceptor(true));
-                }
-
-                if (config.handlers().size() == 0) {
-                    framework.addAtmosphereHandler("/*", ECHO_ATMOSPHEREHANDLER);
-                }
+        for (AtmosphereInterceptor i : framework.interceptors()) {
+            if (HeartbeatInterceptor.class.isAssignableFrom(i.getClass())) {
+                HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(25);
             }
-        });
+        }
+
+        boolean addInterceptor = true;
+        for (AtmosphereInterceptor i : framework.interceptors()) {
+            if (AtmosphereResourceLifecycleInterceptor.class.isAssignableFrom(i.getClass())) {
+                addInterceptor = true;
+            }
+        }
+
+        if (addInterceptor) {
+            framework.interceptor(new AtmosphereResourceLifecycleInterceptor(true));
+        }
+
+        if (config.handlers().size() == 0) {
+            framework.addAtmosphereHandler("/*", ECHO_ATMOSPHEREHANDLER);
+        }
     }
 
     @Override

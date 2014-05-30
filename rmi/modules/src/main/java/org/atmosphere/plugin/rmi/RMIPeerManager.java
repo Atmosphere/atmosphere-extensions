@@ -15,6 +15,7 @@
 
 package org.atmosphere.plugin.rmi;
 
+import org.atmosphere.cpr.AtmosphereConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,15 +273,27 @@ public class RMIPeerManager {
      * <p>
      * Creates a service by binding the given service for the given broadcaster ID.
      * </p>
-     *
-     * @param broadcasterId the broadcaster ID
-     * @param service the service to be bound
+     *  @param broadcasterId the broadcaster ID
+     * @param service       the service to be bound
+     * @param config        the atmosphere config
      */
-    public synchronized void server(final String broadcasterId, final RMIBroadcastService service) {
+    public synchronized void server(final String broadcasterId, final RMIBroadcastService service, AtmosphereConfig config) {
         try {
             if (registry == null) {
                 logger.info("Creating registry with port {}", serverPort);
                 registry = LocateRegistry.createRegistry(serverPort);
+                if (config != null) {
+                    config.shutdownHook(new AtmosphereConfig.ShutdownHook() {
+                        @Override
+                        public void shutdown() {
+                            for (Thread t : Thread.getAllStackTraces().keySet()) {
+                                if ("RMI Reaper".equals(t.getName())) {
+                                    t.interrupt();
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             logger.info("Rebinding {}", RMIBroadcastService.class.getSimpleName());

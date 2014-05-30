@@ -96,7 +96,7 @@ public class RMIPluginTest {
 
         // Bind on mocked service on port 4000
         final RMIBroadcastService service = new RMIBroadcastServiceImpl(broadcaster);
-        RMIPeerManager.getInstance().server("RMITopic", service);
+        RMIPeerManager.getInstance().server("RMITopic", service, null);
 
         // Send message
         final String url = String.format("rmi://localhost:4000/%s/RMITopic", RMIBroadcastService.class.getSimpleName());

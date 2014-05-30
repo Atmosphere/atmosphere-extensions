@@ -66,7 +66,7 @@ public class RMIBroadcaster extends AbstractBroadcasterProxy {
     public void incomingBroadcast() {
         try {
             logger.info("Starting Atmosphere RMI Clustering support");
-            RMIPeerManager.getInstance().server(getID(), new RMIBroadcastServiceImpl(this));
+            RMIPeerManager.getInstance().server(getID(), new RMIBroadcastServiceImpl(this), config);
         } catch (Throwable t) {
             logger.warn("Failed to initialize RMI server", t);
         } finally {

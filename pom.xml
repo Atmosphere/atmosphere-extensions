@@ -502,6 +502,6 @@
         <logback-version>0.9.30</logback-version>
 
         <atmosphere-version>[2.2.0-SNAPSHOT, )</atmosphere-version>
-        <javascript-version>2.1.4</javascript-version>
+        <javascript-version>2.2.1-SNAPSHOT</javascript-version>
     </properties>
 </project>

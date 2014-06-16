@@ -40,7 +40,6 @@
 package org.atmosphere.guice;
 
 import com.google.inject.Provides;
-import com.google.inject.servlet.RequestScoped;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.api.core.ExtendedUriInfo;
 import com.sun.jersey.api.core.HttpContext;
@@ -109,49 +108,41 @@ public class AtmosphereJerseyServletModule extends ServletModule {
         return webApplication.getExceptionMapperContext();
     }
 
-    @RequestScoped
     @Provides
     public HttpContext httpContext(WebApplication webApplication) {
         return webApplication.getThreadLocalHttpContext();
     }
 
     @Provides
-    @RequestScoped
     public UriInfo uriInfo(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getUriInfo();
     }
 
     @Provides
-    @RequestScoped
     public ExtendedUriInfo extendedUriInfo(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getUriInfo();
     }
 
-    @RequestScoped
     @Provides
     public HttpRequestContext requestContext(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getRequest();
     }
 
-    @RequestScoped
     @Provides
     public HttpHeaders httpHeaders(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getRequest();
     }
 
-    @RequestScoped
     @Provides
     public Request request(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getRequest();
     }
 
-    @RequestScoped
     @Provides
     public SecurityContext securityContext(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getRequest();
     }
 
-    @RequestScoped
     @Provides
     public HttpResponseContext responseContext(WebApplication wa) {
         return wa.getThreadLocalHttpContext().getResponse();

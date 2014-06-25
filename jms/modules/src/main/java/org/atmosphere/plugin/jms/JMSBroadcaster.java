@@ -203,8 +203,8 @@ public class JMSBroadcaster extends AbstractBroadcasterProxy {
             connection.close();
             consumerSession.close();
             publisherSession.close();
-            consumer.close();
-            publisher.close();
+            if (consumer != null) consumer.close();
+            if (publisher != null) publisher.close();
         } catch (Throwable ex) {
             logger.warn("releaseExternalResources", ex);
         }

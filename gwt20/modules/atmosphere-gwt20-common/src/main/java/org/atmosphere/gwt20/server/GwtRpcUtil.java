@@ -192,7 +192,7 @@ public class GwtRpcUtil implements ServerSerializerProvider {
     }
 
     public static Object deserialize(String data) throws SerializationException {
-        ServerSerializationStreamReader reader = new ServerSerializationStreamReader(GwtRpcUtil.class.getClassLoader(), GwtRpcUtil.getSerializationPolicyProvider());
+        ServerSerializationStreamReader reader = new ServerSerializationStreamReader(Thread.currentThread().getContextClassLoader(), GwtRpcUtil.getSerializationPolicyProvider());
         reader.prepareToRead(data);
         return reader.readObject();
     }

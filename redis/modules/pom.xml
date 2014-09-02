@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-extensions-project</artifactId>
@@ -18,7 +17,8 @@
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
         <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</developerConnection>
         <url>http://github.com/Atmosphere/atmosphere-extensions</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
@@ -52,6 +52,8 @@
             </plugin>
         </plugins>
     </build>
+    <modules>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>org.atmosphere</groupId>

@@ -16,6 +16,7 @@
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
         <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</developerConnection>
         <url>http://github.com/Atmosphere/atmosphere-extensions</url>
+    <tag>HEAD</tag>
   </scm>
     <build>
         <defaultGoal>install</defaultGoal>

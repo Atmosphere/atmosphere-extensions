@@ -2,6 +2,7 @@ package org.atmosphere.spring;
 
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.atmosphere.inject.InjectableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -19,14 +20,21 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
 
     @Override
     public <T, U extends T> U newClassInstance(AtmosphereFramework framework,
-                                               Class<T> classType, Class<U> classToInstantiate)
+                                               Class<T> classType,
+                                               Class<U> classToInstantiate)
             throws InstantiationException, IllegalAccessException {
+
         WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(framework.getServletContext());
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.setParent(parent);
         context.register(classToInstantiate);
         context.refresh();
         U t = context.getBean(classToInstantiate);
+
+        if (framework.objectFactory().getClass().equals("org.atmosphere.inject.InjectableObjectFactory")) {
+            InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(t, classToInstantiate, framework);
+        }
+
         if (t == null) {
             logger.info("Unable to find {}. Creating the object directly."
                     + classToInstantiate.getName());

@@ -20,6 +20,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.atmosphere.inject.InjectableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,13 +38,20 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
     @Override
     public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         initInjector(framework);
+        U t;
         if (injector == null) {
             logger.warn("No Guice Injector found in current ServletContext. Are you using {}?", AtmosphereGuiceServlet.class.getName());
             logger.trace("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
-            return classToInstantiate.newInstance();
+            t = classToInstantiate.newInstance();
         } else {
-            return injector.getInstance(classToInstantiate);
+            t = injector.getInstance(classToInstantiate);
         }
+
+        if (framework.objectFactory().getClass().equals("org.atmosphere.inject.InjectableObjectFactory")) {
+            InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(t, classToInstantiate, framework);
+        }
+
+        return t;
     }
 
     public String toString() {

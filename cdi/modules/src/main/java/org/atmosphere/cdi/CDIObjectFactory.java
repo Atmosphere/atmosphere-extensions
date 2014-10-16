@@ -17,6 +17,7 @@ package org.atmosphere.cdi;
 
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.atmosphere.inject.InjectableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +64,11 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
             Bean<U> bean = (Bean<U>) i.next();
             CreationalContext<U> ctx = bm.createCreationalContext(bean);
             U dao = (U) bm.getReference(bean, classToInstantiate, ctx);
+
+            if (framework.objectFactory().getClass().equals("org.atmosphere.inject.InjectableObjectFactory")) {
+                InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(dao, classToInstantiate, framework);
+            }
+
             return dao;
         } catch (Exception e) {
             logger.error("Unable to construct {}. Creating the object directly.", classToInstantiate.getName());

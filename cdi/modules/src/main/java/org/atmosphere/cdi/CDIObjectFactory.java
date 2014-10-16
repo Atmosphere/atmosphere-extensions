@@ -65,7 +65,7 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
             CreationalContext<U> ctx = bm.createCreationalContext(bean);
             U dao = (U) bm.getReference(bean, classToInstantiate, ctx);
 
-            if (framework.objectFactory().getClass().equals("org.atmosphere.inject.InjectableObjectFactory")) {
+            if (framework.objectFactory().getClass().getName().equals("org.atmosphere.inject.InjectableObjectFactory")) {
                 InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(dao, classToInstantiate, framework);
             }
 

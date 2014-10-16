@@ -31,7 +31,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
         context.refresh();
         U t = context.getBean(classToInstantiate);
 
-        if (framework.objectFactory().getClass().equals("org.atmosphere.inject.InjectableObjectFactory")) {
+        if (framework.objectFactory().getClass().getName().equals("org.atmosphere.inject.InjectableObjectFactory")) {
             InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(t, classToInstantiate, framework);
         }
 

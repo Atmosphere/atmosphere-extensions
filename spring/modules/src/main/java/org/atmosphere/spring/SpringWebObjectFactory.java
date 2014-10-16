@@ -13,7 +13,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  *
  * @author Aparup Banerjee
  */
-
 public class SpringWebObjectFactory implements AtmosphereObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringObjectFactory.class);

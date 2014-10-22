@@ -15,13 +15,13 @@
 */
 /*
  * Copyright 2009 Richard Zschech.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -29,6 +29,16 @@
  * the License.
  */
 package org.atmosphere.gwt20.rebind;
+
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.IncrementalGenerator;
@@ -47,16 +57,6 @@ import com.google.gwt.user.rebind.SourceWriter;
 import com.google.gwt.user.rebind.rpc.SerializableTypeOracle;
 import com.google.gwt.user.rebind.rpc.SerializableTypeOracleBuilder;
 import com.google.gwt.user.rebind.rpc.TypeSerializerCreator;
-
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
 public class SerializerGenerator extends IncrementalGenerator {
 
@@ -85,10 +85,8 @@ public class SerializerGenerator extends IncrementalGenerator {
                     throw new UnableToCompleteException();
                 }
 
-                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(
-                        logger, context.getPropertyOracle(), context);
-                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(
-                        logger, context.getPropertyOracle(), context);
+                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(logger, context);
+                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(logger, context);
 
                 List<Class<?>> serializableTypes = new ArrayList();
                 Collections.addAll(serializableTypes, annotation.value());
@@ -96,7 +94,7 @@ public class SerializerGenerator extends IncrementalGenerator {
                     int rank = 0;
                     if (serializable.isArray()) {
                         while (serializable.isArray()) {
-                            serializable = (Class<?>) serializable.getComponentType();
+                            serializable = serializable.getComponentType();
                             rank++;
                         }
                     }
@@ -139,7 +137,8 @@ public class SerializerGenerator extends IncrementalGenerator {
 
                 // Create the serializer
                 final String modifiedTypeName = typeName.replace('.', '_');
-                TypeSerializerCreator tsc = new TypeSerializerCreator(logger, typesSentFromBrowser, typesSentToBrowser, context, "comet." + modifiedTypeName, modifiedTypeName);
+                TypeSerializerCreator tsc = new TypeSerializerCreator(logger, typesSentFromBrowser, typesSentToBrowser, context, "comet." + modifiedTypeName,
+                        modifiedTypeName);
                 String realize = tsc.realize(logger);
 
                 // Create the CometSerializer impl

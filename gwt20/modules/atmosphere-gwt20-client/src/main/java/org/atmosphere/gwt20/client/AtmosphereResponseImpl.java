@@ -32,6 +32,7 @@ public final class AtmosphereResponseImpl extends JavaScriptObject implements At
         OPENING,
         RE_OPENING,
         CLOSED,
+        UNSUBSCRIBE,
         ERROR;
 
         @Override
@@ -47,6 +48,8 @@ public final class AtmosphereResponseImpl extends JavaScriptObject implements At
                     return "re-opening";
                 case CLOSED:
                     return "closed";
+                case UNSUBSCRIBE:
+                    return "unsubscribe";
                 default:
                 case ERROR:
                     return "error";

@@ -28,4 +28,4 @@ It is strongly recommended to upgrade to the GWT2.0 module.
 
 If you are interested, subscribe to our [mailing list](http://groups.google.com/group/atmosphere-framework) for more info!  We are on irc.freenode.net under #atmosphere-comet
 
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/d21472996f6ee363312cce7b15d3b18a "githalytics.com")](http://githalytics.com/Atmosphere/atmosphere-extensions)
+[![Analytics](https://ga-beacon.appspot.com/UA-31990725-2/Atmosphere/atmosphere-extensions)]

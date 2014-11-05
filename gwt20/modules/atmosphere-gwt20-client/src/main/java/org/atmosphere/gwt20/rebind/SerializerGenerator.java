@@ -47,6 +47,7 @@ import com.google.gwt.user.rebind.SourceWriter;
 import com.google.gwt.user.rebind.rpc.SerializableTypeOracle;
 import com.google.gwt.user.rebind.rpc.SerializableTypeOracleBuilder;
 import com.google.gwt.user.rebind.rpc.TypeSerializerCreator;
+import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -55,8 +56,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
 
 public class SerializerGenerator extends IncrementalGenerator {
 
@@ -85,8 +84,10 @@ public class SerializerGenerator extends IncrementalGenerator {
                     throw new UnableToCompleteException();
                 }
 
-                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(logger, context);
-                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(logger, context);
+                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(
+                        logger, context.getPropertyOracle(), context);
+                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(
+                        logger, context.getPropertyOracle(), context);
 
                 List<Class<?>> serializableTypes = new ArrayList();
                 Collections.addAll(serializableTypes, annotation.value());

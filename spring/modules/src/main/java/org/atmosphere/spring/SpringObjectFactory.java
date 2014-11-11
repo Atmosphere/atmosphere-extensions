@@ -27,11 +27,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  *
  * @author Jean-Francois Arcand
  */
-public class SpringObjectFactory implements AtmosphereObjectFactory {
+public class SpringObjectFactory extends SpringWebObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(SpringObjectFactory.class);
 
     @Override
-    public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
+    public <T, U extends T> U newClassInstance(Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         ApplicationContext context =
             new AnnotationConfigApplicationContext(classToInstantiate);
         U t = context.getBean(classToInstantiate);

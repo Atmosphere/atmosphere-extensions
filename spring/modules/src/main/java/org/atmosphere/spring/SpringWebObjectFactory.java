@@ -1,5 +1,6 @@
 package org.atmosphere.spring;
 
+import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
 import org.atmosphere.inject.InjectableObjectFactory;
@@ -17,23 +18,19 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class SpringWebObjectFactory implements AtmosphereObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringObjectFactory.class);
+    private AtmosphereConfig config;
 
     @Override
-    public <T, U extends T> U newClassInstance(AtmosphereFramework framework,
-                                               Class<T> classType,
+    public <T, U extends T> U newClassInstance(Class<T> classType,
                                                Class<U> classToInstantiate)
             throws InstantiationException, IllegalAccessException {
 
-        WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(framework.getServletContext());
+        WebApplicationContext parent = WebApplicationContextUtils.getWebApplicationContext(config.framework().getServletContext());
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.setParent(parent);
         context.register(classToInstantiate);
         context.refresh();
         U t = context.getBean(classToInstantiate);
-
-        if (framework.objectFactory().getClass().getName().equals("org.atmosphere.inject.InjectableObjectFactory")) {
-            InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(t, classToInstantiate, framework);
-        }
 
         if (t == null) {
             logger.info("Unable to find {}. Creating the object directly."
@@ -45,6 +42,11 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
 
     public String toString() {
         return "Spring Web ObjectFactory";
+    }
+
+    @Override
+    public void configure(AtmosphereConfig config) {
+        this.config = config;
     }
 
 }

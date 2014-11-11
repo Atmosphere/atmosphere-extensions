@@ -15,9 +15,8 @@
  */
 package org.atmosphere.cdi;
 
-import org.atmosphere.cpr.AtmosphereFramework;
+import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
-import org.atmosphere.inject.InjectableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +37,8 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(CDIObjectFactory.class);
 
     private BeanManager bm;
+    private AtmosphereConfig config;
+
     public CDIObjectFactory(){
         try {
             bm = (BeanManager) new InitialContext().lookup("java:comp/BeanManager");
@@ -48,11 +49,17 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
                 logger.error("{}", e);
             }
         }
+
+        final Iterator<Bean<?>> i = bm.getBeans(AtmosphereProducers.class).iterator();
+        if (!i.hasNext()) {
+            throw new IllegalStateException();
+        }
+
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
+    public <T, U extends T> U newClassInstance(Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
         CreationalContext cc = null;
 
         try {
@@ -65,10 +72,6 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
             CreationalContext<U> ctx = bm.createCreationalContext(bean);
             U dao = (U) bm.getReference(bean, classToInstantiate, ctx);
 
-            if (framework.objectFactory().getClass().getName().equals("org.atmosphere.inject.InjectableObjectFactory")) {
-                InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(dao, classToInstantiate, framework);
-            }
-
             return dao;
         } catch (Exception e) {
             logger.error("Unable to construct {}. Creating the object directly.", classToInstantiate.getName());
@@ -78,7 +81,21 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
         }
     }
 
+
     public String toString() {
         return "CDI ObjectFactory";
     }
+
+    @Override
+    public void configure(AtmosphereConfig config) {
+        this.config = config;
+
+        try {
+            AtmosphereProducers p = newClassInstance(AtmosphereProducers.class,AtmosphereProducers.class);
+            p.configure(config);
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+    }
+
 }

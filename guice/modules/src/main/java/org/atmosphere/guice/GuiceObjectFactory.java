@@ -18,6 +18,7 @@ package org.atmosphere.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
 import org.atmosphere.inject.InjectableObjectFactory;
@@ -34,10 +35,11 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(GuiceObjectFactory.class);
 
     private Injector injector;
+    private AtmosphereConfig config;
 
     @Override
-    public <T, U extends T> U newClassInstance(AtmosphereFramework framework, Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
-        initInjector(framework);
+    public <T, U extends T> U newClassInstance(Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
+        initInjector(config.framework());
         U t;
         if (injector == null) {
             logger.warn("No Guice Injector found in current ServletContext. Are you using {}?", AtmosphereGuiceServlet.class.getName());
@@ -45,10 +47,6 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
             t = classToInstantiate.newInstance();
         } else {
             t = injector.getInstance(classToInstantiate);
-        }
-
-        if (framework.objectFactory().getClass().getName().equals("org.atmosphere.inject.InjectableObjectFactory")) {
-            InjectableObjectFactory.class.cast(framework.objectFactory()).injectAtmosphereInternalObject(t, classToInstantiate, framework);
         }
 
         return t;
@@ -75,4 +73,10 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
             }
         }
     }
+
+    @Override
+    public void configure(AtmosphereConfig config) {
+        this.config = config;
+    }
+
 }

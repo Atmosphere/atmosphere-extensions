@@ -17,6 +17,7 @@ package org.atmosphere.cdi;
 
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.atmosphere.inject.AtmosphereProducers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,6 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
     private static final Logger logger = LoggerFactory.getLogger(CDIObjectFactory.class);
 
     private BeanManager bm;
-    private AtmosphereConfig config;
 
     public CDIObjectFactory(){
         try {
@@ -88,8 +88,6 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
 
     @Override
     public void configure(AtmosphereConfig config) {
-        this.config = config;
-
         try {
             AtmosphereProducers p = newClassInstance(AtmosphereProducers.class,AtmosphereProducers.class);
             p.configure(config);

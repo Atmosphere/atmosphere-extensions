@@ -3,6 +3,7 @@ package org.atmosphere.spring;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.atmosphere.inject.AtmosphereProducers;
 import org.atmosphere.inject.InjectableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,13 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
     @Override
     public void configure(AtmosphereConfig config) {
         this.config = config;
+
+        try {
+            AtmosphereProducers p = newClassInstance(AtmosphereProducers.class,AtmosphereProducers.class);
+            p.configure(config);
+        } catch (Exception e) {
+            logger.error("", e);
+        }
     }
 
 }

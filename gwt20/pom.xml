@@ -4,7 +4,8 @@
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-extensions-project</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1-GWT27-SNAPSHOT</version>
+        <relativePath>../</relativePath>
     </parent>
 
     <groupId>org.atmosphere.extensions</groupId>

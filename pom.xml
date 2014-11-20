@@ -253,24 +253,24 @@
         </profile>
     </profiles>
     <modules>
-        <module>rabbitmq/modules</module>
-        <module>cdi/modules</module>
-        <module>guice/modules</module>
-        <module>spring/modules</module>
-        <module>jgroups/modules</module>
-        <module>jms/modules</module>
-        <module>redis/modules</module>
-        <module>xmpp/modules</module>
-        <module>hazelcast/modules</module>
-        <module>weblogic/modules</module>
-        <module>socketio/modules</module>
-        <module>cometd/modules</module>
+        <!--<module>rabbitmq/modules</module>-->
+        <!--<module>cdi/modules</module>-->
+        <!--<module>guice/modules</module>-->
+        <!--<module>spring/modules</module>-->
+        <!--<module>jgroups/modules</module>-->
+        <!--<module>jms/modules</module>-->
+        <!--<module>redis/modules</module>-->
+        <!--<module>xmpp/modules</module>-->
+        <!--<module>hazelcast/modules</module>-->
+        <!--<module>weblogic/modules</module>-->
+        <!--<module>socketio/modules</module>-->
+        <!--<module>cometd/modules</module>-->
         <!-- Deprecated - Use 1.1.0.RC5
         <module>gwt/</module>
         -->
 		<module>gwt20</module>
-        <module>rmi/modules</module>
-        <module>sockjs/modules</module>
+        <!--<module>rmi/modules</module>-->
+        <!--<module>sockjs/modules</module>-->
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

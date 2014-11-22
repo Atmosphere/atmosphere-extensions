@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.atmosphere.extensions</groupId>
         <artifactId>atmosphere-gwt20</artifactId>
-        <version>2.2.2-GWT27</version>
+        <version>2.2.3-GWT27-SNAPSHOT</version>
         <relativePath>../</relativePath>
     </parent>
 

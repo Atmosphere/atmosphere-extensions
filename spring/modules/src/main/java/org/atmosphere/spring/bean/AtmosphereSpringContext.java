@@ -26,6 +26,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
+/**
+ * Spring context.
+ *
+ * @author Evgeny Konovalov
+ */
 public class AtmosphereSpringContext implements ServletConfig {
 
     private Map<String, String> config;

@@ -2,7 +2,6 @@ package org.atmosphere.spring;
 
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
-import org.atmosphere.inject.AtmosphereProducers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -24,7 +23,10 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
                                                Class<U> classToInstantiate)
             throws InstantiationException, IllegalAccessException {
 
-        context.register(classToInstantiate);
+        String name = classToInstantiate.getSimpleName();
+        if (!context.containsBeanDefinition(name.replace(name.substring(0,1), name.substring(0,1).toLowerCase()))) {
+            context.register(classToInstantiate);
+        }
         U t = context.getBean(classToInstantiate);
 
         if (t == null) {
@@ -47,12 +49,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
         context.setParent(WebApplicationContextUtils.getWebApplicationContext(config.framework().getServletContext()));
         context.refresh();
 
-        try {
-            AtmosphereProducers p = newClassInstance(AtmosphereProducers.class, AtmosphereProducers.class);
-            p.configure(config);
-        } catch (Exception e) {
-            logger.error("", e);
-        }
+        context.register(AtmosphereSpringConfig.class);
     }
 
 }

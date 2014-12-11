@@ -18,11 +18,15 @@ package org.atmosphere.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
+import org.atmosphere.cpr.AtmosphereResourceFactory;
+import org.atmosphere.cpr.AtmosphereResourceSessionFactory;
+import org.atmosphere.cpr.BroadcasterFactory;
+import org.atmosphere.cpr.MetaBroadcaster;
 import org.atmosphere.inject.AtmosphereProducers;
-import org.atmosphere.inject.InjectableObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +39,8 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(GuiceObjectFactory.class);
 
-    private Injector injector;
-    private AtmosphereConfig config;
+    protected Injector injector;
+    protected AtmosphereConfig config;
 
     @Override
     public <T, U extends T> U newClassInstance(Class<T> classType, Class<U> classToInstantiate) throws InstantiationException, IllegalAccessException {
@@ -57,7 +61,7 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
         return "Guice ObjectFactory";
     }
 
-    private void initInjector(AtmosphereFramework framework) {
+    protected void initInjector(AtmosphereFramework framework) {
         if (injector == null) {
             com.google.inject.Injector servletInjector = (com.google.inject.Injector)
                     framework.getServletContext().getAttribute(com.google.inject.Injector.class.getName());
@@ -72,6 +76,49 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
                     }
                 });
             }
+
+            injector = injector.createChildInjector(new AbstractModule() {
+                @Override
+                protected void configure() {
+                    bind(BroadcasterFactory.class).toProvider(new Provider<BroadcasterFactory>() {
+                        @Override
+                        public BroadcasterFactory get() {
+                            return config.getBroadcasterFactory();
+                        }
+                    });
+                    bind(AtmosphereFramework.class).toProvider(new Provider<AtmosphereFramework>() {
+                        @Override
+                        public AtmosphereFramework get() {
+                            return config.framework();
+                        }
+                    });
+                    bind(AtmosphereResourceFactory.class).toProvider(new Provider<AtmosphereResourceFactory>() {
+                        @Override
+                        public AtmosphereResourceFactory get() {
+                            return config.resourcesFactory();
+                        }
+                    });
+                    bind(MetaBroadcaster.class).toProvider(new Provider<MetaBroadcaster>() {
+                        @Override
+                        public MetaBroadcaster get() {
+                            return config.metaBroadcaster();
+                        }
+                    });
+                    bind(AtmosphereResourceSessionFactory.class).toProvider(new Provider<AtmosphereResourceSessionFactory>() {
+                        @Override
+                        public AtmosphereResourceSessionFactory get() {
+                            return config.sessionFactory();
+                        }
+                    });
+                    bind(AtmosphereConfig.class).toProvider(new Provider<AtmosphereConfig>() {
+                        @Override
+                        public AtmosphereConfig get() {
+                            return config;
+                        }
+                    });
+
+                }
+            });
         }
     }
 

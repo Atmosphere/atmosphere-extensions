@@ -30,6 +30,10 @@ import org.atmosphere.inject.AtmosphereProducers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An {@link AtmosphereObjectFactory} for Guice
  *
@@ -41,6 +45,7 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
 
     protected Injector injector;
     protected AtmosphereConfig config;
+    private final List<AbstractModule> modules = new ArrayList<AbstractModule>();
 
     @Override
     public void configure(AtmosphereConfig config) {
@@ -48,6 +53,8 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
             throw new NullPointerException("AtmosphereConfig can't be null");
         }
         this.config = config;
+
+        modules.add(new AtmosphereModule());
 
         try {
             AtmosphereProducers p = newClassInstance(AtmosphereProducers.class, AtmosphereProducers.class);
@@ -84,12 +91,17 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
 
             if (existingInjector != null) {
                 logger.trace("Adding AtmosphereModule to existing Guice injector");
-                injector = existingInjector.createChildInjector(new AtmosphereModule());
+                injector = existingInjector.createChildInjector(modules.toArray(new AbstractModule[modules.size()]));
             } else {
                 logger.trace("Creating the Guice injector manually with AtmosphereModule");
                 injector = Guice.createInjector(new AtmosphereModule());
             }
         }
+    }
+
+    public GuiceObjectFactory module(AbstractModule module) {
+        modules.add(module);
+        return this;
     }
 
     private class AtmosphereModule extends AbstractModule {

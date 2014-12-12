@@ -12,7 +12,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  *
  * @author Aparup Banerjee
  */
-public class SpringWebObjectFactory implements AtmosphereObjectFactory {
+public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>> {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringWebObjectFactory.class);
     private AtmosphereConfig config;
@@ -35,6 +35,12 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory {
             return classToInstantiate.newInstance();
         }
         return t;
+    }
+
+    @Override
+    public AtmosphereObjectFactory allowInjectionOf(Class<?> aClass) {
+        context.register(aClass);
+        return this;
     }
 
     public String toString() {

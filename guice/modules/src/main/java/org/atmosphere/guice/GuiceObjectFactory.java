@@ -39,7 +39,7 @@ import java.util.List;
  *
  * @author Jean-Francois Arcand
  */
-public class GuiceObjectFactory implements AtmosphereObjectFactory {
+public class GuiceObjectFactory implements AtmosphereObjectFactory<AbstractModule> {
 
     private static final Logger logger = LoggerFactory.getLogger(GuiceObjectFactory.class);
 
@@ -89,17 +89,19 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory {
             // start by trying to get an Injector instance from the servlet context
             Injector existingInjector = (Injector) framework.getServletContext().getAttribute(Injector.class.getName());
 
+            AbstractModule[] a = modules.toArray(new AbstractModule[modules.size()]);
             if (existingInjector != null) {
                 logger.trace("Adding AtmosphereModule to existing Guice injector");
-                injector = existingInjector.createChildInjector(modules.toArray(new AbstractModule[modules.size()]));
+                injector = existingInjector.createChildInjector(a);
             } else {
                 logger.trace("Creating the Guice injector manually with AtmosphereModule");
-                injector = Guice.createInjector(new AtmosphereModule());
+                injector = Guice.createInjector(a);
             }
         }
     }
 
-    public GuiceObjectFactory module(AbstractModule module) {
+    @Override
+    public AtmosphereObjectFactory allowInjectionOf(AbstractModule module) {
         modules.add(module);
         return this;
     }

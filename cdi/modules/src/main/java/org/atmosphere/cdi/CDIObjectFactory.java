@@ -33,7 +33,7 @@ import java.util.Iterator;
  *
  * @author Jeanfrancois Arcand
  */
-public class CDIObjectFactory implements AtmosphereObjectFactory {
+public class CDIObjectFactory implements AtmosphereObjectFactory<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(CDIObjectFactory.class);
 
@@ -79,6 +79,11 @@ public class CDIObjectFactory implements AtmosphereObjectFactory {
         } finally {
             if (cc != null) cc.release();
         }
+    }
+
+    @Override
+    public AtmosphereObjectFactory allowInjectionOf(Object o) {
+        return this;
     }
 
 

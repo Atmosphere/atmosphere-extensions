@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import java.beans.Introspector;
+
 /**
  * An {@link AtmosphereObjectFactory} for Spring to be used in Servlet Base Java Apps.
  *
@@ -24,7 +26,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
             throws InstantiationException, IllegalAccessException {
 
         String name = classToInstantiate.getSimpleName();
-        if (!context.containsBeanDefinition(name.replace(name.substring(0,1), name.substring(0,1).toLowerCase()))) {
+        if (!context.containsBeanDefinition(Introspector.decapitalize(name))) {
             context.register(classToInstantiate);
         }
         U t = context.getBean(classToInstantiate);

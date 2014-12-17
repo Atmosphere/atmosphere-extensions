@@ -64,41 +64,41 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
             }
         });
     }
-    
+
     private synchronized void addMessageListener() {
-      if (getAtmosphereResources().size() > 0 && messageListenerRegistrationId == null) {
-        messageListenerRegistrationId = topic.addMessageListener(new MessageListener<String>() {
-          @Override
-          public void onMessage(Message<String> message) {
-              broadcastReceivedMessage(message.getMessageObject());
-          }
-        });
-        
-        logger.info("Added message listener to topic");
-      }
+        if (getAtmosphereResources().size() > 0 && messageListenerRegistrationId == null) {
+            messageListenerRegistrationId = topic.addMessageListener(new MessageListener<String>() {
+                @Override
+                public void onMessage(Message<String> message) {
+                    broadcastReceivedMessage(message.getMessageObject());
+                }
+            });
+
+            logger.info("Added message listener to topic");
+        }
     }
-    
+
     private synchronized void removeMessageListener() {
-      if (getAtmosphereResources().size() == 0 && messageListenerRegistrationId != null) {
-        getTopic().removeMessageListener(messageListenerRegistrationId);
-        messageListenerRegistrationId = null;
-        
-        logger.info("Removed message listener from topic");
-      }   
+        if (getAtmosphereResources().size() == 0 && messageListenerRegistrationId != null && getTopic() != null) {
+            getTopic().removeMessageListener(messageListenerRegistrationId);
+            messageListenerRegistrationId = null;
+
+            logger.info("Removed message listener from topic");
+        }
     }
-    
+
     @Override
     public Broadcaster addAtmosphereResource(AtmosphereResource resource) {
-      Broadcaster result = super.addAtmosphereResource(resource);
-      addMessageListener();
-      return result;
+        Broadcaster result = super.addAtmosphereResource(resource);
+        addMessageListener();
+        return result;
     }
 
     @Override
     public Broadcaster removeAtmosphereResource(AtmosphereResource resource) {
-      Broadcaster result = super.removeAtmosphereResource(resource);
-      removeMessageListener();
-      return result;
+        Broadcaster result = super.removeAtmosphereResource(resource);
+        removeMessageListener();
+        return result;
     }
 
     @Override
@@ -137,6 +137,7 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
 
     /**
      * Get the Hazelcast topic
+     *
      * @return topic
      */
     protected ITopic getTopic() {

@@ -53,13 +53,17 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
     public void configure(AtmosphereConfig config) {
         this.config = config;
 
-        context = new AnnotationConfigApplicationContext();
-        context.setParent(WebApplicationContextUtils.getWebApplicationContext(config.framework().getServletContext()));
+        try {
+            context = new AnnotationConfigApplicationContext();
+            context.setParent(WebApplicationContextUtils.getWebApplicationContext(config.framework().getServletContext()));
 
-        context.refresh();
+            context.refresh();
 
-        // Hack to make it injectable
-        context.register(AtmosphereConfig.class);
-        context.getBean(AtmosphereConfig.class, config.framework()).populate(config);
+            // Hack to make it injectable
+            context.register(AtmosphereConfig.class);
+            context.getBean(AtmosphereConfig.class, config.framework()).populate(config);
+        } catch (Exception ex) {
+            logger.warn("Unable to configure injection", ex);
+        }
     }
 }

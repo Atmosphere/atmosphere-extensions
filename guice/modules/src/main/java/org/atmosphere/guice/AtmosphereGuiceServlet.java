@@ -44,11 +44,11 @@ public class AtmosphereGuiceServlet extends AtmosphereServlet {
         framework = new AtmosphereFramework(isFilter, autoDetectHandlers) {
             @Override
             protected void configureDetectedFramework(ReflectorServletProcessor rsp, boolean isJersey) {
-                Injector injector = (Injector) framework().getAtmosphereConfig().getServletContext().getAttribute(Injector.class.getName());
-                GuiceContainer guiceServlet = injector.getInstance(GuiceContainer.class);
-                rsp.setServlet(guiceServlet);
-
                 if (isJersey) {
+                    Injector injector = (Injector) framework().getAtmosphereConfig().getServletContext().getAttribute(Injector.class.getName());
+                    GuiceContainer guiceServlet = injector.getInstance(GuiceContainer.class);
+                    rsp.setServlet(guiceServlet);
+
                     try {
                         Map<String, String> props = injector.getInstance(
                                 Key.get(new TypeLiteral<Map<String, String>>() {

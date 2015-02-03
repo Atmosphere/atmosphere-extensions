@@ -281,8 +281,8 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         final AtmosphereResponse response = r.getResponse();
         final AtmosphereRequest request = r.getRequest();
 
-        String body = IOUtils.readEntirely(r).toString();
         try {
+            String body = IOUtils.readEntirely(r).toString();
             if (!body.isEmpty() && body.startsWith("d=")) {
                 body = URLDecoder.decode(body, "UTF-8");
                 body = body.substring(2);
@@ -303,7 +303,7 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         return Action.CANCELLED;
     }
 
-    private void reInject(AtmosphereRequest request, AtmosphereResponse response, String body) throws IOException, ServletException{
+    private void reInject(AtmosphereRequest request, AtmosphereResponse response, String body) throws IOException, ServletException {
         request.setAttribute("sockjs.skipInterceptor", Boolean.TRUE);
         framework.doCometSupport(request.body(body), response);
         request.setAttribute("sockjs.skipInterceptor", null);

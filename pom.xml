@@ -269,6 +269,7 @@
         <module>gwt/</module>
         -->
 		<module>gwt20</module>
+        <module>kafka/modules</module>
         <module>rmi/modules</module>
         <module>sockjs/modules</module>
     </modules>

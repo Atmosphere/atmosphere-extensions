@@ -8,7 +8,9 @@ To install Kafka Support, just add in your pom.xml
             <version>2.3.x</version>
         </dependency>
 ```
-You can configure Kafka using a properties file and adding in you web.xml:
+Version 0.8.2.0+ is supported.
+
+You can configure Kafka using a properties file and adding it in your web.xml:
 
 ```xml
         <init-param>
@@ -17,7 +19,9 @@ You can configure Kafka using a properties file and adding in you web.xml:
         </init-param>
 ```
 
-or use the default, local configuration. Install [Kafka](http://kafka.apache.org) and start it:
+or use the default, local configuration. 
+
+## Install [Kafka](http://kafka.apache.org) and start it:
 
 ```bs
 % ./bin/zookeeper-server-start.sh config/zookeeper.properties

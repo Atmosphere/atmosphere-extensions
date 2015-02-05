@@ -30,25 +30,6 @@
  */
 package org.atmosphere.gwt20.rebind;
 
-import com.google.gwt.core.ext.GeneratorContext;
-import com.google.gwt.core.ext.IncrementalGenerator;
-import com.google.gwt.core.ext.RebindMode;
-import com.google.gwt.core.ext.RebindResult;
-import com.google.gwt.core.ext.TreeLogger;
-import com.google.gwt.core.ext.UnableToCompleteException;
-import com.google.gwt.core.ext.typeinfo.JClassType;
-import com.google.gwt.core.ext.typeinfo.JType;
-import com.google.gwt.core.ext.typeinfo.NotFoundException;
-import com.google.gwt.core.ext.typeinfo.TypeOracle;
-import com.google.gwt.user.client.rpc.SerializationException;
-import com.google.gwt.user.client.rpc.impl.Serializer;
-import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
-import com.google.gwt.user.rebind.SourceWriter;
-import com.google.gwt.user.rebind.rpc.SerializableTypeOracle;
-import com.google.gwt.user.rebind.rpc.SerializableTypeOracleBuilder;
-import com.google.gwt.user.rebind.rpc.TypeSerializerCreator;
-import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
-
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -57,15 +38,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SerializerGenerator extends IncrementalGenerator {
+import org.atmosphere.gwt20.client.GwtRpcSerialTypes;
+
+import com.google.gwt.core.ext.GeneratorContextExt;
+import com.google.gwt.core.ext.GeneratorExt;
+import com.google.gwt.core.ext.TreeLogger;
+import com.google.gwt.core.ext.UnableToCompleteException;
+import com.google.gwt.core.ext.typeinfo.JClassType;
+import com.google.gwt.core.ext.typeinfo.JType;
+import com.google.gwt.core.ext.typeinfo.NotFoundException;
+import com.google.gwt.core.ext.typeinfo.TypeOracle;
+import com.google.gwt.dev.javac.rebind.RebindResult;
+import com.google.gwt.dev.javac.rebind.RebindStatus;
+import com.google.gwt.user.client.rpc.SerializationException;
+import com.google.gwt.user.client.rpc.impl.Serializer;
+import com.google.gwt.user.rebind.ClassSourceFileComposerFactory;
+import com.google.gwt.user.rebind.SourceWriter;
+import com.google.gwt.user.rebind.rpc.SerializableTypeOracle;
+import com.google.gwt.user.rebind.rpc.SerializableTypeOracleBuilder;
+import com.google.gwt.user.rebind.rpc.TypeSerializerCreator;
+
+public class SerializerGenerator extends GeneratorExt {
+
 
     @Override
-    public long getVersionId() {
-        return 1L;
-    }
-
-    @Override
-    public RebindResult generateIncrementally(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException {
+    public RebindResult generateIncrementally(TreeLogger logger, GeneratorContextExt context, String typeName) throws UnableToCompleteException {
 
         TypeOracle typeOracle = context.getTypeOracle();
 
@@ -160,7 +157,7 @@ public class SerializerGenerator extends IncrementalGenerator {
             }
         }
 
-        return new RebindResult(RebindMode.USE_ALL_NEW_WITH_NO_CACHING, packageName + '.' + className);
+        return new RebindResult(RebindStatus.USE_ALL_NEW_WITH_NO_CACHING, packageName + '.' + className);
     }
 
 }

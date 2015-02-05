@@ -15,12 +15,14 @@
  */
 package org.atmosphere.gwt20.client;
 
-import org.atmosphere.gwt20.shared.Constants;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.http.client.RequestBuilder.Method;
-import com.google.gwt.user.client.rpc.SerializationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.atmosphere.gwt20.shared.Constants;
+
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.http.client.RequestBuilder.Method;
+import com.google.gwt.user.client.Window;
 
 /**
  *
@@ -431,13 +433,20 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
                   return;
                 }
                 Object message = serializer.deserialize(response.getResponseBody());
+                
                 response.setMessageObject(message);
                 if (messageHandler != null) {
                     messageHandler.onMessage(response);
                 }
-            } catch (SerializationException ex) {
-                logger.log(Level.SEVERE, "Failed to deserialize message: " + response.getResponseBody(), ex);
+            } catch (Exception ex) {
+            	
+            	 logger.log(Level.SEVERE, "Failed to deserialize message: " + response.getResponseBody(), ex);
+//            	 Window.alert("Failed to deserialize message:\n " + response +" , \nex:"+ex);
+//                logger.log(Level.SEVERE, "Failed to deserialize message: " + response.getResponseBody(), ex);
             }
+//            } catch (SerializationException ex) {
+//                logger.log(Level.SEVERE, "Failed to deserialize message: " + response.getResponseBody(), ex);
+//            }
         }
     }
 

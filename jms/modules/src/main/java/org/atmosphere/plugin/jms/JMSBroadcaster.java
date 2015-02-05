@@ -45,22 +45,22 @@ import java.net.URI;
  * @author Jeanfrancois Arcand
  */
 public class JMSBroadcaster extends AbstractBroadcasterProxy {
-    private static final String JMS_TOPIC = JMSBroadcaster.class.getName() + ".topic";
-    private static final String JNDI_NAMESPACE = JMSBroadcaster.class.getName() + ".JNDINamespace";
-    private static final String JNDI_FACTORY_NAME = JMSBroadcaster.class.getName() + ".JNDIConnectionFactoryName";
-    private static final String JNDI_TOPIC = JMSBroadcaster.class.getName() + ".JNDITopic";
-    private static final Logger logger = LoggerFactory.getLogger(JMSBroadcaster.class);
+    public static final String JMS_TOPIC = JMSBroadcaster.class.getName() + ".topic";
+    public static final String JNDI_NAMESPACE = JMSBroadcaster.class.getName() + ".JNDINamespace";
+    public static final String JNDI_FACTORY_NAME = JMSBroadcaster.class.getName() + ".JNDIConnectionFactoryName";
+    public static final String JNDI_TOPIC = JMSBroadcaster.class.getName() + ".JNDITopic";
+    public static final Logger logger = LoggerFactory.getLogger(JMSBroadcaster.class);
 
-    private Connection connection;
-    private Session consumerSession;
-    private Session publisherSession;
-    private Topic topic;
-    private MessageConsumer consumer;
-    private MessageProducer publisher;
+    protected Connection connection;
+    protected Session consumerSession;
+    protected Session publisherSession;
+    protected Topic topic;
+    protected MessageConsumer consumer;
+    protected MessageProducer publisher;
 
-    private String topicId = "atmosphere";
-    private String factoryName = "atmosphereFactory";
-    private String namespace = "jms/";
+    protected String topicId = "atmosphere";
+    protected String factoryName = "atmosphereFactory";
+    protected String namespace = "jms/";
 
     public  JMSBroadcaster() {}
 
@@ -70,7 +70,7 @@ public class JMSBroadcaster extends AbstractBroadcasterProxy {
         return this;
     }
 
-    private void setUp() {
+    protected void setUp() {
         try {
             // For backward compatibility.
             if (config.getInitParameter(JMS_TOPIC) != null) {

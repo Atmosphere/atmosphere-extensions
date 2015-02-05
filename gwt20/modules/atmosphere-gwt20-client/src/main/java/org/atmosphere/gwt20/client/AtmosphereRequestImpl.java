@@ -58,6 +58,12 @@ public final class AtmosphereRequestImpl extends JavaScriptObject implements Atm
     public native void pushLocalImpl(String message) /*-{
         this.pushLocal(message);
     }-*/;
+    
+
+    @Override
+	public native void close() /*-{
+	     this.close();
+	}-*/;
 
     protected AtmosphereRequestImpl() {
 

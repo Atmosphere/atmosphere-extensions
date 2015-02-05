@@ -12,4 +12,6 @@ public interface AtmosphereRequest {
     void pushLocalImpl(String message);
 
     String getUUID();
+    
+    void close();
 }

@@ -54,4 +54,12 @@ public final class Atmosphere extends JavaScriptObject implements AtmosphereSubs
 
     protected Atmosphere() {
     }
+
+	/* (non-Javadoc)
+	 * @see org.atmosphere.gwt20.client.AtmosphereSubscriber#unsubscribeUrl(java.lang.String)
+	 */
+	@Override
+	public native void unsubscribeUrl(String url)/*-{
+    	this.unsubscribeUrl();
+	}-*/;
 }

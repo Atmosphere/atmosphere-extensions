@@ -51,7 +51,7 @@ public class CometdServlet extends AtmosphereServlet {
 
         ReflectorServletProcessor r = new ReflectorServletProcessor();
         r.setServletClassName(org.cometd.java.annotation.AnnotationCometdServlet.class.getName());
-        framework.addAtmosphereHandler("/*", r).initAtmosphereHandler(framework().getServletConfig());
+        framework().addAtmosphereHandler("/*", r).initAtmosphereHandler(framework().getServletConfig());
     }
 
 

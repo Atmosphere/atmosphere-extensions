@@ -41,30 +41,30 @@ public class AtmosphereGuiceServlet extends AtmosphereServlet {
     }
 
     public AtmosphereGuiceServlet(boolean isFilter, boolean autoDetectHandlers) {
-        framework = new AtmosphereFramework(isFilter, autoDetectHandlers) {
-            @Override
-            protected void configureDetectedFramework(ReflectorServletProcessor rsp, boolean isJersey) {
-                if (isJersey) {
-                    Injector injector = (Injector) framework().getAtmosphereConfig().getServletContext().getAttribute(Injector.class.getName());
-                    GuiceContainer guiceServlet = injector.getInstance(GuiceContainer.class);
-                    rsp.setServlet(guiceServlet);
-
-                    try {
-                        Map<String, String> props = injector.getInstance(
-                                Key.get(new TypeLiteral<Map<String, String>>() {
-                                }, Names.named(PROPERTIES)));
-
-                        if (props != null) {
-                            for (String p : props.keySet()) {
-                                framework().addInitParameter(p, props.get(p));
-                            }
-                        }
-                    } catch (Exception ex) {
-                        // Do not fail
-                        logger.debug("failed to add Jersey init parameters to Atmosphere servlet", ex);
-                    }
-                }
-            }
-        };
+//        framework = new AtmosphereFramework(isFilter, autoDetectHandlers) {
+//            @Override
+//            protected void configureDetectedFramework(ReflectorServletProcessor rsp, boolean isJersey) {
+//                if (isJersey) {
+//                    Injector injector = (Injector) framework().getAtmosphereConfig().getServletContext().getAttribute(Injector.class.getName());
+//                    GuiceContainer guiceServlet = injector.getInstance(GuiceContainer.class);
+//                    rsp.setServlet(guiceServlet);
+//
+//                    try {
+//                        Map<String, String> props = injector.getInstance(
+//                                Key.get(new TypeLiteral<Map<String, String>>() {
+//                                }, Names.named(PROPERTIES)));
+//
+//                        if (props != null) {
+//                            for (String p : props.keySet()) {
+//                                framework().addInitParameter(p, props.get(p));
+//                            }
+//                        }
+//                    } catch (Exception ex) {
+//                        // Do not fail
+//                        logger.debug("failed to add Jersey init parameters to Atmosphere servlet", ex);
+//                    }
+//                }
+//            }
+//        };
     }
 }

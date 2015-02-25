@@ -81,10 +81,6 @@ public class AutoBeanClientSerializer implements ClientSerializer {
     // buffer in order to capture split messages
     private StringBuffer buffer = new StringBuffer(16100);
 
-    public void registerBeanFactory(Class<AutoBeanFactory> factoryClass, Class forBean) {
-        registerBeanFactory((AutoBeanFactory) GWT.create(factoryClass), forBean);
-    }
-
     public void registerBeanFactory(AutoBeanFactory factory, Class forBean) {
         if (beanFactories == null) {
             beanFactories = new HashMap<Class, AutoBeanFactory>();

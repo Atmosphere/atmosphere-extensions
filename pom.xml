@@ -13,24 +13,12 @@
     <name>atmosphere-extensions-project</name>
     <version>2.3.0-SNAPSHOT</version>
     <url>http://github.com/Atmosphere/atmosphere-extensions</url>
-   <!--  <scm>
+    <scm>
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
         <developerConnection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</developerConnection>
         <url>http://github.com/Atmosphere/atmosphere-extensions</url>
       <tag>HEAD</tag>
-  </scm> -->
-  	<distributionManagement>
-		<repository>
-			<id>nexus</id>
-			<url>http://192.168.20.81:8081/nexus/content/repositories/Inovelan/</url>
-		</repository>
-
-		<snapshotRepository>
-			<id>nexus</id>
-			<url>http://192.168.20.81:8081/nexus/content/repositories/InovelanSnapshot/</url>
-		</snapshotRepository>
-	</distributionManagement>
-  
+  </scm>
     <prerequisites>
         <maven>2.2.0</maven>
     </prerequisites>

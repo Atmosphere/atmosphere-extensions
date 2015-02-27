@@ -15,7 +15,6 @@
  */
 package org.atmosphere.gwt20.client;
 
-import org.atmosphere.gwt20.shared.Constants;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.user.client.rpc.SerializationException;
@@ -101,7 +100,7 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         r.setMessageHandlerImpl(w);
         w = new MessageHandlerWrapper(inbound);
         r.setLocalMessageHandlerImpl(w);
-        r.setContentType(Constants.GWT_RPC_MEDIA_TYPE + "; charset=UTF-8");
+        r.setContentType("application/json; charset=UTF-8");
         r.clearFlags(Flags.dropAtmosphereHeaders);
         r.setOutboundSerializer(outbound);
         return r;

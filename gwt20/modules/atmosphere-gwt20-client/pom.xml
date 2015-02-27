@@ -35,21 +35,18 @@
         <dependency>
             <groupId>org.atmosphere.client</groupId>
             <artifactId>javascript</artifactId>
-            <version>${javascript-version}</version>
             <type>war</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.atmosphere.extensions</groupId>
-            <artifactId>atmosphere-gwt20-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
+            <version>2.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
+            <version>2.7.0</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

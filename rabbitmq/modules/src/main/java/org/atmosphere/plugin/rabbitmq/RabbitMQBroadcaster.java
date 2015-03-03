@@ -48,13 +48,25 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
 
     public RabbitMQBroadcaster() {}
 
+    @Override
     public Broadcaster initialize(String id, AtmosphereConfig config) {
         super.initialize(id, config);
-        factory = RabbitMQConnectionFactory.getFactory(config);
-        channel = factory.channel();
-        exchangeName = factory.exchangeName();
+        init(config);
         return this;
     }
+
+    public void init(AtmosphereConfig config) {
+	factory = RabbitMQConnectionFactory.getFactory(config);
+        channel = factory.channel();
+        exchangeName = factory.exchangeName();
+    }
+    
+    @Override
+    public Broadcaster initialize(String name, java.net.URI uri, AtmosphereConfig config) {
+	super.initialize(name, uri, config);
+	init(config);
+	return this;
+    };
 
     @Override
     public void setID(String id) {

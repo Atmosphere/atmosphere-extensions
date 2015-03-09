@@ -503,7 +503,7 @@
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>
 
-        <atmosphere-version>2.3.0-RC4</atmosphere-version>
+        <atmosphere-version>2.3.0-SNAPSHOT</atmosphere-version>
         <javascript-version>2.2.7</javascript-version>
     </properties>
 </project>

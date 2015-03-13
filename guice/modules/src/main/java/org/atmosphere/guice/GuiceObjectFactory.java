@@ -70,7 +70,7 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory<AbstractModul
         if (injector != null) {
             t = injector.getInstance(classToInstantiate);
         } else {
-            logger.warn("No Guice Injector found in current ServletContext. Are you using {}?", GuiceAtmosphereFramework.class.getName());
+            logger.warn("No Guice Injector found in current ServletContext. Are you using {}?", AtmosphereGuiceServlet.class.getName());
             logger.trace("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
             t = classToInstantiate.newInstance();
         }

@@ -18,6 +18,9 @@ package org.atmosphere.plugin.rabbitmq;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.ShutdownListener;
+import com.rabbitmq.client.ShutdownSignalException;
+
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +33,7 @@ import java.io.IOException;
  * @author Thibault Normand
  * @author Jean-Francois Arcand
  */
-public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
+public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook, ShutdownListener{
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQBroadcaster.class);
 
     private static RabbitMQConnectionFactory factory;
@@ -47,9 +50,17 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
     private Connection connection;
     private Channel channel;
     private String exchange;
+    private volatile boolean shutdown;
+
+    private String host;
+    private String vhost;
+    private String user;
+    private String port;
+    private String password;
 
     public RabbitMQConnectionFactory(AtmosphereConfig config) {
 
+	shutdown = true;
         String s = config.getInitParameter(PARAM_EXCHANGE_TYPE);
         if (s != null) {
             exchange = s;
@@ -57,53 +68,65 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
             exchange = "topic";
         }
 
-        String host = config.getInitParameter(PARAM_HOST);
+        host = config.getInitParameter(PARAM_HOST);
         if (host == null) {
             host = "127.0.0.1";
         }
 
-        String vhost = config.getInitParameter(PARAM_VHOST);
+        vhost = config.getInitParameter(PARAM_VHOST);
         if (vhost == null) {
             vhost = "/";
         }
 
-        String user = config.getInitParameter(PARAM_USER);
+        user = config.getInitParameter(PARAM_USER);
         if (user == null) {
             user = "guest";
         }
 
-        String port = config.getInitParameter(PARAM_PORT);
+        port = config.getInitParameter(PARAM_PORT);
         if (port == null) {
             port = "5672";
         }
 
-        String password = config.getInitParameter(PARAM_PASS);
+        password = config.getInitParameter(PARAM_PASS);
         if (password == null) {
             password = "guest";
         }
 
         exchangeName = "atmosphere." + exchange;
-        try {
-            logger.debug("Create Connection Factory");
-            connectionFactory = new ConnectionFactory();
-            connectionFactory.setUsername(user);
-            connectionFactory.setPassword(password);
-            connectionFactory.setVirtualHost(vhost);
-            connectionFactory.setHost(host);
-            connectionFactory.setPort(Integer.valueOf(port));
-
-            logger.debug("Try to acquire a connection ...");
-            connection = connectionFactory.newConnection();
-            channel = connection.createChannel();
-
-            logger.debug("Topic creation '{}'...", exchangeName);
-            channel.exchangeDeclare(exchangeName, exchange);
-        } catch (Exception e) {
-            String msg = "Unable to configure RabbitMQBroadcaster";
-            logger.error(msg, e);
-            throw new RuntimeException(msg, e);
-        }
+        reInit();
         config.shutdownHook(this);
+    }
+
+    private void reInit() throws RuntimeException {
+	if(shutdown){
+	    synchronized(RabbitMQConnectionFactory.class){
+		if(shutdown){
+		    try {
+			logger.debug("Create Connection Factory");
+			connectionFactory = new ConnectionFactory();
+			connectionFactory.setUsername(user);
+			connectionFactory.setPassword(password);
+			connectionFactory.setVirtualHost(vhost);
+			connectionFactory.setHost(host);
+			connectionFactory.setPort(Integer.valueOf(port));
+
+			logger.debug("Try to acquire a connection ...");
+			connection = connectionFactory.newConnection();
+			channel = connection.createChannel();
+			channel.addShutdownListener(this);
+
+			logger.debug("Topic creation '{}'...", exchangeName);
+			channel.exchangeDeclare(exchangeName, exchange);
+			shutdown = false;
+		    } catch (Exception e) {
+			String msg = "Unable to configure RabbitMQBroadcaster";
+			logger.error(msg, e);
+			throw new RuntimeException(msg, e);
+		    }
+		}
+	    }
+	}
     }
 
     public final static RabbitMQConnectionFactory getFactory(AtmosphereConfig config) {
@@ -119,6 +142,9 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
     }
 
     public Channel channel() {
+	if(shutdown){
+	    reInit();
+	}
         return channel;
     }
 
@@ -130,5 +156,11 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook{
         } catch (IOException e) {
             logger.trace("", e);
         }
+    }
+
+    @Override
+    public void shutdownCompleted(ShutdownSignalException cause) {
+	logger.info("Recieved shutdownCompleted", cause);
+	shutdown = true;
     }
 }

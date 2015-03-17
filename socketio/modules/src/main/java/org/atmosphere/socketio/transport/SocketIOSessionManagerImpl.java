@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResourceEventImpl;
@@ -38,7 +39,6 @@ import org.atmosphere.socketio.SocketIOSessionManager;
 import org.atmosphere.socketio.SocketIOSessionOutbound;
 import org.atmosphere.socketio.TimeoutSessionMonitor;
 import org.atmosphere.socketio.cpr.SocketIOAtmosphereHandler;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -475,7 +475,7 @@
         <jersey-version>1.19</jersey-version>
         <compat-version>2.1.0</compat-version>
         <jaxb-version>2.1</jaxb-version>
-        <jackson-version>1.3.1</jackson-version>
+        <jackson-version>2.4.1</jackson-version>
         <junit-version>3.8.1</junit-version>
         <maven-plugin.version>1.0.0</maven-plugin.version>
         <servlet-version>3.0-b74b</servlet-version>

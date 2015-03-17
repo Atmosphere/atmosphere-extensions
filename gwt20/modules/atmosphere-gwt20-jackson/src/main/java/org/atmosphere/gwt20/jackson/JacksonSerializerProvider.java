@@ -1,9 +1,9 @@
 package org.atmosphere.gwt20.jackson;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.atmosphere.gwt20.server.ServerSerializer;
 import org.atmosphere.gwt20.server.ServerSerializerProvider;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class JacksonSerializerProvider implements ServerSerializerProvider {
 
     public JacksonSerializerProvider() {
         mapper = new ObjectMapper();
-        mapper.getSerializationConfig().withSerializationInclusion(Inclusion.NON_NULL);
+        mapper.getSerializationConfig().withSerializationInclusion(JsonInclude.Include.NON_NULL);
 //        mapper.getSerializationConfig().withClassIntrospector(new BeanIntroSpector());
 
         logger.info("Loaded Jackson JSONSerializerProvider");

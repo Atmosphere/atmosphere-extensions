@@ -44,6 +44,7 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook,
     public static final String PARAM_EXCHANGE_TYPE = RabbitMQBroadcaster.class.getName() + ".exchange";
     public static final String PARAM_VHOST = RabbitMQBroadcaster.class.getName() + ".vhost";
     public static final String PARAM_PORT = RabbitMQBroadcaster.class.getName() + ".port";
+    public static final String PARAM_USE_SSL = RabbitMQBroadcaster.class.getName() + ".ssl";
 
     private String exchangeName;
     private ConnectionFactory connectionFactory;
@@ -57,6 +58,7 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook,
     private String user;
     private String port;
     private String password;
+    private boolean useSsl;
 
     public RabbitMQConnectionFactory(AtmosphereConfig config) {
 
@@ -83,15 +85,22 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook,
             user = "guest";
         }
 
+        useSsl = Boolean.valueOf(config.getInitParameter(PARAM_USE_SSL, "false"));
+
         port = config.getInitParameter(PARAM_PORT);
         if (port == null) {
-            port = "5672";
+            if(useSsl){
+        	port = "5671";
+            }else{
+        	port = "5672";
+            }
         }
 
         password = config.getInitParameter(PARAM_PASS);
         if (password == null) {
             password = "guest";
         }
+        
 
         exchangeName = "atmosphere." + exchange;
         reInit();
@@ -110,6 +119,9 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook,
 			connectionFactory.setVirtualHost(vhost);
 			connectionFactory.setHost(host);
 			connectionFactory.setPort(Integer.valueOf(port));
+			if(useSsl){
+			    connectionFactory.useSslProtocol();
+			}
 
 			logger.debug("Try to acquire a connection ...");
 			connection = connectionFactory.newConnection();

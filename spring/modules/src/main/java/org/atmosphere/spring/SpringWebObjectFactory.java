@@ -17,7 +17,6 @@ import java.beans.Introspector;
 public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>> {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringWebObjectFactory.class);
-    private AtmosphereConfig config;
     private AnnotationConfigApplicationContext context;
 
     @Override
@@ -51,8 +50,6 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
 
     @Override
     public void configure(AtmosphereConfig config) {
-        this.config = config;
-
         try {
             context = new AnnotationConfigApplicationContext();
             context.setParent(WebApplicationContextUtils.getWebApplicationContext(config.framework().getServletContext()));

@@ -20,6 +20,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.MessageProperties;
+import com.rabbitmq.client.ShutdownListener;
+import com.rabbitmq.client.ShutdownSignalException;
+
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.cpr.BroadcasterFuture;
@@ -36,7 +39,7 @@ import java.io.IOException;
  * @author Thibault Normand
  * @author Jean-Francois Arcand
  */
-public class RabbitMQBroadcaster extends SimpleBroadcaster {
+public class RabbitMQBroadcaster extends SimpleBroadcaster implements ShutdownListener {
 
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQBroadcaster.class);
 
@@ -58,6 +61,7 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
     public void init(AtmosphereConfig config) {
 	factory = RabbitMQConnectionFactory.getFactory(config);
         channel = factory.channel();
+        channel.addShutdownListener(this);
         exchangeName = factory.exchangeName();
     }
     
@@ -173,5 +177,10 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster {
         } catch (Exception ex) {
             logger.trace("", ex);
         }
+    }
+
+    @Override
+    public void shutdownCompleted(ShutdownSignalException cause) {
+	this.destroy();
     }
 }

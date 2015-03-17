@@ -29,7 +29,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
         if (!context.containsBeanDefinition(Introspector.decapitalize(name))) {
             context.register(classToInstantiate);
         }
-        U t = context.getBean(classToInstantiate);
+        U t = context.getAutowireCapableBeanFactory().createBean(classToInstantiate);
 
         if (t == null) {
             logger.info("Unable to find {}. Creating the object directly."

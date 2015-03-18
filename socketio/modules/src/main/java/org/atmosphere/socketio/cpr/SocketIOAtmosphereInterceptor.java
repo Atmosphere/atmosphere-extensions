@@ -15,14 +15,6 @@
  */
 package org.atmosphere.socketio.cpr;
 
-import static org.atmosphere.socketio.transport.SocketIOSessionManagerImpl.mapper;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.atmosphere.config.service.AtmosphereInterceptorService;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AsyncIOWriter;
@@ -46,6 +38,13 @@ import org.atmosphere.socketio.transport.XHRPollingTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.atmosphere.socketio.transport.SocketIOSessionManagerImpl.mapper;
+
 /**
  * SocketIO implementation.
  *
@@ -58,7 +57,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
     public final static String SOCKETIO_PACKET = SocketIOSessionManagerImpl.SocketIOProtocol.class.getName();
     private static final Logger logger = LoggerFactory.getLogger(SocketIOAtmosphereInterceptor.class);
     private static final int BUFFER_SIZE_DEFAULT = 8192;
-    private final SocketIOSessionManager sessionManager = new SocketIOSessionManagerImpl();;
+    private final SocketIOSessionManager sessionManager = new SocketIOSessionManagerImpl();
     /**
      * See <a href="https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server">https://github.com/LearnBoost/socket.io/wiki/Configuring-Socket.IO#wiki-server</a><br>
      * The timeout for the server when it should send a new heartbeat to the client. <br>
@@ -247,6 +246,10 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
 
     @Override
     public void postInspect(AtmosphereResource r) {
+    }
+
+    @Override
+    public void destroy() {
     }
 
     @Override

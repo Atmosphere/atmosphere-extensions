@@ -184,6 +184,10 @@ public class CometdAtmosphereInterceptor implements AtmosphereInterceptor {
     }
 
     @Override
+    public void destroy() {
+    }
+
+    @Override
     public String toString() {
         return "CometD/Bayeux Protocol";
     }

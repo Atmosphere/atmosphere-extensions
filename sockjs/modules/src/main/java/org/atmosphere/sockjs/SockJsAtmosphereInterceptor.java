@@ -61,7 +61,7 @@ import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.UNDEFINED;
 import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.WEBSOCKET;
 
 @AtmosphereInterceptorService
-public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
+public class gc SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
 
     public final static String SOCKS_JS_ORIGIN = SockJsAtmosphereInterceptor.class.getName() + ".origin";
 

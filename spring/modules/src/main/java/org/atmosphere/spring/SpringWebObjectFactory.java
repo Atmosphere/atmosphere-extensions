@@ -2,13 +2,15 @@ package org.atmosphere.spring;
 
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
-import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.beans.Introspector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An {@link AtmosphereObjectFactory} for Spring to be used in Servlet Base Java Apps.
@@ -16,11 +18,15 @@ import java.beans.Introspector;
  * @author Aparup Banerjee
  */
 public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>> {
+    /**
+     * A comma delimited list of {@link org.atmosphere.inject.InjectableObjectFactory.DEFAULT_ATMOSPHERE_INJECTABLE} that
+     * won't be created by Spring.
+     */
+    public static final String SPRING_INJECT_ATMOSPHERERESOURCE = "org.atmosphere.spring.excludedClasses";
 
     private static final Logger logger = LoggerFactory.getLogger(SpringWebObjectFactory.class);
-
-    protected boolean allowAtmosphereResourceInjection = false;
-    public static String SPRING_INJECT_ATMOSPHERERESOURCE = "org.atmosphere.spring.ar.inject";
+    protected boolean preventSpringInjection = false;
+    private final List<Class<?>> excludedFromInjection = new ArrayList<Class<?>>();
 
     private AnnotationConfigApplicationContext context;
 
@@ -29,8 +35,10 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
                                                Class<U> classToInstantiate)
             throws InstantiationException, IllegalAccessException {
 
-        if (!allowAtmosphereResourceInjection && classType.getName().equals(AtmosphereResource.class.getName()))
+        if (preventSpringInjection && excludedFromInjection.contains(classType)) {
+            logger.trace("Excluded from injection {}", classToInstantiate.getName());
             return classToInstantiate.newInstance();
+        }
 
         String name = classToInstantiate.getSimpleName();
         if (!context.containsBeanDefinition(Introspector.decapitalize(name))) {
@@ -62,7 +70,14 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
 
             String s = config.getInitParameter(SPRING_INJECT_ATMOSPHERERESOURCE);
             if (s != null) {
-                allowAtmosphereResourceInjection = Boolean.parseBoolean(s);
+                String[] list = s.split(",");
+                for (String clazz : list) {
+                    excludedFromInjection.add(IOUtils.loadClass(getClass(), clazz));
+                }
+
+                if (list.length > 0) {
+                    preventSpringInjection = true;
+                }
             }
 
             context = new AnnotationConfigApplicationContext();

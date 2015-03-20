@@ -22,7 +22,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
      * A comma delimited list of {@link org.atmosphere.inject.InjectableObjectFactory.DEFAULT_ATMOSPHERE_INJECTABLE} that
      * won't be created by Spring.
      */
-    public static final String SPRING_INJECT_ATMOSPHERERESOURCE = "org.atmosphere.spring.excludedClasses";
+    public static final String ATMOSPHERE_SPRING_EXCLUDE_CLASSES = "org.atmosphere.spring.excludedClasses";
 
     private static final Logger logger = LoggerFactory.getLogger(SpringWebObjectFactory.class);
     protected boolean preventSpringInjection = false;
@@ -68,7 +68,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
     public void configure(AtmosphereConfig config) {
         try {
 
-            String s = config.getInitParameter(SPRING_INJECT_ATMOSPHERERESOURCE);
+            String s = config.getInitParameter(ATMOSPHERE_SPRING_EXCLUDE_CLASSES);
             if (s != null) {
                 String[] list = s.split(",");
                 for (String clazz : list) {

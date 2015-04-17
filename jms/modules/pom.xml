@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>javax.jms</groupId>
-            <artifactId>jms</artifactId>
+            <artifactId>jms-api</artifactId>
             <version>${jms-version}</version>
             <type>jar</type>
             <scope>provided</scope>

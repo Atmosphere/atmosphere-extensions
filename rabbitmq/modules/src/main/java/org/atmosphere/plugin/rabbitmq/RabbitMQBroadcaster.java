@@ -49,7 +49,8 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster implements ShutdownLi
     private Channel channel;
     private String exchangeName;
 
-    public RabbitMQBroadcaster() {}
+    public RabbitMQBroadcaster() {
+    }
 
     @Override
     public Broadcaster initialize(String id, AtmosphereConfig config) {
@@ -59,18 +60,20 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster implements ShutdownLi
     }
 
     public void init(AtmosphereConfig config) {
-	factory = RabbitMQConnectionFactory.getFactory(config);
+        factory = RabbitMQConnectionFactory.getFactory(config);
         channel = factory.channel();
         channel.addShutdownListener(this);
+
         exchangeName = factory.exchangeName();
+        restartConsumer();
     }
-    
+
     @Override
     public Broadcaster initialize(String name, java.net.URI uri, AtmosphereConfig config) {
-	super.initialize(name, uri, config);
-	init(config);
-	return this;
-    };
+        super.initialize(name, uri, config);
+        init(config);
+        return this;
+    }
 
     @Override
     public void setID(String id) {
@@ -181,6 +184,6 @@ public class RabbitMQBroadcaster extends SimpleBroadcaster implements ShutdownLi
 
     @Override
     public void shutdownCompleted(ShutdownSignalException cause) {
-	this.destroy();
+        this.destroy();
     }
 }

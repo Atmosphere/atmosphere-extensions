@@ -34,12 +34,11 @@ public class RedisBroadcaster extends AbstractBroadcasterProxy {
     public RedisBroadcaster() {}
 
     public Broadcaster initialize(String id, AtmosphereConfig config) {
-        return super.initialize(id, URI.create("http://localhost:6379"), config);
+        return initialize(id, URI.create("http://localhost:6379"), config);
     }
 
     public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
-        // Ignore URI
-        // TODO: Make it configurable
+        // Ignore default.
         uri = URI.create("http://localhost:6379");
         super.initialize(id, uri, config);
         this.redisUtil = new RedisUtil(uri, config, new RedisUtil.Callback() {
@@ -53,6 +52,7 @@ public class RedisBroadcaster extends AbstractBroadcasterProxy {
                 RedisBroadcaster.this.broadcastReceivedMessage(message);
             }
         });
+        setUp();
         return this;
     }
 

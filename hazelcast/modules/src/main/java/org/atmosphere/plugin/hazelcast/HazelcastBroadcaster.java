@@ -47,11 +47,13 @@ public class HazelcastBroadcaster extends AbstractBroadcasterProxy {
     private final static HazelcastInstance HAZELCAST_INSTANCE = Hazelcast.newHazelcastInstance();
 
     public Broadcaster initialize(String id, AtmosphereConfig config) {
-        return super.initialize(id, URI.create("http://localhost:6379"), config);
+        return initialize(id, URI.create("http://localhost:6379"), config);
     }
 
     public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
-        return super.initialize(id, uri, config);
+        super.initialize(id, uri, config);
+        setUp();
+        return this;
     }
 
     public void setUp() {

@@ -17,7 +17,6 @@ package org.atmosphere.sockjs;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.atmosphere.config.service.AtmosphereInterceptorService;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AsyncIOInterceptorAdapter;
 import org.atmosphere.cpr.AsyncIOWriter;
@@ -35,7 +34,6 @@ import org.atmosphere.cpr.AtmosphereResourceImpl;
 import org.atmosphere.cpr.AtmosphereResponse;
 import org.atmosphere.cpr.HeaderConfig;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
-import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.atmosphere.interceptor.HeartbeatInterceptor;
 import org.atmosphere.util.IOUtils;
 import org.atmosphere.util.StringEscapeUtils;
@@ -46,9 +44,9 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.HTMLFILE;
@@ -60,7 +58,6 @@ import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.STREAMING;
 import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.UNDEFINED;
 import static org.atmosphere.cpr.AtmosphereResource.TRANSPORT.WEBSOCKET;
 
-@AtmosphereInterceptorService
 public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
 
     public final static String SOCKS_JS_ORIGIN = SockJsAtmosphereInterceptor.class.getName() + ".origin";
@@ -90,17 +87,6 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
             if (HeartbeatInterceptor.class.isAssignableFrom(i.getClass())) {
                 HeartbeatInterceptor.class.cast(i).paddingText("h".getBytes()).heartbeatFrequencyInSeconds(25);
             }
-        }
-
-        boolean addInterceptor = true;
-        for (AtmosphereInterceptor i : framework.interceptors()) {
-            if (AtmosphereResourceLifecycleInterceptor.class.isAssignableFrom(i.getClass())) {
-                addInterceptor = true;
-            }
-        }
-
-        if (addInterceptor) {
-            framework.interceptor(new AtmosphereResourceLifecycleInterceptor(true));
         }
 
         if (config.handlers().size() == 0) {

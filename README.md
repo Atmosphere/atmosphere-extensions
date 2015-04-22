@@ -11,6 +11,16 @@ You need Atmosphere Runtime version 2.1.0 and higher to use those extension. To 
 ```
 Where module can be one of the listed directory above. Client on the module's pom.xml to get the exact artifact name.
 
+For GWT 2.7
+
+```java
+     <dependency>
+         <groupId>org.atmosphere</groupId>
+         <artifactId>atmosphere-{atmosphere-module}</artifactId>
+         <version>2.3.0-GWT27</version>
+      </dependency>
+```
+
 Easiest way to use extensions is by looking at our [Samples](https://github.com/Atmosphere/atmosphere-samples) 
 or jump directly into the [code](https://github.com/Atmosphere/atmosphere-samplesi/extensions-samples) of the extensions you want to use.
 

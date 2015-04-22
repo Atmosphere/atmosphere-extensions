@@ -11,7 +11,7 @@
     <artifactId>atmosphere-extensions-project</artifactId>
     <packaging>pom</packaging>
     <name>atmosphere-extensions-project</name>
-    <version>2.3.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <url>http://github.com/Atmosphere/atmosphere-extensions</url>
     <scm>
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
@@ -503,7 +503,7 @@
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>
 
-        <atmosphere-version>2.3.0</atmosphere-version>
+        <atmosphere-version>3.0.0-SNAPSHOT</atmosphere-version>
         <javascript-version>2.2.11</javascript-version>
     </properties>
 </project>

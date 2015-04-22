@@ -105,4 +105,9 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
 
     }
 
+    @Override
+    public void destroy() {
+
+    }
+
 }

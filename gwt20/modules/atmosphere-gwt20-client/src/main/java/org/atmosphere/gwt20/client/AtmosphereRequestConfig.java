@@ -77,7 +77,8 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         readResponsesHeaders,
         dropAtmosphereHeaders,
         executeCallbackBeforeReconnect,
-        enableProtocol
+        enableProtocol,
+        reconnectOnServerError
     }
     /**
      * use the same serializer for inbound and outbound

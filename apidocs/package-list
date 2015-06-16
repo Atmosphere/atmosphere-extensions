@@ -9,6 +9,7 @@ org.atmosphere.gwt20.managed
 org.atmosphere.gwt20.rebind
 org.atmosphere.gwt20.server
 org.atmosphere.gwt20.shared
+org.atmosphere.kafka
 org.atmosphere.plugin.hazelcast
 org.atmosphere.plugin.jgroups
 org.atmosphere.plugin.jms
@@ -22,5 +23,6 @@ org.atmosphere.socketio.cpr
 org.atmosphere.socketio.transport
 org.atmosphere.sockjs
 org.atmosphere.spring
+org.atmosphere.spring.bean
 org.atmosphere.weblogic
 weblogic.servlet.http

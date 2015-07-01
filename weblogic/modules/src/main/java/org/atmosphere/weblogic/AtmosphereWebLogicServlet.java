@@ -15,11 +15,11 @@
  */
  package org.atmosphere.weblogic;
 
-import org.atmosphere.cpr.Action;
+ import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AsynchronousProcessor;
 import org.atmosphere.cpr.AtmosphereFramework;
-import org.atmosphere.cpr.AtmosphereRequest;
-import org.atmosphere.cpr.AtmosphereResponse;
+import org.atmosphere.cpr.AtmosphereRequestImpl;
+import org.atmosphere.cpr.AtmosphereResponseImpl;
 import org.atmosphere.cpr.AtmosphereServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class AtmosphereWebLogicServlet extends AbstractAsyncServlet {
     protected boolean doRequest(RequestResponseKey rrk) throws IOException, ServletException {
         try {
             rrk.getRequest().getSession().setAttribute(WebLogicCometSupport.RRK, rrk);
-            Action action = framework.doCometSupport(AtmosphereRequest.wrap(rrk.getRequest()), AtmosphereResponse.wrap(rrk.getResponse()));
+            Action action = framework.doCometSupport(AtmosphereRequestImpl.wrap(rrk.getRequest()), AtmosphereResponseImpl.wrap(rrk.getResponse()));
             if (action.type() == Action.TYPE.SUSPEND) {
                 if (action.timeout() == -1) {
                     rrk.setTimeout(Integer.MAX_VALUE);
@@ -124,8 +124,8 @@ public class AtmosphereWebLogicServlet extends AbstractAsyncServlet {
      * @throws javax.servlet.ServletException
      */
     protected void doTimeout(RequestResponseKey rrk) throws IOException, ServletException {
-        ((AsynchronousProcessor) framework.getAsyncSupport()).timedout(AtmosphereRequest.wrap(rrk.getRequest()),
-                AtmosphereResponse.wrap(rrk.getResponse()));
+        ((AsynchronousProcessor) framework.getAsyncSupport()).timedout(AtmosphereRequestImpl.wrap(rrk.getRequest()),
+                AtmosphereResponseImpl.wrap(rrk.getResponse()));
     }
 
 

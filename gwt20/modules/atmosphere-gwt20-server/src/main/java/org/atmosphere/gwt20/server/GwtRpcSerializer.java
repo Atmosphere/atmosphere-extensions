@@ -15,7 +15,10 @@
  */
 package org.atmosphere.gwt20.server;
 
+import static org.atmosphere.cpr.HeaderConfig.X_ATMOSPHERE_TRACKMESSAGESIZE;
+
 import com.google.gwt.user.client.rpc.SerializationException;
+
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.Serializer;
 import org.slf4j.Logger;
@@ -48,11 +51,15 @@ public class GwtRpcSerializer implements Serializer {
         } catch (SerializationException ex) {
             throw new IOException("Failed to deserialize message");
         }
+        // Add message size if required by client.
+        if ("true".equalsIgnoreCase(resource.getRequest().getHeader(X_ATMOSPHERE_TRACKMESSAGESIZE))) {
+            payload = payload.length() + "|" + payload;
+        }
+        
         if (logger.isTraceEnabled()) {
             logger.trace("Writing to outputstream with encoding: " + outputEncoding + " data: " + payload);
         }
         out.write(payload.getBytes(outputEncoding));
         out.flush();
     }
-
 }

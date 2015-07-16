@@ -18,6 +18,7 @@ package org.atmosphere.plugin.redis;
 
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.Broadcaster;
+import org.atmosphere.plugin.redis.RedisUtil;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 
 import java.net.URI;
@@ -38,8 +39,6 @@ public class RedisBroadcaster extends AbstractBroadcasterProxy {
     }
 
     public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
-        // Ignore default.
-        uri = URI.create("http://localhost:6379");
         super.initialize(id, uri, config);
         this.redisUtil = new RedisUtil(uri, config, new RedisUtil.Callback() {
             @Override

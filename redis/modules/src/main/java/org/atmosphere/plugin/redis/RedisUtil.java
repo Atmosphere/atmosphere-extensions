@@ -15,7 +15,7 @@
  */
 package org.atmosphere.plugin.redis;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,9 +84,9 @@ public class RedisUtil {
 
             // setup is synchronized, no need to sync here as well.
             if (jedisPool == null) {
-                GenericObjectPool.Config gConfig = new GenericObjectPool.Config();
-                gConfig.testOnBorrow = true;
-                gConfig.testWhileIdle = true;
+                GenericObjectPoolConfig gConfig = new GenericObjectPoolConfig();
+                gConfig.setTestOnBorrow(true);
+                gConfig.setTestWhileIdle(true);
 
                 jedisPool = new JedisPool(gConfig, uri.getHost(), uri.getPort());
 

@@ -31,8 +31,7 @@ public class RedissonUtil {
     private static final String REDIS_AUTH = RedissonBroadcaster.class.getName() + ".authorization";
     private static final String REDIS_SERVER = RedissonBroadcaster.class.getName() + ".server";
 
-    private Redisson redissonSubscriber;
-    private Redisson redissonPublisher;
+    private Redisson redisson;
     private String authToken = null;
 
     private final AtmosphereConfig config;
@@ -67,38 +66,31 @@ public class RedissonUtil {
 
         Config config = new Config();
         config.useSingleServer().setAddress(uri.getHost() + ":" + uri.getPort());
-
-        config.useSingleServer().setAddress(uri.getHost() + ":" + uri.getPort()).setDatabase(1);
+        config.useSingleServer().setDatabase(1);
         try {
-            redissonSubscriber = Redisson.create(config);
+            redisson = Redisson.create(config);
         } catch (Exception e) {
-            logger.error("failed to connect subscriber", e);
-            disconnectSubscriber();
-        }
-        try {
-            redissonPublisher = Redisson.create(config);
-        } catch (Exception e) {
-            logger.error("failed to connect publisher", e);
-            disconnectPublisher();
+            logger.error("failed to connect redis", e);
+            disconnectRedisson();
         }
     }
 
+    public void disconnectRedisson() {
+        redisson.shutdown();
+    }
+
     public synchronized void setID(String id) {
-        disconnectPublisher();
-        disconnectSubscriber();
+        disconnectRedisson();
     }
 
     /**
      * {@inheritDoc}
      */
     public void destroy() {
-        synchronized (this) {
-            try {
-                disconnectPublisher();
-                disconnectSubscriber();
-            } catch (Throwable t) {
-                logger.warn("Redisson error on close", t);
-            }
+        try {
+            disconnectRedisson();
+        } catch (Throwable t) {
+            logger.warn("Redisson error on close", t);
         }
     }
 
@@ -108,7 +100,7 @@ public class RedissonUtil {
     public void incomingBroadcast() {
         logger.info("Subscribing to: {}", callback.getID());
 
-        RTopic<String> topic = redissonSubscriber.getTopic(callback.getID());
+        RTopic<String> topic = redisson.getTopic(callback.getID());
         topic.addListener(new MessageListener<String>() {
 
             public void onMessage(String channel, String message) {
@@ -118,35 +110,11 @@ public class RedissonUtil {
     }
 
     public void outgoingBroadcast(Object message) {
-        RTopic<String> topic = redissonPublisher.getTopic(callback.getID());
+        RTopic<String> topic = redisson.getTopic(callback.getID());
         try {
             topic.publish(message.toString());
         } catch (Exception e) {
             logger.warn("outgoingBroadcast exception", e);
-        }
-    }
-
-    private void disconnectSubscriber() {
-        if (redissonSubscriber == null) return;
-
-        synchronized (this) {
-            try {
-                redissonSubscriber.shutdown();
-            } catch (Exception e) {
-                logger.error("failed to disconnect subscriber", e);
-            }
-        }
-    }
-
-    private void disconnectPublisher() {
-        if (redissonPublisher == null) return;
-
-        synchronized (this) {
-            try {
-                redissonPublisher.shutdown();
-            } catch (Exception e) {
-                logger.error("failed to disconnect publisher", e);
-            }
         }
     }
 

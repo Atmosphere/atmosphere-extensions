@@ -64,11 +64,11 @@ public class RedissonUtil {
             throw new NullPointerException("uri cannot be null");
         }
 
-        Config config = new Config();
-        config.useSingleServer().setAddress(uri.getHost() + ":" + uri.getPort());
-        config.useSingleServer().setDatabase(1);
+        Config redissonConfig = new Config();
+        redissonConfig.useSingleServer().setAddress(uri.getHost() + ":" + uri.getPort());
+        redissonConfig.useSingleServer().setDatabase(1);
         try {
-            redisson = Redisson.create(config);
+            redisson = Redisson.create(redissonConfig);
         } catch (Exception e) {
             logger.error("failed to connect redis", e);
             disconnectRedisson();

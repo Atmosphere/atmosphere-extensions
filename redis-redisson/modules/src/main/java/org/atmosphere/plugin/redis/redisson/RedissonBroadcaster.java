@@ -57,15 +57,6 @@ public class RedissonBroadcaster extends AbstractBroadcasterProxy {
         return this;
     }
 
-    public String getAuth() {
-        return redisUtil.getAuth();
-    }
-
-    public void setAuth(String auth) {
-        redisUtil.setAuth(auth);
-
-    }
-
     public synchronized void setUp() {
         redisUtil.configure();
     }

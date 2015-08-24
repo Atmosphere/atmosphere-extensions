@@ -100,18 +100,6 @@ public class RedissonFilter implements ClusterBroadcastFilter {
         return bc;
     }
 
-    public String getAuth() {
-        return redisUtil.getAuth();
-    }
-
-    public void setAuth(String auth) {
-        if (redisUtil != null) {
-            redisUtil.setAuth(auth);
-        } else {
-            this.auth = auth;
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -132,7 +120,6 @@ public class RedissonFilter implements ClusterBroadcastFilter {
             }
         });
         redisUtil.configure();
-        if (auth != null) redisUtil.setAuth(auth);
 
         listener.submit(new Runnable() {
             public void run() {

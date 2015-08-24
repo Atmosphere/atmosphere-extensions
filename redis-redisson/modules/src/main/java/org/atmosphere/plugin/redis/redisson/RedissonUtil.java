@@ -18,21 +18,30 @@ package org.atmosphere.plugin.redis.redisson;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.redisson.Config;
 import org.redisson.Redisson;
+import org.redisson.client.protocol.pubsub.Message;
+import org.redisson.connection.RandomLoadBalancer;
 import org.redisson.core.MessageListener;
+import org.redisson.core.PatternMessageListener;
+import org.redisson.core.RPatternTopic;
 import org.redisson.core.RTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 public class RedissonUtil {
     private static final Logger logger = LoggerFactory.getLogger(RedissonBroadcaster.class);
 
     private static final String REDIS_AUTH = RedissonBroadcaster.class.getName() + ".authorization";
     private static final String REDIS_SERVER = RedissonBroadcaster.class.getName() + ".server";
+    private static final String REDIS_OTHERS = RedissonBroadcaster.class.getName() + ".others";
+    private static final String REDIS_TYPE = RedissonBroadcaster.class.getName() + ".type";
+    private static final String REDIS_SCAN_INTERVAL = RedissonBroadcaster.class.getName() + ".scan.interval";
+    private static final String REDIS_SENTINEL_MASTER_NAME = RedissonBroadcaster.class.getName() + ".master.name";
 
     private Redisson redisson;
-    private String authToken = null;
 
     private final AtmosphereConfig config;
     private URI uri;
@@ -44,15 +53,26 @@ public class RedissonUtil {
         this.uri = uri;
     }
 
-    public String getAuth() {
-        return authToken;
-    }
+    private enum RedisType {
+        SINGLE("single"), MASTER("master"), CLUSTER("cluster"), SENTINEL("sentinel");
+        private String stringValue;
 
-    public void setAuth(String auth) {
-        authToken = auth;
+        RedisType(String s) {
+            stringValue = s;
+        }
+
+        public String getStringValue() {
+            return stringValue;
+        }
     }
 
     public void configure() {
+        String authToken = "";
+        String redisType = "";
+
+        if (config.getServletConfig().getInitParameter(REDIS_TYPE) != null) {
+            redisType = config.getServletConfig().getInitParameter(REDIS_TYPE);
+        }
 
         if (config.getServletConfig().getInitParameter(REDIS_AUTH) != null) {
             authToken = config.getServletConfig().getInitParameter(REDIS_AUTH);
@@ -64,11 +84,64 @@ public class RedissonUtil {
             throw new NullPointerException("uri cannot be null");
         }
 
-        Config config = new Config();
-        config.useSingleServer().setAddress(uri.getHost() + ":" + uri.getPort());
-        config.useSingleServer().setDatabase(1);
+        Config redissonConfig = new Config();
+
+        if (redisType.isEmpty() || redisType.equals(RedisType.SINGLE.getStringValue())) {
+            redissonConfig.useSingleServer().setAddress(uri.getHost() + ":" + uri.getPort());
+            redissonConfig.useSingleServer().setDatabase(1);
+            if (!authToken.isEmpty()) {
+                redissonConfig.useSingleServer().setPassword(authToken);
+            }
+        } else {
+            List<String> slaveList = Arrays.asList(config.getServletConfig().getInitParameter(REDIS_OTHERS).split("\\s*,\\s*"));
+            if (redisType.equals(RedisType.MASTER.getStringValue())) {
+                redissonConfig.useMasterSlaveConnection()
+                        .setMasterAddress(uri.getHost() + ":" + uri.getPort())
+                        .setLoadBalancer(new RandomLoadBalancer());
+                for (String slave : slaveList) {
+                    URI serverAddress = URI.create(slave);
+                    redissonConfig.useMasterSlaveConnection().addSlaveAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                }
+                if (!authToken.isEmpty()) {
+                    redissonConfig.useMasterSlaveConnection().setPassword(authToken);
+                }
+            } else if (redisType.equals(RedisType.CLUSTER.getStringValue())) {
+                Integer scanInterval = 2000;
+                if (config.getServletConfig().getInitParameter(REDIS_SCAN_INTERVAL) != null) {
+                    scanInterval = Integer.parseInt(config.getServletConfig().getInitParameter(REDIS_SCAN_INTERVAL));
+                }
+                redissonConfig.useClusterServers()
+                        .setScanInterval(scanInterval)
+                        .addNodeAddress(uri.getHost() + ":" + uri.getPort());
+                for (String slave : slaveList) {
+                    URI serverAddress = URI.create(slave);
+                    redissonConfig.useClusterServers().addNodeAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                }
+                if (!authToken.isEmpty()) {
+                    redissonConfig.useClusterServers().setPassword(authToken);
+                }
+            } else if (redisType.equals(RedisType.SENTINEL.getStringValue())) {
+                String masterName = "";
+                if (config.getServletConfig().getInitParameter(REDIS_SENTINEL_MASTER_NAME) != null) {
+                    masterName = config.getServletConfig().getInitParameter(REDIS_SENTINEL_MASTER_NAME);
+                } else if (masterName.isEmpty()) {
+                    throw new NullPointerException("SENTINEL MASTER NAME cannot be null");
+                }
+                redissonConfig.useSentinelConnection()
+                        .setMasterName(masterName)
+                        .addSentinelAddress(uri.getHost() + ":" + uri.getPort());
+                for (String slave : slaveList) {
+                    URI serverAddress = URI.create(slave);
+                    redissonConfig.useSentinelConnection().addSentinelAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                }
+                if (!authToken.isEmpty()) {
+                    redissonConfig.useSentinelConnection().setPassword(authToken);
+                }
+            }
+        }
+
         try {
-            redisson = Redisson.create(config);
+            redisson = Redisson.create(redissonConfig);
         } catch (Exception e) {
             logger.error("failed to connect redis", e);
             disconnectRedisson();
@@ -98,15 +171,26 @@ public class RedissonUtil {
      * {@inheritDoc}
      */
     public void incomingBroadcast() {
-        logger.info("Subscribing to: {}", callback.getID());
+        String callbackId = callback.getID();
+        logger.info("Subscribing to: {}", callbackId);
 
-        RTopic<String> topic = redisson.getTopic(callback.getID());
-        topic.addListener(new MessageListener<String>() {
+        if (!callbackId.contains("*")) {
+            RTopic<String> topic = redisson.getTopic(callbackId);
+            topic.addListener(new MessageListener<String>() {
 
-            public void onMessage(String channel, String message) {
-                callback.broadcastReceivedMessage(message);
-            }
-        });
+                public void onMessage(String channel, String message) {
+                    callback.broadcastReceivedMessage(message);
+                }
+            });
+        } else {
+            RPatternTopic<Message> topic1 = redisson.getPatternTopic("topic1.*");
+            topic1.addListener(new PatternMessageListener<Message>() {
+                @Override
+                public void onMessage(String pattern, String channel, Message msg) {
+                    callback.broadcastReceivedMessage(msg.toString());
+                }
+            });
+        }
     }
 
     public void outgoingBroadcast(Object message) {

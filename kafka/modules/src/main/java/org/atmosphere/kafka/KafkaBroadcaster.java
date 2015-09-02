@@ -73,7 +73,7 @@ public class KafkaBroadcaster extends AbstractBroadcasterProxy {
             String load = config.getInitParameter(PROPERTIES_FILE, null);
             Properties props = new Properties();
             if (load == null) {
-                props.put("bootstrap.servers", "10.0.1.10:9092");
+                props.put("bootstrap.servers", "127.0.0.1:9092");
                 props.put("zk.connect", "127.0.0.1:9092");
                 props.put("group.id", "kafka.atmosphere");
                 props.put("partition.assignment.strategy", "roundrobin");

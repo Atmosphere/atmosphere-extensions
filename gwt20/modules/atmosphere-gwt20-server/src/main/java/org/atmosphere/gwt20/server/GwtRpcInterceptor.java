@@ -85,7 +85,7 @@ public class GwtRpcInterceptor implements AtmosphereInterceptor {
             } catch (IOException ex) {
                 logger.error("Failed to read request data", ex);
             } catch (SerializationException ex) {
-                logger.error("Failed to deserialize GWT RPC data");
+                logger.error("Failed to deserialize GWT RPC data", ex);
             }
         }
         return Action.CONTINUE;

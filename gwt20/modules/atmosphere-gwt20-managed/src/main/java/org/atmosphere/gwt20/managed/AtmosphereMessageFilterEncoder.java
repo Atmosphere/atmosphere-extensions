@@ -21,6 +21,8 @@ import org.atmosphere.gwt20.client.managed.RPCEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Callable;
+
 /**
  * Wrap a message into an {@link org.atmosphere.gwt20.client.AtmosphereMessage}
  *
@@ -40,10 +42,26 @@ public class AtmosphereMessageFilterEncoder implements BroadcastFilter {
      */
     @Override
     public BroadcastAction filter(String broadcasterId, Object originalMessage, Object message) {
+
+        if (message == null) {
+            logger.warn("Message is null", message);
+            return new BroadcastAction(BroadcastAction.ACTION.ABORT, message);
+        }
+
         if (!AtmosphereMessage.class.isAssignableFrom(message.getClass())) {
             try {
                 AtmosphereMessage<Object> m = (AtmosphereMessage<Object>) messageClazz.newInstance();
-                m.setMessage(message);
+
+                if (Callable.class.isAssignableFrom(message.getClass())) {
+                    message = Callable.class.cast(message).call();
+                }
+
+                if (RPCEvent.class.isAssignableFrom(message.getClass())) {
+                    m.setMessage(RPCEvent.class.cast(message).getMessage());
+                } else {
+                    m.setMessage(message);
+                }
+
                 return new BroadcastAction(BroadcastAction.ACTION.CONTINUE, m);
             } catch (Exception e) {
                 logger.warn("Oups. Make sure your RPCEvent implements AtmosphereMessage<Your Class>. Or remove the AtmosphereMessageInterceptor {}", e);

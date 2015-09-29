@@ -84,10 +84,8 @@ public class SerializerGenerator extends IncrementalGenerator {
                     throw new UnableToCompleteException();
                 }
 
-                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(
-                        logger, context.getPropertyOracle(), context);
-                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(
-                        logger, context.getPropertyOracle(), context);
+                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(logger, context);
+                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(logger, context);
 
                 List<Class<?>> serializableTypes = new ArrayList();
                 Collections.addAll(serializableTypes, annotation.value());

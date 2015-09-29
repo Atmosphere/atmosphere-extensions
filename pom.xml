@@ -11,7 +11,7 @@
     <artifactId>atmosphere-extensions-project</artifactId>
     <packaging>pom</packaging>
     <name>atmosphere-extensions-project</name>
-    <version>2.3.3-SNAPSHOT</version>
+    <version>2.3.2-gwt27-SNAPSHOT</version>
     <url>http://github.com/Atmosphere/atmosphere-extensions</url>
     <scm>
         <connection>scm:git:git@github.com:Atmosphere/atmosphere-extensions.git</connection>
@@ -253,25 +253,7 @@
         </profile>
     </profiles>
     <modules>
-        <module>rabbitmq/modules</module>
-        <module>cdi/modules</module>
-        <module>guice/modules</module>
-        <module>spring/modules</module>
-        <module>jgroups/modules</module>
-        <module>jms/modules</module>
-        <module>redis/modules</module>
-        <module>xmpp/modules</module>
-        <module>hazelcast/modules</module>
-        <module>weblogic/modules</module>
-        <module>socketio/modules</module>
-        <module>cometd/modules</module>
-        <!-- Deprecated - Use 1.1.0.RC5
-        <module>gwt/</module>
-        -->
 		<module>gwt20</module>
-        <module>kafka/modules</module>
-        <module>rmi/modules</module>
-        <module>sockjs/modules</module>
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

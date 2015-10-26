@@ -15,6 +15,10 @@
  */
 package org.atmosphere.socketio.cpr;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 import org.atmosphere.config.service.AtmosphereInterceptorService;
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AsyncIOWriter;
@@ -32,18 +36,12 @@ import org.atmosphere.socketio.SocketIOSessionOutbound;
 import org.atmosphere.socketio.transport.JSONPPollingTransport;
 import org.atmosphere.socketio.transport.SocketIOPacketImpl;
 import org.atmosphere.socketio.transport.SocketIOSessionManagerImpl;
+import static org.atmosphere.socketio.transport.SocketIOSessionManagerImpl.mapper;
 import org.atmosphere.socketio.transport.Transport;
 import org.atmosphere.socketio.transport.WebSocketTransport;
 import org.atmosphere.socketio.transport.XHRPollingTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.atmosphere.socketio.transport.SocketIOSessionManagerImpl.mapper;
 
 /**
  * SocketIO implementation.
@@ -250,6 +248,7 @@ public class SocketIOAtmosphereInterceptor implements AtmosphereInterceptor {
 
     @Override
     public void destroy() {
+        sessionManager.destory();
     }
 
     @Override

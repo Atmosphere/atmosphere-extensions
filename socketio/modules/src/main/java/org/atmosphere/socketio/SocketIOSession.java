@@ -17,7 +17,6 @@ package org.atmosphere.socketio;
 
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereResourceImpl;
-import org.atmosphere.socketio.cpr.SocketIOAtmosphereHandler;
 import org.atmosphere.socketio.transport.DisconnectReason;
 
 /**

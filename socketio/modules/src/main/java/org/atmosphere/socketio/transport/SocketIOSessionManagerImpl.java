@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.concurrent.TimeUnit;
 import org.atmosphere.cpr.AtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereRequest;
 import org.atmosphere.cpr.AtmosphereResourceEventImpl;
@@ -149,6 +150,16 @@ public class SocketIOSessionManagerImpl implements SocketIOSessionManager, Socke
     @Override
     public long getRequestSuspendTime() {
         return requestSuspendTime;
+    }
+
+    @Override
+    public void destory() {
+        executor.shutdownNow();
+        try {
+            executor.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            logger.debug("Interrupted while waiting for executor to terminate. (Continuing)", ex);
+        }
     }
 
     private class SessionImpl implements SocketIOSession {

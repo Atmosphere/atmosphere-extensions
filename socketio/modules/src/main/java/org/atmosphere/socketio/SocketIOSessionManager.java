@@ -49,4 +49,10 @@ public interface SocketIOSessionManager extends SocketIOSessionFactory {
      * @return
      */
     long getRequestSuspendTime();
+    
+    /**
+     * This will destroy the session manager and release resources.
+     */
+    void destory();    
+    
 }

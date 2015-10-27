@@ -17,7 +17,7 @@ package org.atmosphere.cdi;
 
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
-import org.atmosphere.inject.AtmosphereProducers;
+import org.atmosphere.inject.AtmosphereConfigAware;
 import org.atmosphere.inject.CDIProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +100,9 @@ public class CDIObjectFactory implements AtmosphereObjectFactory<Object> {
     @Override
     public void configure(AtmosphereConfig config) {
         try {
-            AtmosphereProducers p = newClassInstance(AtmosphereProducers.class, AtmosphereProducers.class);
-            p.configure(config);
+            for (CDIProducer p : producerServiceLoader) {
+                AtmosphereConfigAware.class.cast(p).configure(config);
+            }
         } catch (Exception e) {
             logger.error("", e);
         }

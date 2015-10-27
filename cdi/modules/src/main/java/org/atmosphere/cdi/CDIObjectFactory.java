@@ -18,6 +18,7 @@ package org.atmosphere.cdi;
 import org.atmosphere.cpr.AtmosphereConfig;
 import org.atmosphere.cpr.AtmosphereObjectFactory;
 import org.atmosphere.inject.AtmosphereProducers;
+import org.atmosphere.inject.CDIProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Iterator;
+import java.util.ServiceLoader;
 
 /**
  * CDI support for injecting object
@@ -36,25 +38,29 @@ import java.util.Iterator;
 public class CDIObjectFactory implements AtmosphereObjectFactory<Object> {
 
     private static final Logger logger = LoggerFactory.getLogger(CDIObjectFactory.class);
+    private final ServiceLoader<CDIProducer> producerServiceLoader = ServiceLoader.load(CDIProducer.class);
 
-    private BeanManager bm;
+    private final BeanManager bm;
 
-    public CDIObjectFactory(){
+    public CDIObjectFactory() {
+        BeanManager beanManager = null;
         try {
-            bm = (BeanManager) new InitialContext().lookup("java:comp/BeanManager");
+            beanManager = (BeanManager) new InitialContext().lookup("java:comp/BeanManager");
         } catch (NamingException ex) {
             try {
-                bm = (BeanManager) new InitialContext().lookup("java:comp/env/BeanManager");
+                beanManager = (BeanManager) new InitialContext().lookup("java:comp/env/BeanManager");
             } catch (NamingException e) {
                 logger.error("{}", e);
             }
         }
 
-        final Iterator<Bean<?>> i = bm.getBeans(AtmosphereProducers.class).iterator();
-        if (!i.hasNext()) {
-            throw new IllegalStateException();
+        this.bm = beanManager;
+        for (CDIProducer p : producerServiceLoader) {
+            final Iterator<Bean<?>> i = bm.getBeans(p.getClass()).iterator();
+            if (!i.hasNext()) {
+                throw new IllegalStateException();
+            }
         }
-
     }
 
     @Override
@@ -94,7 +100,7 @@ public class CDIObjectFactory implements AtmosphereObjectFactory<Object> {
     @Override
     public void configure(AtmosphereConfig config) {
         try {
-            AtmosphereProducers p = newClassInstance(AtmosphereProducers.class,AtmosphereProducers.class);
+            AtmosphereProducers p = newClassInstance(AtmosphereProducers.class, AtmosphereProducers.class);
             p.configure(config);
         } catch (Exception e) {
             logger.error("", e);

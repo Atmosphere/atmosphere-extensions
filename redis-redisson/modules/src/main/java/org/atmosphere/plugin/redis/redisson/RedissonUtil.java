@@ -104,10 +104,12 @@ public class RedissonUtil {
                         .setLoadBalancer(new RandomLoadBalancer());
                 for (String slave : slaveList) {
                     URI serverAddress = URI.create(slave);
-                    redissonConfig.useMasterSlaveConnection().addSlaveAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                    redissonConfig.useMasterSlaveConnection()
+                            .addSlaveAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
                 }
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useMasterSlaveConnection().setPassword(authToken);
+                    redissonConfig.useMasterSlaveConnection()
+                            .setPassword(authToken);
                 }
             } else if (redisType.equals(RedisType.CLUSTER.getStringValue())) {
                 redissonConfig.useClusterServers()
@@ -115,10 +117,12 @@ public class RedissonUtil {
                         .addNodeAddress(uri.getHost() + ":" + uri.getPort());
                 for (String slave : slaveList) {
                     URI serverAddress = URI.create(slave);
-                    redissonConfig.useClusterServers().addNodeAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                    redissonConfig.useClusterServers()
+                            .addNodeAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
                 }
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useClusterServers().setPassword(authToken);
+                    redissonConfig.useClusterServers()
+                            .setPassword(authToken);
                 }
             } else if (redisType.equals(RedisType.SENTINEL.getStringValue())) {
                 String masterName = "";
@@ -132,17 +136,20 @@ public class RedissonUtil {
                         .addSentinelAddress(uri.getHost() + ":" + uri.getPort());
                 for (String slave : slaveList) {
                     URI serverAddress = URI.create(slave);
-                    redissonConfig.useSentinelConnection().addSentinelAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                    redissonConfig.useSentinelConnection()
+                            .addSentinelAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
                 }
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useSentinelConnection().setPassword(authToken);
+                    redissonConfig.useSentinelConnection()
+                            .setPassword(authToken);
                 }
             } else if (redisType.equals(RedisType.ELASTICACHE.getStringValue())) {
                 redissonConfig.useElasticacheServers()
                         .addNodeAddress(uri.getHost() + ":" + uri.getPort())
                         .setScanInterval(scanInterval);
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useElasticacheServers().setPassword(authToken);
+                    redissonConfig.useElasticacheServers()
+                            .setPassword(authToken);
                 }
             }
         }

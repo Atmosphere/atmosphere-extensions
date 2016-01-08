@@ -28,14 +28,17 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 /**
  * <p>
- * This manager is in charge of sending all broadcasted messages to a set of known peers (thanks to its
+ * This manager is in charge of sending all broadcast messages to a set of known peers (thanks to its
  * {@link RMIPeerManager#sendAll(String, Object)} method) and to bind a {@link RMIBroadcastService} (thanks to
- * its {@link RMIPeerManager#server(String, RMIBroadcastService) method}).
+ * its {@link RMIPeerManager#server(String, RMIBroadcastService, AtmosphereConfig) method}).
  * </p>
  *
  * <p>
@@ -99,6 +102,16 @@ public class RMIPeerManager {
     private static final String SYSTEM_PROPERTY_PREFIX = "org.atmosphere.";
 
     /**
+     * Server port system property.
+     */
+    private static final String RMI_SERVER_PORT_SYSTEM_PROPERTY = SYSTEM_PROPERTY_PREFIX + RMI_SERVER_PORT_PROPERTY;
+
+    /**
+     * Prefix for all system properties referencing a peer's URL.
+     */
+    private static final String PEER_SYSTEM_PROPERTY_PREFIX = SYSTEM_PROPERTY_PREFIX + PEER_PROPERTY_PREFIX;
+
+    /**
      * Logger.
      */
     private final Logger logger = LoggerFactory.getLogger(RMIPeerManager.class);
@@ -133,24 +146,23 @@ public class RMIPeerManager {
      * </p>
      */
     private RMIPeerManager() {
+        final Properties properties = new Properties();
+
         logger.info("Looking for '{}' file in the classpath", RMI_PROPERTIES_LOCATION);
         final InputStream peerProperties = getClass().getResourceAsStream(RMI_PROPERTIES_LOCATION);
-
-        if (peerProperties == null) {
-            throw new IllegalStateException("You must provide a '" + RMI_PROPERTIES_LOCATION + "' file in your classpath.");
-        } else {
-            peers = new ArrayList<Peer>();
-            final Properties properties = new Properties();
-
+        if (peerProperties != null) {
             try {
-                logger.info("Loading '{}' file in found classpath", RMI_PROPERTIES_LOCATION);
+                logger.info("Loading '{}' file from classpath", RMI_PROPERTIES_LOCATION);
                 properties.load(peerProperties);
-                discoverServerPort(properties);
-                discoverPeers(properties);
-            } catch (IOException ioe) {
-                throw new IllegalStateException("Unable to load '" + RMI_PROPERTIES_LOCATION + "' file from the classpath", ioe);
+            } catch (final IOException ioe) {
+                logger.error("Unable to load '" + RMI_PROPERTIES_LOCATION + "' file from the classpath", ioe);
             }
         }
+
+        peers = new ArrayList<Peer>();
+
+        discoverServerPort(properties);
+        discoverPeers(properties);
     }
 
     /**
@@ -167,18 +179,17 @@ public class RMIPeerManager {
     private void discoverServerPort(final Properties properties) {
         String portValue = properties.getProperty(RMI_SERVER_PORT_PROPERTY);
 
-        if (portValue == null) {
-            throw new IllegalArgumentException(RMI_SERVER_PORT_PROPERTY + " property's value is null. Must be a valid integer");
-        }
-
         // Looking for system property
-        final String sysPropertyKey = SYSTEM_PROPERTY_PREFIX + RMI_SERVER_PORT_PROPERTY;
-        final String sysPropertyValue = System.getProperty(sysPropertyKey);
+        final String sysPropertyValue = System.getProperty(RMI_SERVER_PORT_SYSTEM_PROPERTY);
 
         if (sysPropertyValue != null) {
             logger.info("System property '{}' set. Overriding value '{}' with '{}'",
-                    new Object[] { sysPropertyKey, portValue, sysPropertyValue, });
+                    new Object[] { RMI_SERVER_PORT_SYSTEM_PROPERTY, portValue, sysPropertyValue, });
             portValue = sysPropertyValue;
+        }
+
+        if (portValue == null) {
+            throw new IllegalArgumentException(RMI_SERVER_PORT_PROPERTY + " property's value is null. Must be a valid integer");
         }
 
         try {
@@ -190,47 +201,61 @@ public class RMIPeerManager {
 
     /**
      * <p>
-     * Discovers all the peers referenced in the given {@code Properties} object.
+     * Discovers all the peer name to authority (host:port) mappings defined in the given {@code Properties} object and/or the system properties.
      * </p>
      *
-     * <p>
-     * If one URL is malformed, then an {@code IllegalArgumentException} will be thrown.
-     * </p>
+     * If the same peer name occurs in both the given {@code Properties} object and the system properties,
+     * the system properties authority overrides the given {@code Properties} authority.
      *
-     * @param properties the properties containing all peers URLs
+     * @param properties Properties containing peer name to authority mappings
+     *
+     * @throws IllegalArgumentException If any peer authority (host:port) is malformed 
      */
     private void discoverPeers(final Properties properties) {
-
         logger.info("Discovering RMI peers");
 
-        for (String propertyKey : properties.stringPropertyNames()) {
-            String propertyValue = String.valueOf(properties.get(propertyKey));
+        final Map<String, String> sysPropPeerAuthorityByPeerName = new HashMap<String, String>();
 
-            // Don't reed properties without the right prefix
+        // Add peers from system properties
+        for (final Entry<Object, Object> sysProp : System.getProperties().entrySet()) {
+            final String sysPropKey = sysProp.getKey().toString();
+            if (sysPropKey.startsWith(PEER_SYSTEM_PROPERTY_PREFIX)) {
+                final String peerName       = sysPropKey.substring(PEER_SYSTEM_PROPERTY_PREFIX.length());
+                final String peerAuthority  = sysProp.getValue().toString();
+                addPeer(peerName, peerAuthority);
+                sysPropPeerAuthorityByPeerName.put(peerName, peerAuthority);
+                logger.info("Added peer '{}' with authority '{}' from system properties", peerName, peerAuthority);
+            }
+        }
+
+        // Add peers from properties that weren't overridden by system properties
+        for (final Entry<Object, Object> property : properties.entrySet()) {
+            final String propertyKey = property.getKey().toString();
             if (propertyKey.startsWith(PEER_PROPERTY_PREFIX)) {
-                logger.info("Reading peer-key '{}' with value '{}'", propertyKey, propertyValue);
-
-                // Looking for system property
-                final String sysPropertyKey = SYSTEM_PROPERTY_PREFIX + propertyKey;
-                final String sysPropertyValue = System.getProperty(sysPropertyKey);
-
-                if (sysPropertyValue != null) {
-                    logger.info("System property '{}' set. Overriding value '{}' with '{}'",
-                            new Object[] { sysPropertyKey, propertyValue, sysPropertyValue, });
-                    propertyValue = sysPropertyValue;
+                final String peerName             = propertyKey.substring(PEER_PROPERTY_PREFIX.length());
+                final String peerAuthority        = property.getValue().toString();
+                final String sysPropPeerAuthority = sysPropPeerAuthorityByPeerName.get(peerName);
+                if (sysPropPeerAuthority == null) {
+                    addPeer(peerName, peerAuthority);
+                    logger.info("Added peer '{}' with authority '{}' from properties", peerName, peerAuthority);
                 }
-
-                try {
-                    final String peerUrl = String.format("rmi://%s/%s/", propertyValue, RMIBroadcastService.class.getSimpleName());
-                    logger.info("Going to connect peer at {}", peerUrl);
-                    peers.add(new Peer(peerUrl));
-                } catch (MalformedURLException mue) {
-                    throw new IllegalArgumentException("Property value for key '"
-                            + propertyKey
-                            + "' must corresponds to valid host name and port (for instance foo:4000). Incorrect found value : "
-                            + propertyValue);
+                else if (! sysPropPeerAuthority.equals(peerAuthority)) {
+                    logger.info(
+                        "Peer '{}' with authority '{}' from system properties overrode authority '{}'",
+                        new Object[] {peerName, sysPropPeerAuthority, peerAuthority}
+                    );
                 }
             }
+        }
+    }
+
+    private void addPeer(final String peerName, final String peerAuthority) {
+        try {
+            peers.add(new Peer("rmi://" + peerAuthority + '/' + RMIBroadcastService.class.getSimpleName() + '/'));
+        } catch (final MalformedURLException mue) {
+            throw new IllegalArgumentException(
+                "Value for peer '" + peerName + "' must be a valid host name and port (e.g., foo:40001). Invalid value: " + peerAuthority
+            );
         }
     }
 
@@ -308,7 +333,7 @@ public class RMIPeerManager {
 
     /**
      * <p>
-     * Internal class which represents a peer handling connections where messages should be broadcasted.
+     * Internal class which represents a peer handling connections where messages should be broadcast.
      * </p>
      *
      * <p>
@@ -335,6 +360,8 @@ public class RMIPeerManager {
          * @throws MalformedURLException if the URL is not correct
          */
         Peer(final String peerUrl) throws MalformedURLException {
+            logger.info("Connecting to peer at {}", peerUrl);
+
             url = peerUrl;
 
             // Just connect to detect a MalformedURLException exception

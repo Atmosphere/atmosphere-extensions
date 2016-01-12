@@ -39,15 +39,23 @@ public class AtmosphereSpringServlet extends HttpServlet {
 
     @Autowired
     private AtmosphereFramework framework;
+    
+    @Autowired
+	private AtmosphereSpringContext atmosphereSpringContext;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-
-        WebApplicationContextUtils.
+        
+     	WebApplicationContextUtils.
                 getRequiredWebApplicationContext(getServletContext()).
                 getAutowireCapableBeanFactory().
                 autowireBean(this);
+     	
+        // set the real servlet context
+        atmosphereSpringContext.setServletContext(config.getServletContext());
+     	framework.init(atmosphereSpringContext, false);
+
     }
 
     @Override

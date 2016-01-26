@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * RabbitMQ Connection Factory.
@@ -165,7 +166,7 @@ public class RabbitMQConnectionFactory implements AtmosphereConfig.ShutdownHook,
         try {
             channel.close();
             connection.close();
-        } catch (IOException e) {
+        } catch (IOException | TimeoutException e) {
             logger.trace("", e);
         }
     }

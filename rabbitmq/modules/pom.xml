@@ -23,7 +23,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Import-Package>*</Import-Package>
+                        <Import-Package>
+                            com.rabbitmq.client;version="[3.5,4)",
+                            *
+                        </Import-Package>
                         <Export-Package>
                             org.atmosphere.plugin.rabbitmq.*
                         </Export-Package>
@@ -51,7 +54,7 @@
         <dependency>
           <groupId>com.rabbitmq</groupId>
           <artifactId>amqp-client</artifactId>
-          <version>3.5.0</version>
+          <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

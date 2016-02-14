@@ -15,16 +15,12 @@
  */
 package org.atmosphere.spring.bean;
 
-import org.atmosphere.util.ServletProxyFactory;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 /**
  * Spring context.
@@ -34,22 +30,21 @@ import java.util.Map;
 public class AtmosphereSpringContext implements ServletConfig {
 
     private Map<String, String> config;
+    
+    private ServletContext servletContext;
+
+	@Override
+	public ServletContext getServletContext() {
+		return servletContext;
+	}
+
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;
+	}
 
     @Override
     public String getServletName() {
         return "AtmosphereFramework";
-    }
-
-    @Override
-    public ServletContext getServletContext() {
-        return (ServletContext) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{ServletContext.class},
-                new InvocationHandler() {
-                    @Override
-                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                        return ServletProxyFactory.getDefault().proxy(proxy, method, args);
-                    }
-                }
-        );
     }
 
     @Override

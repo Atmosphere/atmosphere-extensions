@@ -67,6 +67,7 @@ public class JMSBroadcaster extends AbstractBroadcasterProxy {
     public Broadcaster initialize(String id, URI uri, AtmosphereConfig config) {
         super.initialize(id, uri, config);
         setUp();
+        startOrRestartConsumer();
         return this;
     }
 
@@ -128,10 +129,10 @@ public class JMSBroadcaster extends AbstractBroadcasterProxy {
     @Override
     public void setID(String id) {
         super.setID(id);
-        restartConsumer();
+        startOrRestartConsumer();
     }
 
-    void restartConsumer() {
+    void startOrRestartConsumer() {
         try {
             String id = getID();
             if (id.startsWith("/*")) {

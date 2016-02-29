@@ -17,6 +17,7 @@ package org.atmosphere.sockjs;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import org.atmosphere.cpr.Action;
 import org.atmosphere.cpr.AsyncIOInterceptorAdapter;
 import org.atmosphere.cpr.AsyncIOWriter;
@@ -41,9 +42,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
@@ -115,8 +119,13 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         if (!baseURL.get().isEmpty() && request.getRequestURI().startsWith(baseURL.get())) {
             super.inspect(r);
 
-            final String sessionId = param(request.getRequestURI(), 2);
-            String transport = param(request.getRequestURI(), 4);
+            // See https://sockjs.github.io/sockjs-protocol/sockjs-protocol-0.3.3.html#section-36
+            // The URL received from the client should be similar to the following:
+            //   <base_url>/<server>/<session>/<protocol>
+            // The auxiliar params method will handle this URL processing
+            String[] params = params(request.getRequestURI().substring(baseURL.get().length()), 2);
+            final String sessionId = params[0];
+            String transport = params[1];
 
             SockjsSession s = sessions.get(sessionId);
             configureTransport(AtmosphereResourceImpl.class.cast(r), transport, s != null);
@@ -171,14 +180,43 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         return Action.CANCELLED;
     }
 
-    private String param(String url, int pos) {
-        String[] params = url.split("/");
-        if (params.length < pos) {
-            return "/";
-        } else {
-            return params[pos];
-        }
-
+    
+    private String[] params(String urlFragment, int pos) {
+    	  if (pos <= 0) {
+    		    throw new IllegalArgumentException("pos must be greater then zero");
+    	  }
+    	
+    	  String s = urlFragment;
+    	  if (s.startsWith("/")) {
+    	      s = s.substring(1);
+    	  }
+        
+    	  List<String> params = new ArrayList<String>();
+    	  int currPos = 1;
+    	  int slashPos = -1;
+    	  String token = null;
+    	  // the first pos position is 1, the second 2, and so on
+    	  while (currPos <= pos) {
+    	      slashPos = s.indexOf('/');
+    	      if (slashPos > 0) {
+    	          token = s.substring(0, slashPos);
+    	          s = s.substring(slashPos + 1);
+    	          params.add(token);
+    	      } else {
+    	          break;
+    	      }
+    	      
+    	      currPos++;
+    	  }
+    	  
+    	  if (params.size() < pos) {
+    	    throw new IllegalStateException(
+    	        String.format("the number of tokens in the url fragment passed as argument '%s' is less than the number required %d", urlFragment, pos));
+    	  }
+        
+    	  String[] aParams = new String[params.size()];
+    	  params.toArray(aParams);
+    	  return aParams;
     }
 
     private void configureTransport(AtmosphereResourceImpl r, String s, boolean hasSession) {

@@ -180,44 +180,38 @@ public class SockJsAtmosphereInterceptor extends AtmosphereInterceptorAdapter {
         return Action.CANCELLED;
     }
 
-    
-    private String[] params(String urlFragment, int pos) {
-    	  if (pos <= 0) {
-    		    throw new IllegalArgumentException("pos must be greater then zero");
-    	  }
-    	
-    	  String s = urlFragment;
-    	  if (s.startsWith("/")) {
-    	      s = s.substring(1);
-    	  }
+    private static String[] params(String urlFragment, int pos) {
+        if (pos <= 0) {
+            throw new IllegalArgumentException("pos must be greater then zero");
+        }
+      
+        String s = urlFragment;
+        int currPos = 0;
+        if (s.startsWith("/")) {
+            currPos++;
+        }
+      
+        List<String> params = new ArrayList<String>();
+        int slashPos = -1;
+        String token = null;
+        while (params.size() < pos) {
+            slashPos = s.indexOf('/', currPos);
+            if (slashPos > 0) {
+                token = s.substring(currPos, slashPos);
+                currPos = slashPos + 1;
+                params.add(token);
+            } else {
+                break;
+            }
+        }
         
-    	  List<String> params = new ArrayList<String>();
-    	  int currPos = 1;
-    	  int slashPos = -1;
-    	  String token = null;
-    	  // the first pos position is 1, the second 2, and so on
-    	  while (currPos <= pos) {
-    	      slashPos = s.indexOf('/');
-    	      if (slashPos > 0) {
-    	          token = s.substring(0, slashPos);
-    	          s = s.substring(slashPos + 1);
-    	          params.add(token);
-    	      } else {
-    	          break;
-    	      }
-    	      
-    	      currPos++;
-    	  }
-    	  
-    	  if (params.size() < pos) {
-    	    throw new IllegalStateException(
-    	        String.format("the number of tokens in the url fragment passed as argument '%s' is less than the number required %d", urlFragment, pos));
-    	  }
-        
-    	  String[] aParams = new String[params.size()];
-    	  params.toArray(aParams);
-    	  return aParams;
-    }
+        if (params.size() < pos) {
+           throw new IllegalArgumentException(
+               String.format("the number of tokens in the url fragment passed as argument '%s' is less than the number required %d", urlFragment, pos));
+        }
+      
+        return params.toArray(new String[params.size()]);
+    }    
 
     private void configureTransport(AtmosphereResourceImpl r, String s, boolean hasSession) {
         if ("websocket".equals(s)) {

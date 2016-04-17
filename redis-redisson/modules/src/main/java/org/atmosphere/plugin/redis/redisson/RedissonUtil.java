@@ -54,7 +54,7 @@ public class RedissonUtil {
     }
 
     private enum RedisType {
-        SINGLE("single"), MASTER("master"), CLUSTER("cluster"), SENTINEL("sentinel");
+        SINGLE("single"), MASTER("master"), CLUSTER("cluster"), SENTINEL("sentinel"), ELASTICACHE("elasticache");
         private String stringValue;
 
         RedisType(String s) {
@@ -94,31 +94,35 @@ public class RedissonUtil {
             }
         } else {
             List<String> slaveList = Arrays.asList(config.getServletConfig().getInitParameter(REDIS_OTHERS).split("\\s*,\\s*"));
+            Integer scanInterval = 2000;
+            if (config.getServletConfig().getInitParameter(REDIS_SCAN_INTERVAL) != null) {
+                scanInterval = Integer.parseInt(config.getServletConfig().getInitParameter(REDIS_SCAN_INTERVAL));
+            }
             if (redisType.equals(RedisType.MASTER.getStringValue())) {
                 redissonConfig.useMasterSlaveConnection()
                         .setMasterAddress(uri.getHost() + ":" + uri.getPort())
                         .setLoadBalancer(new RandomLoadBalancer());
                 for (String slave : slaveList) {
                     URI serverAddress = URI.create(slave);
-                    redissonConfig.useMasterSlaveConnection().addSlaveAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                    redissonConfig.useMasterSlaveConnection()
+                            .addSlaveAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
                 }
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useMasterSlaveConnection().setPassword(authToken);
+                    redissonConfig.useMasterSlaveConnection()
+                            .setPassword(authToken);
                 }
             } else if (redisType.equals(RedisType.CLUSTER.getStringValue())) {
-                Integer scanInterval = 2000;
-                if (config.getServletConfig().getInitParameter(REDIS_SCAN_INTERVAL) != null) {
-                    scanInterval = Integer.parseInt(config.getServletConfig().getInitParameter(REDIS_SCAN_INTERVAL));
-                }
                 redissonConfig.useClusterServers()
                         .setScanInterval(scanInterval)
                         .addNodeAddress(uri.getHost() + ":" + uri.getPort());
                 for (String slave : slaveList) {
                     URI serverAddress = URI.create(slave);
-                    redissonConfig.useClusterServers().addNodeAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                    redissonConfig.useClusterServers()
+                            .addNodeAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
                 }
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useClusterServers().setPassword(authToken);
+                    redissonConfig.useClusterServers()
+                            .setPassword(authToken);
                 }
             } else if (redisType.equals(RedisType.SENTINEL.getStringValue())) {
                 String masterName = "";
@@ -132,10 +136,20 @@ public class RedissonUtil {
                         .addSentinelAddress(uri.getHost() + ":" + uri.getPort());
                 for (String slave : slaveList) {
                     URI serverAddress = URI.create(slave);
-                    redissonConfig.useSentinelConnection().addSentinelAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
+                    redissonConfig.useSentinelConnection()
+                            .addSentinelAddress(serverAddress.getHost() + ":" + serverAddress.getPort());
                 }
                 if (!authToken.isEmpty()) {
-                    redissonConfig.useSentinelConnection().setPassword(authToken);
+                    redissonConfig.useSentinelConnection()
+                            .setPassword(authToken);
+                }
+            } else if (redisType.equals(RedisType.ELASTICACHE.getStringValue())) {
+                redissonConfig.useElasticacheServers()
+                        .addNodeAddress(uri.getHost() + ":" + uri.getPort())
+                        .setScanInterval(scanInterval);
+                if (!authToken.isEmpty()) {
+                    redissonConfig.useElasticacheServers()
+                            .setPassword(authToken);
                 }
             }
         }

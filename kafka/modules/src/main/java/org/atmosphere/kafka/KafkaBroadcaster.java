@@ -15,18 +15,16 @@
  */
 package org.atmosphere.kafka;
 
-import kafka.consumer.Consumer;
-import kafka.consumer.ConsumerConfig;
-import kafka.consumer.ConsumerIterator;
-import kafka.consumer.KafkaStream;
-import kafka.javaapi.consumer.ConsumerConnector;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.atmosphere.config.managed.ManagedAtmosphereHandler;
 import org.atmosphere.cpr.AtmosphereConfig;
-import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.util.AbstractBroadcasterProxy;
 import org.atmosphere.util.ExecutorsFactory;
@@ -35,10 +33,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Kafka Support via a {@link Broadcaster}
@@ -52,87 +52,82 @@ public class KafkaBroadcaster extends AbstractBroadcasterProxy {
     public final static String PROPERTIES_FILE = "org.atmosphere.kafka.propertiesFile";
     private String topic;
 
+    // using kafka 0.9+ API
     private KafkaProducer producer;
-    private ConsumerConnector consumer;
+    private KafkaConsumer consumer;
     private final Serializer stringSerializer = new StringSerializer();
-    private Map<String, Integer> topicCountMap;
-    private Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap;
+    private final Deserializer stringDeserializer = new StringDeserializer();
+    private final AtomicBoolean closed = new AtomicBoolean(false);
 
     @Override
     public Broadcaster initialize(String id, URI uri, final AtmosphereConfig config) {
         super.initialize(id, uri, config);
 
         topic = id.equals(ROOT_MASTER) ? "atmosphere" : id.replaceAll("[^a-zA-Z0-9\\s]", "");
-
         // We are thread-safe
-        producer = (KafkaProducer) config.properties().get(KafkaProducer.class.getName());
-        consumer = (ConsumerConnector) config.properties().get(ConsumerConnector.class.getName());
-        topicCountMap = (Map<String, Integer>) config.properties().get("topicCountMap");
-
-        if (producer == null) {
+        producer = (KafkaProducer) config.properties().get("producer");
+        Set<String> topics = (Set<String>) config.properties().get("topics");
+        if (topics == null) {
+            topics = new HashSet<String>();
+            config.properties().put("topics", topics);
+        }
+        // create a new producer and consumer when the topic changes
+        if (topics.isEmpty() || !topics.contains(topic)) {
             String load = config.getInitParameter(PROPERTIES_FILE, null);
             Properties props = new Properties();
-            if (load == null) {
-                props.put("bootstrap.servers", "127.0.0.1:9092");
-                props.put("zk.connect", "127.0.0.1:9092");
-                props.put("group.id", "kafka.atmosphere");
-                props.put("partition.assignment.strategy", "roundrobin");
-                props.put("zookeeper.connect", "localhost:2181");
-            } else {
+            // let each consumer use its own group by default so that each can receive messages
+            UUID uuid = UUID.randomUUID();
+            String defaultGroupId = "atmosphere-consumer-" + Long.toHexString(uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits());
+            props.put("group.id", defaultGroupId);
+            props.put("bootstrap.servers", "127.0.0.1:9092");
+            props.put("enable.auto.commit", "true");
+            props.put("auto.commit.interval.ms", "1000");
+            if (load != null) {
                 try {
                     props.load(config.getServletContext().getResourceAsStream(load));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
+            if (topics.isEmpty()) {
+                // producer can be reused, so it is instantiated only once
+                producer = new KafkaProducer<String, String>(props, stringSerializer, stringSerializer);
+                config.properties().put("producer", producer);
+            }
+            // consumer needs to be created for each topic subscription
+            consumer = new KafkaConsumer<String, String>(props, stringDeserializer, stringDeserializer);
+            topics.add(topic);
 
-            producer = new KafkaProducer(props, stringSerializer, stringSerializer);
-            consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
-            topicCountMap = new HashMap<String, Integer>();
-
-            config.properties().put("producer", producer);
-            config.properties().put(ConsumerConnector.class.getName(), consumer);
-            config.properties().put("topicCountMap", topicCountMap);
+            startConsumer();
         }
 
-        topicCountMap.put(topic, new Integer(1));
 
-        config.startupHook(new AtmosphereConfig.StartupHook() {
-
-            @Override
-            public void started(AtmosphereFramework framework) {
-                if (config.properties().get("started") != null) return;
-
-                config.properties().put("started", "true");
-                consumerMap = consumer.createMessageStreams(topicCountMap);
-                for (final String t : topicCountMap.keySet()) {
-                    ExecutorsFactory.getMessageDispatcher(config, "kafka").execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                KafkaStream<byte[], byte[]> stream = consumerMap.get(t).get(0);
-                                ConsumerIterator<byte[], byte[]> it = stream.iterator();
-                                String message;
-                                while (it.hasNext()) {
-                                    message = new String(it.next().message());
-
-                                    logger.trace("{} incomingBroadcast {}", t, message);
-                                    broadcastReceivedMessage(message);
-                                }
-                            } catch (Exception ex) {
-                                if (InterruptedException.class.isAssignableFrom(ex.getClass())) {
-                                    logger.trace("", ex);
-                                } else {
-                                    logger.warn("", ex);
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });
 
         return this;
+    }
+
+    @Override
+    public synchronized void destroy() {
+        closed.set(true);
+        super.destroy();
+    }
+
+    void startConsumer() {
+
+        consumer.subscribe(Arrays.asList(topic));
+        ExecutorsFactory.getMessageDispatcher(config, "kafka").execute(new Runnable() {
+            @Override
+            public void run() {
+                while (!closed.get()) {
+                    ConsumerRecords<String, String> records = consumer.poll(1000);
+                    for (ConsumerRecord<String, String> record : records) {
+                        broadcastReceivedMessage(record.value());
+                    }
+                }
+                consumer.close();
+                ((Set<String>)config.properties().get("topics")).remove(topic);
+            }
+        });
     }
 
     @Override
@@ -145,10 +140,6 @@ public class KafkaBroadcaster extends AbstractBroadcasterProxy {
 
         // TODO: Prevent message round trip.
 
-        if (ManagedAtmosphereHandler.Managed.class.isAssignableFrom(message.getClass())) {
-            message = ManagedAtmosphereHandler.Managed.class.cast(message).object();
-        }
-
-        producer.send(new ProducerRecord(topic, message));
+        producer.send(new ProducerRecord<String, String>(topic, message.toString()));
     }
 }

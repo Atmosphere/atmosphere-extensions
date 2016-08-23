@@ -486,7 +486,7 @@
         <jackson-version>2.4.1</jackson-version>
         <junit-version>3.8.1</junit-version>
         <maven-plugin.version>1.0.0</maven-plugin.version>
-        <servlet-version>3.0-b74b</servlet-version>
+        <servlet-version>3.0.1</servlet-version>
         <grizzly-version>1.9.50</grizzly-version>
         <grizzly2-version>2.2.18</grizzly2-version>
         <jboss-version>2.1.1.GA</jboss-version>
@@ -511,7 +511,7 @@
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>
 
-        <atmosphere-version>2.4.2</atmosphere-version>
-        <javascript-version>2.2.13</javascript-version>
+        <atmosphere-version>2.4.6-SNAPSHOT</atmosphere-version>
+        <javascript-version>2.3.2</javascript-version>
     </properties>
 </project>

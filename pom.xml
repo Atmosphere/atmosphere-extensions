@@ -511,7 +511,7 @@
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>
 
-        <atmosphere-version>2.4.6-SNAPSHOT</atmosphere-version>
+        <atmosphere-version>2.4.5</atmosphere-version>
         <javascript-version>2.3.2</javascript-version>
     </properties>
 </project>

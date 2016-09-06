@@ -1,12 +1,12 @@
 ### [Atmosphere Framework](https://github.com/Atmosphere/atmosphere) Extensions and Plugin
 
-You need Atmosphere Runtime version 2.1.0 and higher to use those extension. To install, just do
+You need Atmosphere Runtime version 2.4.0 and higher to use those extension. To install, just do
 
 ```java
      <dependency>
          <groupId>org.atmosphere</groupId>
          <artifactId>atmosphere-{atmosphere-module}</artifactId>
-         <version>2.4.0</version>
+         <version>2.4.3</version>
       </dependency>
 ```
 Where module can be one of the listed directory above. Client on the module's pom.xml to get the exact artifact name.

@@ -32,10 +32,12 @@ package org.atmosphere.gwt20.rebind;
 
 import com.google.gwt.core.ext.GeneratorContext;
 import com.google.gwt.core.ext.IncrementalGenerator;
+import com.google.gwt.core.ext.PropertyOracle;
 import com.google.gwt.core.ext.RebindMode;
 import com.google.gwt.core.ext.RebindResult;
 import com.google.gwt.core.ext.TreeLogger;
 import com.google.gwt.core.ext.UnableToCompleteException;
+import com.google.gwt.core.ext.linker.EmittedArtifact.Visibility;
 import com.google.gwt.core.ext.typeinfo.JClassType;
 import com.google.gwt.core.ext.typeinfo.JType;
 import com.google.gwt.core.ext.typeinfo.NotFoundException;
@@ -53,11 +55,44 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class SerializerGenerator extends IncrementalGenerator {
+    private static final Constructor<SerializableTypeOracleBuilder> SERIALIZABLE_TYPE_ORACLE_BUILDER_GWT25_CTOR =
+            probeSerializableTypeOracleBuilderConstructor(TreeLogger.class, PropertyOracle.class, GeneratorContext.class);
+    private static final Constructor<SerializableTypeOracleBuilder> SERIALIZABLE_TYPE_ORACLE_BUILDER_GWT28_CTOR =
+            probeSerializableTypeOracleBuilderConstructor(TreeLogger.class, GeneratorContext.class);
+
+    private static Constructor<SerializableTypeOracleBuilder> probeSerializableTypeOracleBuilderConstructor(Class<?>... args) {
+        try {
+            return SerializableTypeOracleBuilder.class.getConstructor(args);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+    private static SerializableTypeOracleBuilder createSerializableTypeOracleBuilder(TreeLogger logger, PropertyOracle propertyOracle, GeneratorContext context) throws UnableToCompleteException {
+        SerializableTypeOracleBuilder obj = null;
+        try {
+            if (SERIALIZABLE_TYPE_ORACLE_BUILDER_GWT25_CTOR != null) {
+                obj = SERIALIZABLE_TYPE_ORACLE_BUILDER_GWT25_CTOR.newInstance(logger, propertyOracle, context);
+            } else {
+                obj = SERIALIZABLE_TYPE_ORACLE_BUILDER_GWT28_CTOR.newInstance(logger, context);
+            }
+        } catch (InvocationTargetException e) {
+            if (e.getTargetException() instanceof UnableToCompleteException) {
+                throw (UnableToCompleteException)e.getTargetException();
+            } else if (e.getTargetException() instanceof RuntimeException) {
+                throw (RuntimeException)e.getTargetException();
+            }
+        } catch (InstantiationException | IllegalAccessException e) {
+            // ignore
+        }
+        return obj;
+    }
 
     @Override
     public long getVersionId() {
@@ -84,9 +119,9 @@ public class SerializerGenerator extends IncrementalGenerator {
                     throw new UnableToCompleteException();
                 }
 
-                SerializableTypeOracleBuilder typesSentToBrowserBuilder = new SerializableTypeOracleBuilder(
+                SerializableTypeOracleBuilder typesSentToBrowserBuilder = createSerializableTypeOracleBuilder(
                         logger, context.getPropertyOracle(), context);
-                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = new SerializableTypeOracleBuilder(
+                SerializableTypeOracleBuilder typesSentFromBrowserBuilder = createSerializableTypeOracleBuilder(
                         logger, context.getPropertyOracle(), context);
 
                 List<Class<?>> serializableTypes = new ArrayList();
@@ -133,7 +168,7 @@ public class SerializerGenerator extends IncrementalGenerator {
                 writer.close();
 
                 if (pathInfo != null) {
-                    context.commitResource(logger, pathInfo).setPrivate(true);
+                    context.commitResource(logger, pathInfo).setVisibility(Visibility.Private);
                 }
 
                 // Create the serializer

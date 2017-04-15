@@ -36,7 +36,8 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
         STREAMING,
         JSONP,
         SSE,
-        WEBSOCKET;
+        WEBSOCKET,
+        NONE;
 
         @Override
         public String toString() {
@@ -54,6 +55,8 @@ public final class AtmosphereRequestConfig extends JavaScriptObject implements R
                     return "sse";
                 case WEBSOCKET:
                     return "websocket";
+                case NONE:
+                    return "none";
             }
         }
 

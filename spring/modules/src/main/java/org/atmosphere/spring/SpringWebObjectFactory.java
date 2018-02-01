@@ -48,6 +48,7 @@ public class SpringWebObjectFactory extends InjectableObjectFactory {
             t = context.getAutowireCapableBeanFactory().createBean(classToInstantiate);
         } catch (BeanCreationException e) {
             // Fallback to Atmosphere instead of writing all kind of Spring glue code.
+            logger.warn("Unable to create bean {}", classToInstantiate.getName(), e);
             t = super.newClassInstance(classType, classToInstantiate);
         }
 

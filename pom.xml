@@ -480,7 +480,7 @@
 
     <properties>
         <jetty-version>6.1.22</jetty-version>
-        <jersey-version>1.19</jersey-version>
+        <jersey-version>1.19.4</jersey-version>
         <compat-version>2.1.0</compat-version>
         <jaxb-version>2.1</jaxb-version>
         <jackson-version>2.4.1</jackson-version>
@@ -511,7 +511,7 @@
         <slf4j-version>1.6.1</slf4j-version>
         <logback-version>0.9.30</logback-version>
 
-        <atmosphere-version>2.4.19</atmosphere-version>
+        <atmosphere-version>2.4.20</atmosphere-version>
         <javascript-version>2.3.2</javascript-version>
     </properties>
 </project>

@@ -53,9 +53,7 @@ public class SpringWebObjectFactory extends InjectableObjectFactory {
         }
 
         if (t == null) {
-            logger.info("Unable to find {}. Creating the object directly."
-                    + classToInstantiate.getName());
-            return classToInstantiate.newInstance();
+            throw new IllegalStateException("Unable to create {}" + classToInstantiate.getName());
         }
         return t;
     }

@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.atmosphere</groupId>
         <artifactId>atmosphere-extensions-project</artifactId>
-        <version>2.4.20-SNAPSHOT</version>
+        <version>2.4.20</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <artifactId>atmosphere-redis-redisson</artifactId>
-    <version>2.4.20-SNAPSHOT</version>
+    <version>2.4.20</version>
     <dependencies>
         <dependency>
             <groupId>org.redisson</groupId>

@@ -42,6 +42,8 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory<AbstractModul
 
     private static final Logger logger = LoggerFactory.getLogger(GuiceObjectFactory.class);
 
+    public final static String BIND_INTERNAL_COMPONENT = GuiceObjectFactory.class.getName() + ".bindInternalObjects";
+
     protected Injector injector;
     protected AtmosphereConfig config;
     private final List<AbstractModule> modules = new ArrayList<AbstractModule>();
@@ -53,7 +55,9 @@ public class GuiceObjectFactory implements AtmosphereObjectFactory<AbstractModul
         }
         this.config = config;
 
-        modules.add(new AtmosphereModule());
+        if (config.getInitParameter(BIND_INTERNAL_COMPONENT, true)) {
+            modules.add(new AtmosphereModule());
+        }
 
         try {
             AtmosphereProducers p = newClassInstance(AtmosphereProducers.class, AtmosphereProducers.class);

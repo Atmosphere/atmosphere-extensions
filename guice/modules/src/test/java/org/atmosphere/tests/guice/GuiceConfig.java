@@ -59,14 +59,12 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import org.atmosphere.config.service.AtmosphereHandlerService;
 import org.atmosphere.container.Jetty7CometSupport;
-import org.atmosphere.cpr.ApplicationConfig;
-import org.atmosphere.cpr.AtmosphereResource;
-import org.atmosphere.cpr.AtmosphereResourceEvent;
-import org.atmosphere.cpr.AtmosphereResourceEventListenerAdapter;
+import org.atmosphere.cpr.*;
 import org.atmosphere.guice.AtmosphereGuiceServlet;
 import org.atmosphere.guice.GuiceObjectFactory;
 import org.atmosphere.handler.AbstractReflectorAtmosphereHandler;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,7 +77,6 @@ public class GuiceConfig extends GuiceServletContextListener {
         return Guice.createInjector(new ServletModule() {
             @Override
             protected void configureServlets() {
-                bind(Resource.class);
                 bind(new TypeLiteral<Map<String, String>>() {
                 }).annotatedWith(Names.named(AtmosphereGuiceServlet.PROPERTIES)).toInstance(
                         Collections.<String, String>emptyMap());
@@ -98,6 +95,9 @@ public class GuiceConfig extends GuiceServletContextListener {
 
     @AtmosphereHandlerService(path="/")
     public final static class Resource extends AbstractReflectorAtmosphereHandler {
+
+        @Inject
+        private BroadcasterFactory b;
 
         @Override
         public void onRequest(final AtmosphereResource r) throws IOException {

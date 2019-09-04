@@ -30,9 +30,12 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
- /**
-  * WebLogic Comet implementation.
-  */
+import org.atmosphere.cpr.AtmosphereRequest;
+import org.atmosphere.cpr.AtmosphereResponse;
+
+/**
+ * WebLogic Comet implementation.
+ */
 public class AtmosphereWebLogicServlet extends AbstractAsyncServlet {
 
     protected static final Logger logger = LoggerFactory.getLogger(AtmosphereServlet.class);
@@ -88,8 +91,10 @@ public class AtmosphereWebLogicServlet extends AbstractAsyncServlet {
      */
     protected boolean doRequest(RequestResponseKey rrk) throws IOException, ServletException {
         try {
-            rrk.getRequest().getSession().setAttribute(WebLogicCometSupport.RRK, rrk);
-            Action action = framework.doCometSupport(AtmosphereRequestImpl.wrap(rrk.getRequest()), AtmosphereResponseImpl.wrap(rrk.getResponse()));
+            AtmosphereRequest req = AtmosphereRequestImpl.wrap(rrk.getRequest());
+            AtmosphereResponse resp = AtmosphereResponseImpl.wrap(rrk.getResponse());
+            Action action = framework.doCometSupport(req , resp);
+            rrk.getRequest().getSession().setAttribute(WebLogicCometSupport.RRK + resp.uuid(), rrk);
             if (action.type() == Action.TYPE.SUSPEND) {
                 if (action.timeout() == -1) {
                     rrk.setTimeout(Integer.MAX_VALUE);

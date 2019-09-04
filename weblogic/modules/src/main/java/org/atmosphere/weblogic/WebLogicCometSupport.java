@@ -76,7 +76,7 @@ public class WebLogicCometSupport extends AsynchronousProcessor {
 
     private static final Logger logger = LoggerFactory.getLogger(WebLogicCometSupport.class);
 
-    public static final String RRK = "RequestResponseKey";
+    public static final String RRK = "RequestResponseKey-";
 
     public WebLogicCometSupport(AtmosphereConfig config) {
         super(config);
@@ -109,7 +109,7 @@ public class WebLogicCometSupport extends AsynchronousProcessor {
         super.action(actionEvent);
         if (actionEvent.isInScope() && actionEvent.action().type() == Action.TYPE.RESUME) {
             try {
-                RequestResponseKey rrk = (RequestResponseKey) actionEvent.getRequest().getSession().getAttribute(RRK);
+                RequestResponseKey rrk = (RequestResponseKey) actionEvent.getRequest().getSession().getAttribute(RRK + actionEvent.uuid());
                 AbstractAsyncServlet.notify(rrk, null);
             } catch (IOException ex) {
                 logger.debug("action failed", ex);

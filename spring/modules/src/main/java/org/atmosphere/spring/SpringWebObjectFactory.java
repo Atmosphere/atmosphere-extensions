@@ -87,7 +87,9 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
 
             // Hack to make it injectable
             context.register(AtmosphereConfig.class);
-            ((AtmosphereConfig) context.getBean(AtmosphereConfig.class.getCanonicalName(), config.framework())).populate(config);
+            String string = AtmosphereConfig.class.getSimpleName();
+            String beanName = string.substring(0, 1).toLowerCase() + string.substring(1);
+            ((AtmosphereConfig) context.getBean(beanName, config.framework())).populate(config);
         } catch (Exception ex) {
             logger.warn("Unable to configure injection", ex);
         }

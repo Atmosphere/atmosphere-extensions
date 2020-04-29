@@ -11,6 +11,10 @@ You need Atmosphere Runtime version 2.4.0 and higher to use those extension. To 
 ```
 Where module can be one of the listed directory above. Client on the module's pom.xml to get the exact artifact name.
 
+![jdk8](https://github.com/Atmosphere/atmosphere-extensions/workflows/jdk8/badge.svg)
+![JDK11](https://github.com/Atmosphere/atmosphere-extensions/workflows/JDK11/badge.svg)
+![JDK13](https://github.com/Atmosphere/atmosphere-extensions/workflows/JDK13/badge.svg)
+
 For GWT 2.7
 
 ```java

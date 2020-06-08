@@ -47,14 +47,9 @@ public class CDIObjectFactory implements AtmosphereObjectFactory<Object> {
                 bm = (BeanManager) new InitialContext().lookup("java:comp/env/BeanManager");
             } catch (NamingException e) {
                 logger.error("{}", e);
+                throw new IllegalStateException();
             }
         }
-
-        final Iterator<Bean<?>> i = bm.getBeans(AtmosphereProducers.class).iterator();
-        if (!i.hasNext()) {
-            throw new IllegalStateException();
-        }
-
     }
 
     @Override

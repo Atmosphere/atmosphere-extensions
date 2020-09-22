@@ -85,6 +85,7 @@ public class GuiceConfig extends GuiceServletContextListener {
                     {
                         put(ApplicationConfig.PROPERTY_COMET_SUPPORT, Jetty7CometSupport.class.getName());
                         put(ApplicationConfig.OBJECT_FACTORY, GuiceObjectFactory.class.getName());
+                        put(ApplicationConfig.ANALYTICS, "false");
                         put("org.atmosphere.useNative", "true");
                         put(ApplicationConfig.ANNOTATION_PACKAGE, Resource.class.getPackage().getName());
                     }

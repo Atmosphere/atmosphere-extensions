@@ -3,5 +3,5 @@ sudo: false
 language: java
 jdk:
   - openjdk8
-before_install: 'mvn -version'
-install: 'mvn clean install'
+before_install: 'mvn -T 1C -version'
+install: 'mvn -T 1C clean install'

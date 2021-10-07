@@ -6,7 +6,7 @@ You need Atmosphere Runtime version 2.4.0 and higher to use those extension. To 
      <dependency>
          <groupId>org.atmosphere</groupId>
          <artifactId>atmosphere-{atmosphere-module}</artifactId>
-         <version>2.5.2</version>
+         <version>2.6.5</version>
       </dependency>
 ```
 Where module can be one of the listed directory above. Client on the module's pom.xml to get the exact artifact name.

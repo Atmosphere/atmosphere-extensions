@@ -17,7 +17,7 @@
     <url>https://github.com/Atmosphere/atmosphere-extensions/gwt20</url>
 
     <properties>
-        <gwt-version>2.5.0</gwt-version>
+        <gwt-version>2.9.0</gwt-version>
     </properties>
 
     <modules>

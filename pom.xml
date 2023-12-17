@@ -356,11 +356,11 @@
     <repositories>
         <repository>
             <id>oss.sonatype.org</id>
-            <url>http://oss.sonatype.org/content/repositories/releases</url>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </repository>
         <repository>
             <id>oss.sonatype.org-snapshot</id>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <!-- <repository>
             <id>scala-tools.org</id>
@@ -374,11 +374,11 @@
         <repository>
             <id>codehaus</id>
             <name>repository.codehaus.org</name>
-            <url>http://repository.codehaus.org</url>
+            <url>https://repository.codehaus.org</url>
         </repository>
         <repository>
             <id>codehaus-snapshots</id>
-            <url>http://snapshots.repository.codehaus.org</url>
+            <url>https://snapshots.repository.codehaus.org</url>
         </repository>
         <repository>
             <id>maven.java.net</id>

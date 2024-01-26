@@ -25,6 +25,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
     public static final String ATMOSPHERE_SPRING_EXCLUDE_CLASSES = "org.atmosphere.spring.excludedClasses";
 
     private static final Logger logger = LoggerFactory.getLogger(SpringWebObjectFactory.class);
+
     protected boolean preventSpringInjection = false;
     private final List<Class<?>> excludedFromInjection = new ArrayList<Class<?>>();
 
@@ -47,8 +48,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
         U t = context.getAutowireCapableBeanFactory().createBean(classToInstantiate);
 
         if (t == null) {
-            logger.info("Unable to find {}. Creating the object directly."
-                    + classToInstantiate.getName());
+            logger.info("Unable to find {}. Creating the object directly.", classToInstantiate.getName());
             return classToInstantiate.newInstance();
         }
         return t;
@@ -60,6 +60,7 @@ public class SpringWebObjectFactory implements AtmosphereObjectFactory<Class<?>>
         return this;
     }
 
+    @Override
     public String toString() {
         return "Spring Web ObjectFactory";
     }

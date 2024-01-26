@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 
 /**
  * Spring context.
@@ -64,6 +64,4 @@ public class AtmosphereSpringContext implements ServletConfig {
     public void setConfig(Map<String, String> config) {
         this.config = config;
     }
-
 }
-

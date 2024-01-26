@@ -510,7 +510,7 @@
         <felix-version>2.4.0</felix-version>
         <jms-version>1.1-rev-1</jms-version>
         <guice-version>3.0</guice-version>
-        <spring-version>3.2.16.RELEASE</spring-version>
+        <spring-version>6.1.3</spring-version>
         <wicket.version>1.4.12</wicket.version>
         <ahc.version>1.8.3</ahc.version>
         <jedis.version>2.0.0</jedis.version>
@@ -519,6 +519,7 @@
         <logback-version>1.1.2</logback-version>
 
         <atmosphere-version>2.7.5</atmosphere-version>
+        <atmosphere3-version>3.0.4</atmosphere3-version>
         <javascript-version>3.1.2</javascript-version>
     </properties>
 </project>

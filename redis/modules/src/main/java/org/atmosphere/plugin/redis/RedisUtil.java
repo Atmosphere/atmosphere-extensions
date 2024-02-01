@@ -259,7 +259,7 @@ public class RedisUtil {
     }
 
     private Object getLockingObject() {
-        return sharedPool ? jedisPool : jedisPublisher;
+        return sharedPool ? new Object() : jedisPublisher;
     }
 
     public static interface Callback {

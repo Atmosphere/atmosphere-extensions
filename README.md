@@ -6,7 +6,7 @@ You need Atmosphere Runtime version 3.0.0 and higher to use those extension. To 
      <dependency>
          <groupId>org.atmosphere</groupId>
          <artifactId>atmosphere-{atmosphere-module}</artifactId>
-         <version>3.0.0</version>
+         <version>3.0.1</version>
       </dependency>
 ```
 

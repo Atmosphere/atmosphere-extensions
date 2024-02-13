@@ -1,4 +1,0 @@
-INSTALL
-org.atmosphere.sockjs.SockJsAtmosphereInterceptor
-EXCLUDE
-org.atmosphere.client.TrackMessageSizeInterceptor

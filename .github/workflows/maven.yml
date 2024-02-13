@@ -1,4 +1,4 @@
-name: Java tests
+name: Java 17/21
 
 on:
   push:

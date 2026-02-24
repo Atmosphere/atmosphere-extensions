@@ -1,3 +1,11 @@
+> **⚠️ This repository is legacy and no longer actively maintained.**
+>
+> Extensions like Redis and Kafka clustering are now built-in modules in the [Atmosphere 4](https://github.com/Atmosphere/atmosphere) monorepo.
+>
+> **→ [github.com/Atmosphere/atmosphere](https://github.com/Atmosphere/atmosphere)**
+
+---
+
 ### [Atmosphere Framework](https://github.com/Atmosphere/atmosphere) Extensions and Plugin
 
 You need Atmosphere Runtime version 3.0.0 and higher to use those extension. To install, just do
